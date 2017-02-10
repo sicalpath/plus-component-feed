@@ -1,0 +1,26 @@
+{
+    "name": "zhiyicx/plus-component-feed",
+    "description": "feed-component for TS+",
+    "type": "plus-component",
+    "license": "Apache-2",
+    "authors": [
+        {
+            "name": "boxshadow",
+            "email": "idafoo@sina.com"
+        }
+    ],
+    "require": {
+        "zhiyicx/plus-install-plugin": "^1.0"
+    },
+    "extra": {
+        "installer-class": "Zhiyi\\Component\\ZhiyiPlus\\PlusComponentFeed\\Installer"
+    },
+    "autoload": {
+        "psr-4": {
+            "Zhiyi\\Component\\ZhiyiPlus\\PlusComponentFeed\\": "src/"
+        },
+        "files": [
+            "src/helpers.php" 
+        ]
+    }
+}
