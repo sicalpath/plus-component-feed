@@ -3,6 +3,8 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed;
 
 use Closure;
 use Zhiyi\Component\Installer\PlusInstallPlugin\AbstractInstaller;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 use function  Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\{
     asset_path,
     route_path,
