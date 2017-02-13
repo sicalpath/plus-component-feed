@@ -104,6 +104,15 @@ class Installer extends AbstractInstaller
         	});
         	include component_base_path('/database/table_feed_storages_columns.php');
         }
+
+        if (!Schema::hasTable('feed_views')) {
+            Schema::create('feed_views', function (Blueprint $table) {
+                $table->engine = 'InnoDB';
+                $table->increments('id')->comment('primary key');
+                $table->timestamps();
+            });
+            include component_base_path('/database/table_feed_views_columns.php');
+        }
         
 		$next();
 	}
