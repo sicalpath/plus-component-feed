@@ -3,6 +3,7 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Controllers;
 
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 
 class FeedController extends Controller
 {
@@ -18,6 +19,10 @@ class FeedController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request, [
+            'content' => 'required',
+            'user_id' => 'required'
+        ]);
     	if(!$request->content) {
 	        return response()->json([
 	            'status'  => false,
@@ -36,10 +41,16 @@ class FeedController extends Controller
         $request->title && $feed['feed_title'] = $request->title;
         $feed['feed_content'] = $request->content;
         $feed['feed_client_id'] = $request->getClientIp();
-        $feed['user_id'] = $request->user_id;
+        $feed['user_id'] = intval($request->user_id);
         // 判断动态来路,默认为来自pc
         $feed['feed_from'] = $request->feed_from ?? 1;
-        $feed['latitude'] = $rqeuest->
-    	dump($request->all());
+        $feed['latitude'] = $rqeuest->latitude ?? '';
+        $feed['longtitude'] = $request->longtitude ?? '';
+    	Feed::create($feed);
+        return response()->json([
+                'status' => true,
+                'code' => 0,
+                'message' => '动态创建成功'
+            ])->setStatusCode(201);
     }
 }
