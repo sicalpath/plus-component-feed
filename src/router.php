@@ -4,3 +4,6 @@ use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\base_path as component_
 Route::middleware('web')
     ->namespace('Zhiyi\\Component\\ZhiyiPlus\\PlusComponentFeed\\Controllers')
     ->group(component_base_path('/routes/web.php'));
+Route::prefix('api/v1')
+    ->namespace('Zhiyi\\Component\\ZhiyiPlus\\PlusComponentFeed\\Controllers')
+    ->group(component_base_path('/routes/api.php'));
