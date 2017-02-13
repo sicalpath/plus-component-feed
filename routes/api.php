@@ -25,4 +25,6 @@ Route::group([
 	Route::post('/feeds/{feed_id}/diggs', 'xxx@xxx');
 	//取消点赞
 	Route::delete('/feeds/{feed_id}/diggs', 'xxx@xxx');
+	//获取@我的分享列表
+	Route::get('/feeds/atme', 'xxx@xxx');
 });
