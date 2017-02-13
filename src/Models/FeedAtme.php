@@ -16,7 +16,7 @@ class FeedAtme extends Model
      */
     public function atuser()
     {
-        return $this->hasOne(User::class, 'at_user_id', 'id');
+        return $this->hasOne(User::class, 'id', 'at_user_id');
     }
 
     /**
@@ -27,7 +27,7 @@ class FeedAtme extends Model
      */
     public function user()
     {
-    	return $this->hasOne(User::class, 'user_id', 'id');
+    	return $this->hasOne(User::class, 'id', 'user_id');
     }
 
     /**
