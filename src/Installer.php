@@ -11,8 +11,6 @@ use function  Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\{
     resource_path,
     base_path as component_base_path
 };
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 class Installer extends AbstractInstaller
 {
