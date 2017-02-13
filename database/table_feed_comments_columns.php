@@ -11,6 +11,12 @@ if (!Schema::hasColumn($component_table_name, 'user_id')) {
     });
 }
 
+if (!Schema::hasColumn($component_table_name, 'to_user_id')) {
+    Schema::table($component_table_name, function (Blueprint $table) {
+        $table->integer('to_user_id')->unsigned()->index()->comment('被评论的作者');
+    });
+}
+
 if (!Schema::hasColumn($component_table_name, 'reply_to_user_id')) {
     Schema::table($component_table_name, function (Blueprint $table) {
         $table->integer('reply_to_user_id')->unsigned()->index()->comment('被回复的评论作者');
