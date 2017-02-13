@@ -54,7 +54,7 @@ class Feed extends Model
      * 一条动态可能会@多个用户
      * @return [type] [description]
      */
-    pubilc function atmes()
+    public function atmes()
     {
     	return $this->hasMany(FeedAtme::class, 'feed_id');
     }
