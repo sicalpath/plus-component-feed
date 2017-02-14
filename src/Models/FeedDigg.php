@@ -1,7 +1,6 @@
 <?php
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models;
 
-use Zhiyi\Plus\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,7 +16,7 @@ class FeedDigg extends Model
      */
     public function user()
     {
-    	return $this->belongsTo(User::class, 'id', 'user_id');
+    	return $this->hasOne('Zhiyi\\Plus\\Models\\User', 'id', 'user_id');
     }
 
     /**

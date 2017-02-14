@@ -59,7 +59,7 @@ class Installer extends AbstractInstaller
 		if (!Schema::hasTable('feed_atmes')) {
             Schema::create('feed_atmes', function (Blueprint $table) {
                 $table->engine = 'InnoDB';
-                $table->increments('atme_id')->comment('主键');
+                $table->increments('id')->comment('主键');
                 $table->timestamps();
             });
             include component_base_path('/database/table_feed_atmes_columns.php');
@@ -68,7 +68,7 @@ class Installer extends AbstractInstaller
         if (!Schema::hasTable('feeds')) {
         	Schema::create('feeds', function (Blueprint $table) {
         		$table->engine = 'InnoDB';
-        		$table->increments('feed_id')->comment('primary key');
+        		$table->increments('id')->comment('primary key');
         		$table->timestamps();
         		$table->softDeletes();
         	});
@@ -78,7 +78,7 @@ class Installer extends AbstractInstaller
         if (!Schema::hasTable('feed_diggs')) {
         	Schema::create('feed_diggs', function (Blueprint $table) {
         		$table->engine = 'InnoDB';
-        		$table->increments('feed_digg_id')->comment('primary key');
+        		$table->increments('id')->comment('primary key');
         		$table->timestamps();
         	});
         	include component_base_path('/database/table_feed_diggs_columns.php');
@@ -87,7 +87,7 @@ class Installer extends AbstractInstaller
         if (!Schema::hasTable('feed_comments')) {
         	Schema::create('feed_comments', function (Blueprint $table) {
         		$table->engine = 'InnoDB';
-        		$table->increments('feed_comment_id')->comment('primary key');
+        		$table->increments('id')->comment('primary key');
         		$table->timestamps();
         		$table->softDeletes();
         	});

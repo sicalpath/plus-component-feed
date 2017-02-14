@@ -53,4 +53,21 @@ class FeedController extends Controller
                 'message' => '动态创建成功'
             ])->setStatusCode(201);
     }
+
+    public function read($feed_id)
+    {
+        dump($feed_id);
+        if(!$feed_id) {
+            return response()->json([
+                'status' => false,
+                'code' => 6003,
+                'message' => '动态ID不能为空'
+            ])->setStatusCode(400);
+        }
+        $feed = Feed::find(intval($feed_id));
+        foreach($feed->diggs as $digg) {
+            dump($digg->user);
+        }
+        die;
+    }
 }

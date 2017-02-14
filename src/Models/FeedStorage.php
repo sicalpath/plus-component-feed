@@ -20,7 +20,7 @@ class FeedStorage extends Model
 
     public function user()
     {
-    	return $this->belongsTo(User::class, 'id', 'user_id');
+    	return $this->belongsTo('Zhiyi\\Plus\\Models\\User', 'id', 'user_id');
     }
 
     /**
@@ -29,6 +29,6 @@ class FeedStorage extends Model
      */
     public function storage()
     {
-    	return $this->hasOne(Stroage::class, 'id', 'feed_storage_id');
+    	return $this->hasOne('Zhiyi\\Plus\\Models\\Storage', 'id', 'feed_storage_id');
     }
 }

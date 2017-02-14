@@ -15,7 +15,8 @@ class Feed extends Model
     	'feed_latitude',
     	'feed_longtitude',
     	'feed_client_id',
-    	'feed_goehash'
+    	'feed_goehash',
+        'user_id'
     ];
 
     protected $hidden = [
@@ -28,7 +29,7 @@ class Feed extends Model
      */
     public function user()
     {
-    	return $this->belongsTo(User::class);
+    	return $this->belongsTo('Zhiyi\\Plus\\Models\\User');
     }
 
     /**
