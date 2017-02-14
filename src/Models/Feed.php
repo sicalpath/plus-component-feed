@@ -39,7 +39,7 @@ class Feed extends Model
      */
     public function diggs()
     {
-    	return $this->hasMany(FeedDigg::class, 'feed_id');
+    	return $this->hasMany(FeedDigg::class, 'feed_id', 'feed_id');
     }
 
 
