@@ -10,9 +10,9 @@ Route::group([
 	]
 ], function() {
 	//分享详情
-	// Route::get('/feeds/{feed_id}', 'xxx@xxx');
+	Route::get('/feed/{feed_id}', 'FeedController@read');
 	// //发送分享
-	// Route::post('/feeds', 'xxx@xxx');
+	Route::post('/feed', 'FeedController@store');
 	// //删除分享
 	// Route::delete('/feeds/{feed_id}', 'xxx@xxx');
 	// //评论列表
