@@ -1,8 +1,9 @@
 <?php
 use Zhiyi\Plus\Http\Middleware;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Middleware as FeedMiddleware;
 
 //分享列表
-// Route::get('/feeds', 'xxx@xxx');
+Route::get('/feeds', 'FeedController@index');
 
 Route::group([
 	'middleware' => [
@@ -10,9 +11,9 @@ Route::group([
 	]
 ], function() {
 	//分享详情
-	Route::get('/feed/{feed_id}', 'FeedController@read');
+	Route::get('/feeds/{feed_id}', 'FeedController@read');
 	// //发送分享
-	Route::post('/feed', 'FeedController@store');
+	Route::post('/feeds', 'FeedController@store');
 	// //删除分享
 	// Route::delete('/feeds/{feed_id}', 'xxx@xxx');
 	// //评论列表
