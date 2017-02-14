@@ -3,6 +3,9 @@ use Zhiyi\Plus\Http\Middleware;
 
 //分享列表
 // Route::get('/feeds', 'xxx@xxx');
+//获取一条动态的赞列表
+Route::get('/feeds/{feed_id}/diggusers','FeedDiggApiController@getDiggList');
+
 
 Route::group([
 	'middleware' => [
