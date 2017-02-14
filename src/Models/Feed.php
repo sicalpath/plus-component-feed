@@ -39,7 +39,7 @@ class Feed extends Model
      */
     public function diggs()
     {
-    	return $this->hasMany(FeedDigg::class, 'feed_id');
+    	return $this->hasMany(FeedDigg::class, 'feed_id', 'feed_id');
     }
 
 
@@ -79,6 +79,19 @@ class Feed extends Model
     public function scopeByUserId(Builder $query, integer $userId): Builder
     {
         return $query->where('user_id', $userId);
+    }
+
+    /**
+     * 通过动态id查找相关动态
+     * 
+     * @author bs<414606094@qq.com>
+     * @param  Builder $query  [description]
+     * @param  integer $feedId [description]
+     * @return [type]          [description]
+     */
+    public function scopeByFeedId(Builder $query, int $feedId): Builder
+    {
+        return $query->where('feed_id', $feedId);
     }
 }
 
