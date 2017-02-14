@@ -1,6 +1,7 @@
 <?php
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models;
 
+use Zhiyi\Plus\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,7 +22,7 @@ class FeedComment extends Model
      */
     public function user()
     {
-    	return $this->belongsTo('Zhiyi\\Plus\\Models\\User', 'id', 'user_id');
+    	return $this->belongsTo(User::class, 'id', 'user_id');
     }
 
     /**

@@ -1,6 +1,8 @@
 <?php
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models;
 
+use Zhiyi\Plus\Models\User;
+use Zhiyi\Plus\Models\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,7 +22,7 @@ class FeedStorage extends Model
 
     public function user()
     {
-    	return $this->belongsTo('Zhiyi\\Plus\\Models\\User', 'id', 'user_id');
+    	return $this->belongsTo(User::class, 'id', 'user_id');
     }
 
     /**
@@ -29,6 +31,6 @@ class FeedStorage extends Model
      */
     public function storage()
     {
-    	return $this->hasOne('Zhiyi\\Plus\\Models\\Storage', 'id', 'feed_storage_id');
+    	return $this->hasOne(Storage::class, 'id', 'feed_storage_id');
     }
 }
