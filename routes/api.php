@@ -25,9 +25,9 @@ Route::group([
 	// //删除评论
 	// Route::delete('/feeds/{feed_id}/comments/{comment_id}', 'xxx@xxx');
 	// //点赞
-	// Route::post('/feeds/{feed_id}/diggs', 'xxx@xxx');
+	Route::post('/feeds/{feed_id}/digg', 'FeedDiggApiController@diggFeed');
 	// //取消点赞
-	// Route::delete('/feeds/{feed_id}/diggs', 'xxx@xxx');
+	Route::delete('/feeds/{feed_id}/digg', 'FeedDiggApiController@cancelDiggFeed');
 	//获取@我的分享列表
 	Route::get('/feeds/atme', 'FeedAtmeApiController@getAtmeList');
 });
