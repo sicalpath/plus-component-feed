@@ -1,0 +1,33 @@
+#@我的动态列表
+
+##接口地址
+/api/v1/feeds/atme
+
+##请求方法
+GET
+
+##返回体
+```json5
+{
+    "feed_id": 1,
+    "feed_title": "xxxxx",
+    "feed_content": "xxxxxx",
+    "created_at": 1487011968,
+    "user": {//主动@的用户信息
+    "user_name": "Wayne",
+    "phone": "18908019700"
+    }
+}
+```
+
+##返回字段
+| name     | type     | must     | description |
+|----------|:--------:|:--------:|:--------:|
+| feed_id  | int      | yes      | 动态id |
+| feed_title | string	  | yes		 | 动态标题 |
+| feed_content     | string  	  | yes 	 | 动态内容 |
+| created_at | timestamp    | yes      | 发布时间 |
+| user_name | string    | yes      | 用户名 |
+| phone | string    | yes      | 手机号 |
+
+code请参见[Feed消息对照表](Feed消息对照表.md)
