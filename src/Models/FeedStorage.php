@@ -17,7 +17,7 @@ class FeedStorage extends Model
 
     public function feed()
     {
-    	return $this->belongsTo(Feed::class, 'feed_id', 'feed_id');
+    	return $this->belongsTo(Feed::class, 'id', 'feed_id');
     }
 
     public function user()

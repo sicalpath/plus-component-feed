@@ -28,7 +28,6 @@ class FeedController extends Controller
             $datas[$feed->id]['feed']['feed_content'] = $feed->feed_content;
             $datas[$feed->id]['feed']['created_at'] = $feed->created_at->timestamp;
             $datas[$feed->id]['feed']['feed_from'] = $feed->feed_from;
-            
             // 工具数据
             $datas[$feed->id]['tool'] = [];
             $datas[$feed->id]['tool']['feed_view_count'] = $feed->feed_view_count;
@@ -45,31 +44,13 @@ class FeedController extends Controller
                 $datas[$feed->id]['comments'][$comment->id]['reply_to_user_id'] = $comment->reply_to_user_id;
             };
         };
+
         return response()->json([
                 'status'  => true,
                 'code'    => 0,
                 'message' => '动态列表获取成功',
                 'data' => $datas
             ])->setStatusCode(201);
-        // 组装数据$
-        // $data = [];
-        // // 用户标识
-        // $data['user_id'] = $feed->user_id;
-        // // 动态内容
-        // $data['feed'] = [];
-        // $data['feed']['id'] = $feed->id;
-        // $data['feed']['title'] = $feed->feed_title;
-        // $data['feed']['content'] = $feed->feed_content;
-        // $data['feed']['created_at'] = $feed->created_at->timestamp;
-        // $data['feed']['feed_from'] = $feed->feed_from;
-        // // 工具栏数据
-        // $data['tool'] = [];
-        // $data['tool']['digg'] = $feed->feed_digg_count;
-        // $data['tool']['view'] = $feed->feed_view_count;
-        // $data['tool']['comment'] = $feed->feed_comment_count;
-        // // 动态评论,详情默认为空，自动获取评论列表接口
-        // $data['comments'] = [];
-
     }
 
     /**
@@ -107,6 +88,7 @@ class FeedController extends Controller
         $feed['latitude'] = $rqeuest->latitude ?? '';
         $feed['longtitude'] = $request->longtitude ?? '';
     	Feed::create($feed);
+
         return response()->json([
                 'status' => true,
                 'code' => 0,
@@ -143,6 +125,11 @@ class FeedController extends Controller
         $data['feed']['content'] = $feed->feed_content;
         $data['feed']['created_at'] = $feed->created_at->timestamp;
         $data['feed']['feed_from'] = $feed->feed_from;
+        $data['feed']['feed_storages'] = [];
+        foreach($feed->storages as $storage) {
+            dump($storage->storage->filename);
+        }
+        die;
         // 工具栏数据
         $data['tool'] = [];
         $data['tool']['digg'] = $feed->feed_digg_count;
@@ -150,6 +137,11 @@ class FeedController extends Controller
         $data['tool']['comment'] = $feed->feed_comment_count;
         // 动态评论,详情默认为空，自动获取评论列表接口
         $data['comments'] = [];
+        // 动态最新8条点赞的用户id
+        $data['diggs'] = [];
+        foreach($feed->diggs()->take(8)->get() as $digg) {
+            $data['diggs'][] = $digg->user_id;
+        }
 
         return response()->json([
                 'status' => true,
