@@ -16,15 +16,29 @@ class FeedAtmeApiController extends Controller
 	 */
 	public function getAtmeList(Request $request)
 	{
-		$user = $request->attributes->get('user');
-		$list = FeedAtme::byAtmeUserId($user)->feed()->get();
-
+		$user = $request->user()->id;
+		$FeedAtModel = new FeedAtme();
+		$list = $FeedAtModel::ByAtUserId($user)->get();
+		
 		if ($list) {
+			foreach ($list as $key => $value) {
+				if ($value->feed) {
+					$data['feed_id'] = $value->feed->feed_id;
+					$data['feed_title'] = $value->feed->feed_title;
+					$data['feed_content'] = $value->feed->feed_content;
+					$data['created_at'] = $value->feed->created_at->timestamp;
+					if ($value->user) {
+						$data['user']['user_name'] = $value->user->name;
+						$data['user']['phone'] = $value->user->phone;
+					}
+				}
+				$datas[] = $data;
+			}
 
             return response()->json(static::createJsonData([
                 'code'   => 0,
                 'status' => true,
-                'data' => $list->toArray(),
+                'data' => $datas,
             ]))->setStatusCode(200);
 		}
 

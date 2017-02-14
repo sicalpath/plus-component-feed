@@ -1,14 +1,16 @@
 <?php
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models;
 
-use Zhiyi\Plus\Models;
+use Zhiyi\Plus\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models as ComponentModel;
 
 class FeedAtme extends Model
 {
     protected $table = 'feed_atmes';
 
+    protected $primaryKey = 'atme_id';
     /**
      * 获取被@用户的基本信息
      * 
@@ -17,7 +19,7 @@ class FeedAtme extends Model
      */
     public function atuser()
     {
-        return $this->hasOne('Zhiyi\\Plus\\Models\\User', 'id', 'at_user_id');
+        return $this->belongsTo(User::class, 'at_user_id', 'id');
     }
 
     /**
@@ -28,7 +30,7 @@ class FeedAtme extends Model
      */
     public function user()
     {
-    	return $this->hasOne('Zhiyi\\Plus\\Models\\User', 'id', 'user_id');
+    	return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     /**
@@ -40,5 +42,18 @@ class FeedAtme extends Model
     public function feed()
     {
     	return $this->belongsTo(Feed::class, 'feed_id', 'feed_id'); 
+    }
+
+    /**
+     * 根据被@用户id查找
+     * 
+     * @author bs<414606094@qq.com>
+     * @param  Builder $query    [description]
+     * @param  integer $atUserId [description]
+     * @return [type]            [description]
+     */
+    public function scopeByAtUserId(Builder $query, int $atUserId): Builder
+    {
+        return $query->where('at_user_id', $atUserId);
     }
 }
