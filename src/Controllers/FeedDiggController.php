@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg;
 
-class FeedDiggApiController extends Controller
+class FeedDiggController extends Controller
 {
 	/**
 	 * 获取赞微博的用户

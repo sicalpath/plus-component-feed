@@ -5,7 +5,7 @@ use Zhiyi\Plus\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedAtme;
 
-class FeedAtmeApiController extends Controller
+class FeedAtmeController extends Controller
 {
 	/**
 	 * 获取@我的分享列表
