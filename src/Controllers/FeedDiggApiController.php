@@ -9,7 +9,7 @@ use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg;
 class FeedDiggApiController extends Controller
 {
 	/**
-	 * 获取赞微博的与用户
+	 * 获取赞微博的用户
 	 * 
 	 * @author bs<414606094@qq.com>
 	 * @return json
@@ -24,14 +24,22 @@ class FeedDiggApiController extends Controller
                 'message' => '指定动态不存在',
             ]))->setStatusCode(404);
 		}
-		if (!($feed->diggs->toArray())) {
+		$limit = intval($request->input('limit')) ? : 10;
+		$diggs = $feed->diggs->take($limit);
+		if (!empty(intval($request->input('max_id')))) {
+			$max_id = intval($request->input('max_id'));
+			$diggs = $diggs->where('feed_digg_id', '<',$max_id);
+		}
+
+		if (!($diggs->toArray())) {
             return response()->json(static::createJsonData([
                 'status' => true,
                 'data' => [],
             ]))->setStatusCode(200);
 		}
-		foreach ($feed->diggs as $key => $value) {
+		foreach ($diggs as $key => $value) {
 			if ($value->user->toArray()) {
+				$user['feed_digg_id'] = $value->feed_digg_id;
 				$user['name'] = $value->user->name;
 				$user['phone'] = $value->user->phone;
 				$user['email'] = $value->user->email ?? '';
