@@ -15,3 +15,5 @@ feed-component for TS+
 
 [对一条动态进行点赞的用户列表](/documents/对一条动态进行点赞的用户列表.md)
 
+[获取单条动态信息](/documents/获取单条动态信息.md)
+
