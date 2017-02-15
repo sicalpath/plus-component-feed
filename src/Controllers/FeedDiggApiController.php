@@ -79,6 +79,7 @@ class FeedDiggApiController extends Controller
 		}
 
 		FeedDigg::create($feeddigg);
+		Feed::byFeedId($feed_id)->increment('feed_digg_count');//增加点赞数量
         return response()->json(static::createJsonData([
             'status' => true,
             'message' => '点赞成功',
@@ -106,6 +107,7 @@ class FeedDiggApiController extends Controller
 		}
 
 		FeedDigg::byFeedId($feed_id)->byUserId($feeddigg['user_id'])->delete();
+		Feed::byFeedId($feed_id)->decrement('feed_digg_count');//减少点赞数量
         return response()->json(static::createJsonData([
             'status' => true,
             'message' => '取消点赞成功',
