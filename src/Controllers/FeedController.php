@@ -3,12 +3,22 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Controllers;
 
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
+use Zhiyi\Plus\Storages\Storage;
 
 class FeedController extends Controller
 {
+    public function __construct(Request $request)
+    {
+        $request->setUserResolver(function() {
+            return Auth::guard('api')->basic();
+        });
+    }
+
     public function index(Request $request)
     {   
+        $user_id  = $request->user()->id ?? 0;
         // 设置单页数量
         $limit = $request->limit ?? 15;
         $feeds = Feed::orderBy('created_at', 'DESC')
@@ -17,6 +27,11 @@ class FeedController extends Controller
                     $query->where('id', '<', $request->max_id);
                 }
             })
+            ->withCount(['diggs' => function($query) use ($user_id) {
+                if($user_id) {
+                    $query->where('user_id', $user_id);
+                }
+            }])
             ->take($limit)
             ->get();
         $datas = [];
@@ -34,10 +49,11 @@ class FeedController extends Controller
             $datas[$feed->id]['tool']['feed_digg_count'] = $feed->feed_digg_count;
             $datas[$feed->id]['tool']['feed_comment_count'] = $feed->feed_comment_count;
             // 暂时剔除当前登录用户判定
-            $datas[$feed->id]['tool']['is_digg_feed'] = 1;
+            $datas[$feed->id]['tool']['is_digg_feed'] = $user_id ? $feed->diggs_count : 0;
             // 最新3条评论
             $datas[$feed->id]['comments'] = [];
             foreach($feed->comments()->orderBy('id', 'DESC')->take(3)->get() as $comment) {
+                $datas[$feed->id]['comments'][$comment->id]['id'] = $comment->id;
                 $datas[$feed->id]['comments'][$comment->id]['user_id'] = $comment->user_id;
                 $datas[$feed->id]['comments'][$comment->id]['created_at'] = $comment->created_at->timestamp;
                 $datas[$feed->id]['comments'][$comment->id]['comment_content'] = $comment->comment_content;
@@ -105,7 +121,15 @@ class FeedController extends Controller
                 'message' => '动态ID不能为空'
             ])->setStatusCode(400);
         }
-        $feed = Feed::find(intval($feed_id));
+        $feed = Feed::where('id',intval($feed_id))
+            ->with([
+                'diggs' => function($query) {
+                    $query->take(8);
+                },
+                'storages'
+            ])
+            ->first();
+        ;
         if(!$feed) {
            return response()->json([
                 'status' => false,
@@ -113,7 +137,6 @@ class FeedController extends Controller
                 'message' => '动态不存在或已被删除'
             ])->setStatusCode(404); 
         }
-
         // 组装数据
         $data = [];
         // 用户标识
@@ -125,11 +148,9 @@ class FeedController extends Controller
         $data['feed']['content'] = $feed->feed_content;
         $data['feed']['created_at'] = $feed->created_at->timestamp;
         $data['feed']['feed_from'] = $feed->feed_from;
-        $data['feed']['feed_storages'] = [];
-        foreach($feed->storages as $storage) {
-            dump($storage->storage->filename);
-        }
-        die;
+        $data['feed']['feed_storages'] = $feed->storages->map(function($storage) {
+            return $storage->feed_storage_id;
+        });
         // 工具栏数据
         $data['tool'] = [];
         $data['tool']['digg'] = $feed->feed_digg_count;
@@ -138,10 +159,9 @@ class FeedController extends Controller
         // 动态评论,详情默认为空，自动获取评论列表接口
         $data['comments'] = [];
         // 动态最新8条点赞的用户id
-        $data['diggs'] = [];
-        foreach($feed->diggs()->take(8)->get() as $digg) {
-            $data['diggs'][] = $digg->user_id;
-        }
+        $data['diggs'] = $feed->diggs->map(function($digg) {
+            return $digg->user_id;
+        });
 
         return response()->json([
                 'status' => true,
