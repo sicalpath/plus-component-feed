@@ -29,6 +29,7 @@ class FeedAtmeApiController extends Controller
 		if ($list = $list->orderBy('atme_id', 'desc')->get()) {
 			foreach ($list as $key => $value) {
 				if ($value->feed) {
+					$data['atme_id'] = $value->atme_id;
 					$data['feed_id'] = $value->feed->feed_id;
 					$data['feed_title'] = $value->feed->feed_title;
 					$data['feed_content'] = $value->feed->feed_content;
