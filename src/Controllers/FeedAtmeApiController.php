@@ -26,7 +26,7 @@ class FeedAtmeApiController extends Controller
 			$list = $list->ByMaxId($max_id);
 		}
 
-		if ($list = $list->get()) {
+		if ($list = $list->orderBy('atme_id', 'desc')->get()) {
 			foreach ($list as $key => $value) {
 				if ($value->feed) {
 					$data['feed_id'] = $value->feed->feed_id;
