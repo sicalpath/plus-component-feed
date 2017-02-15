@@ -16,7 +16,20 @@ class FeedDiggApiController extends Controller
 	 */	
 	public function getDiggList(Request $request, int $feed_id)
 	{
-		$feed = Feed::byFeedId($feed_id)->first();
+		$limit = $request->get('limit', 10);
+		//intval($request->limit) ? : 10;
+		$max_id = $request->get('max_id');
+		$feed = Feed::byFeedId($feed_id)
+			->with([
+				'diggs' => function ($query) use ($limit, $max_id) {
+					if (intval($max_id) > 0)  {
+						$query->where('feed_digg_id', '<', intval($max_id));
+					}
+					$query->take($limit);
+				},
+				'diggs.user'
+			])
+			->first();
 		if (!$feed) {
             return response()->json(static::createJsonData([
             	'code' => 6004,
@@ -24,28 +37,20 @@ class FeedDiggApiController extends Controller
                 'message' => '指定动态不存在',
             ]))->setStatusCode(404);
 		}
-		$limit = intval($request->input('limit')) ? : 10;
-		$diggs = $feed->diggs->take($limit);
-		if (!empty(intval($request->input('max_id')))) {
-			$max_id = intval($request->input('max_id'));
-			$diggs = $diggs->where('feed_digg_id', '<',$max_id);
-		}
 
-		if (!($diggs->toArray())) {
+		if ($feed->diggs->isEmpty()) {
             return response()->json(static::createJsonData([
                 'status' => true,
                 'data' => [],
             ]))->setStatusCode(200);
 		}
-		foreach ($diggs as $key => $value) {
-			if ($value->user->toArray()) {
+		foreach ($feed->diggs as $key => $value) {
 				$user['feed_digg_id'] = $value->feed_digg_id;
 				$user['name'] = $value->user->name;
 				$user['phone'] = $value->user->phone;
 				$user['email'] = $value->user->email ?? '';
 
 				$users[] = $user;
-			}
 		}
 	    return response()->json(static::createJsonData([
 	        'status' => true,
