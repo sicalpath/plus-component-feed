@@ -18,15 +18,15 @@ class FeedAtmeApiController extends Controller
 	{
 
 		$user = $request->user()->id;
-		$limit = intval($request->input('limit')) ? : 10;
+		$limit = intval($request->limit) ? : 10;
 		$FeedAtModel = new FeedAtme();
-		$list = $FeedAtModel::ByAtUserId($user)->take($limit);
-		if (!empty(intval($request->input('max_id')))) {
-			$max_id = intval($request->input('max_id'));
-			$list = $list->ByMaxId($max_id);
-		}
 
-		if ($list = $list->orderBy('atme_id', 'desc')->get()) {
+		$list = $FeedAtModel::ByAtUserId($user)->take($limit)->where(function($query) use ($request) {
+			if ( intval($request->max_id) > 0) {
+				$query->where('atme_id', '<', intval($request->max_id));
+			}
+		})->orderBy('atme_id', 'desc')->get();
+		if ($list->toArray()) {
 			foreach ($list as $key => $value) {
 				if ($value->feed) {
 					$data['atme_id'] = $value->atme_id;
