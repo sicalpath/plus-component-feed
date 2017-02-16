@@ -18,7 +18,7 @@ class FeedDigg extends Model
      */
     public function user()
     {
-        return $this->hasOne(User::class, 'id', 'user_id');
+        return $this->hasOne(User::class, 'user_id', 'id');
     }
 
     /**
@@ -29,7 +29,7 @@ class FeedDigg extends Model
      */
     public function feed()
     {
-        return $this->belongsTo(Feed::class, 'id', 'feed_id');
+        return $this->belongsTo(Feed::class, 'feed_id', 'id');
     }
 
     /**

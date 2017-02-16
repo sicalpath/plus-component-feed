@@ -10,7 +10,7 @@ class FeedAtme extends Model
 {
     protected $table = 'feed_atmes';
 
-    protected $primaryKey = 'atme_id';
+    protected $primaryKey = 'id';
     /**
      * 获取被@用户的基本信息
      * 
@@ -41,7 +41,7 @@ class FeedAtme extends Model
      */
     public function feed()
     {
-        return $this->belongsTo(Feed::class, 'id', 'feed_id'); 
+        return $this->belongsTo(Feed::class, 'feed_id', 'id'); 
     }
 
     /**
@@ -66,7 +66,7 @@ class FeedAtme extends Model
      */
     public function scopeByMaxId(Builder $query, int $maxId): Builder
     {
-        return $query->where('atme_id', '<', $maxId);
+        return $query->where('id', '<', $maxId);
     }
 
 }
