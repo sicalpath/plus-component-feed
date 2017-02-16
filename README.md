@@ -21,3 +21,5 @@ feed-component for TS+
 
 [对一条动态或一条动态评论进行评论](/documents/对一条动态或一条动态评论进行评论.md)
 
+[删除一条评论](/documents/删除一条评论.md)
+

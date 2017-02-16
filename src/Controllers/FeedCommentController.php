@@ -59,6 +59,12 @@ class FeedCommentController extends Controller
 	    ]))->setStatusCode(200);
 	}
 
+	/**
+	 * 对一条动态或评论进行评论
+	 * 
+	 * @author bs<414606094@qq.com>
+	 * @param  Request $request [description]
+	 */
 	public function addComment(Request $request)
 	{	
 		$feed = $request->attributes->get('feed');
@@ -71,10 +77,27 @@ class FeedCommentController extends Controller
 
     	FeedComment::create($feedComment);
 
-        return response()->json([
+        return response()->json(static::createJsonData([
                 'status' => true,
                 'code' => 0,
                 'message' => '评论成功'
-            ])->setStatusCode(201);
+            ]))->setStatusCode(201);
+	}
+
+	/**
+	 * 删除一条评论 
+	 * 
+	 * @author bs<414606094@qq.com>
+	 * @param  Request $request    [description]
+	 * @param  int     $comment_id [description]
+	 * @return [type]              [description]
+	 */
+	public function delComment(Request $request, int $comment_id)
+	{
+		FeedComment::where('id', $comment_id)->delete();
+        return response()->json(static::createJsonData([
+            'status' => true,
+            'message' => '删除成功',
+        ]))->setStatusCode(204);
 	}
 }
