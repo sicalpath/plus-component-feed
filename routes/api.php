@@ -31,5 +31,5 @@ Route::group([
 	// //取消点赞
 	Route::delete('/feeds/{feed_id}/digg', 'FeedDiggController@cancelDiggFeed');
 	//获取@我的分享列表
-	Route::get('/feeds/atme', 'FeedAtmeController@getAtmeList');
+	Route::get('/feed/atme', 'FeedAtmeController@getAtmeList');
 });

@@ -10,18 +10,18 @@ class Feed extends Model
     protected $table = 'feeds';
 
     protected $fillable = [
-    	'feed_title',
-    	'feed_content',
-    	'feed_from',
-    	'feed_latitude',
-    	'feed_longtitude',
-    	'feed_client_id',
-    	'feed_goehash',
+        'feed_title',
+        'feed_content',
+        'feed_from',
+        'feed_latitude',
+        'feed_longtitude',
+        'feed_client_id',
+        'feed_goehash',
         'user_id'
     ];
 
     protected $hidden = [
-    	'feed_client_id'
+        'feed_client_id'
     ];
 
     /**
@@ -30,7 +30,7 @@ class Feed extends Model
      */
     public function user()
     {
-    	return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class);
     }
 
     /**
@@ -39,7 +39,7 @@ class Feed extends Model
      */
     public function diggs()
     {
-    	return $this->hasMany(FeedDigg::class, 'feed_id');
+        return $this->hasMany(FeedDigg::class, 'feed_id');
     }
 
 
@@ -49,7 +49,7 @@ class Feed extends Model
      */
     public function comments()
     {
-    	return $this->hasMany(FeedComment::class, 'feed_id');
+        return $this->hasMany(FeedComment::class, 'feed_id');
     }
 
     /**
@@ -58,7 +58,7 @@ class Feed extends Model
      */
     public function atmes()
     {
-    	return $this->hasMany(FeedAtme::class, 'feed_id');
+        return $this->hasMany(FeedAtme::class, 'feed_id');
     }
 
     /**
@@ -67,7 +67,7 @@ class Feed extends Model
      */
     public function storages()
     {
-    	return $this->hasMany(FeedStorage::class, 'feed_id');
+        return $this->hasMany(FeedStorage::class, 'feed_id');
     }
 
     /**
@@ -91,7 +91,7 @@ class Feed extends Model
      */
     public function scopeByFeedId(Builder $query, int $feedId): Builder
     {
-        return $query->where('feed_id', $feedId);
+        return $query->where('id', $feedId);
     }
 }
 

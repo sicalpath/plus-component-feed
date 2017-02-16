@@ -23,13 +23,13 @@ class FeedDiggController extends Controller
 			->with([
 				'diggs' => function ($query) use ($limit, $max_id) {
 					if (intval($max_id) > 0)  {
-						$query->where('feed_digg_id', '<', intval($max_id));
+						$query->where('id', '<', intval($max_id));
 					}
 					$query->take($limit);
 				},
 				'diggs.user'
 			])
-			->first();
+			->orderBy('id', 'desc')->first();
 		if (!$feed) {
             return response()->json(static::createJsonData([
             	'code' => 6004,
@@ -45,7 +45,7 @@ class FeedDiggController extends Controller
             ]))->setStatusCode(200);
 		}
 		foreach ($feed->diggs as $key => $value) {
-				$user['feed_digg_id'] = $value->feed_digg_id;
+				$user['feed_digg_id'] = $value->id;
 				$user['name'] = $value->user->name;
 				$user['phone'] = $value->user->phone;
 				$user['email'] = $value->user->email ?? '';

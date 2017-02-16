@@ -22,17 +22,15 @@ class FeedAtmeController extends Controller
 
 		$list = FeedAtme::ByAtUserId($user)->take($limit)->where(function($query) use ($request) {
 			if ( intval($request->max_id) > 0) {
-				$query->where('atme_id', '<', intval($request->max_id));
+				$query->where('id', '<', intval($request->max_id));
 			}
-		})->with([
-			'feed','user',
-		])->orderBy('atme_id', 'desc')->get();
+		})->orderBy('id', 'desc')->get();
 
 		if (!$list->isEmpty()) {
 			foreach ($list as $key => $value) {
 				if ($value->feed) {
-					$data['atme_id'] = $value->atme_id;
-					$data['feed_id'] = $value->feed->feed_id;
+					$data['atme_id'] = $value->id;
+					$data['feed_id'] = $value->feed->id;
 					$data['feed_title'] = $value->feed->feed_title;
 					$data['feed_content'] = $value->feed->feed_content;
 					$data['created_at'] = $value->feed->created_at->timestamp;
