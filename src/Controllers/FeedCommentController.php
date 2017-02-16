@@ -66,7 +66,7 @@ class FeedCommentController extends Controller
 		$feedComment['user_id'] = $request->user()->id;
 		$feedComment['feed_id'] = $feed->id;
 		$feedComment['to_user_id'] = $feed->user_id;
-		$feedComment['reply_to_user_id'] = $request->reply_to_user_id;
+		$feedComment['reply_to_user_id'] = $request->reply_to_user_id ?? 0;
 		$feedComment['comment_content'] = $request->comment_content;
 
     	FeedComment::create($feedComment);
