@@ -129,7 +129,6 @@ class FeedController extends Controller
                 'storages'
             ])
             ->first();
-        ;
         if(!$feed) {
            return response()->json([
                 'status' => false,
