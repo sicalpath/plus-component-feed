@@ -17,3 +17,5 @@ feed-component for TS+
 
 [获取单条动态信息](/documents/获取单条动态信息.md)
 
+[一条动态的评论列表](/documents/一条动态的评论列表.md)
+
