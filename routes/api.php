@@ -18,6 +18,11 @@ Route::group([
 	Route::get('/feeds/{feed_id}', 'FeedController@read');
 	// //发送分享
 	Route::post('/feeds', 'FeedController@store');
+	// 添加评论
+	Route::post('/feeds/{feed_id}/comment', 'FeedCommentController@addComment')
+	->middleware(FeedMiddleware\CheckFeedByFeedId::class) //验证动态是否存在
+	->middleware(FeedMiddleware\CheckReplyUser::class)  //验证被回复者是否存在
+	->middleware(FeedMiddleware\VerifyCommentContent::class); // 验证评论内容
 	// //删除分享
 	// Route::delete('/feeds/{feed_id}', 'xxx@xxx');
 	// //评论列表
@@ -31,5 +36,5 @@ Route::group([
 	// //取消点赞
 	Route::delete('/feeds/{feed_id}/digg', 'FeedDiggController@cancelDiggFeed');
 	//获取@我的分享列表
-	Route::get('/feed/atme', 'FeedAtmeController@getAtmeList');
+	Route::get('/atme/feeds', 'FeedAtmeController@getAtmeList');
 });

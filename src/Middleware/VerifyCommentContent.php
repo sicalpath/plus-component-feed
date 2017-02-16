@@ -7,12 +7,12 @@ use Illuminate\Http\Request;
 use Zhiyi\Plus\Traits\CreateJsonResponseData;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 
-class CheckFeedByFeedId
+class VerifyCommentContent
 {
     use CreateJsonResponseData;
     
     /**
-     * 验证动态是否存在.
+     * 验证评论内容是否存在.
      *
      * @param \Illuminate\Http\Request $request
      * @param \Closure                 $next
@@ -21,20 +21,14 @@ class CheckFeedByFeedId
      */
     public function handle(Request $request, Closure $next)
     {   
-        $feed_id = intval($request->input('feed_id'));
-
-        if (!$feed_id) {
-            return response()->json(static::createJsonData([
-                'code' => 6003,
-            ]))->setStatusCode(400);
+        if (!$request->input('comment_content')) {
+            return response()->json([
+                'status' => false,
+                'code' => 6007,
+                'message' => '评论内容不能为空'
+            ])->setStatusCode(400);
         }
-        $feed = Feed::find($feed_id);
-        if (!$feed) {
-            return response()->json(static::createJsonData([
-                'code' => 6004,
-            ]))->setStatusCode(403);
-        }
-        $request->attributes->set('feed', $feed);
+        
         return $next($request);
     }
 }
