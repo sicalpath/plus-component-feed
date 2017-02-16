@@ -10,10 +10,10 @@ class FeedComment extends Model
     protected $table = 'feed_comments';
 
     protected $fillable = [
-    	'user_id',
-    	'reply_to_user_id',
-    	'feed_id',
-    	'comment_content'
+        'user_id',
+        'reply_to_user_id',
+        'feed_id',
+        'comment_content'
     ];
 
     /**
@@ -22,7 +22,16 @@ class FeedComment extends Model
      */
     public function user()
     {
-    	return $this->belongsTo(User::class, 'id', 'user_id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    /**
+     * 单条评论属于一个评论发起用户
+     * @return [type] [description]
+     */
+    public function replyUser()
+    {
+        return $this->belongsTo(User::class, 'reply_to_user_id', 'id');
     }
 
     /**
@@ -31,7 +40,7 @@ class FeedComment extends Model
      */
     public function feed()
     {
-    	return $this->belongsTo(Feed::class, 'id', 'feed_id');
+        return $this->belongsTo(Feed::class, 'feed_id', 'id');
     }
 
     /**
@@ -42,7 +51,7 @@ class FeedComment extends Model
      */
     public function scopeByUserId(Builder $query, integer $userId)
     {
-    	return $query->where('user_id', $userId);
+        return $query->where('user_id', $userId);
     }
 
     /**
@@ -53,7 +62,7 @@ class FeedComment extends Model
      */
     public function scopeByToUserId(Builder $query, integer $toUserId)
     {
-    	return $query->where('to_user_id', $toUserId);
+        return $query->where('to_user_id', $toUserId);
     }
 
     /**
@@ -64,7 +73,19 @@ class FeedComment extends Model
      */
     public function scopeByReplyToUserId(Builder $query, integer $replyToUserId)
     {
-    	return $query->where('reply_to_user_id', $replyToUserId);
+        return $query->where('reply_to_user_id', $replyToUserId);
     }
 
+    /**
+     * 根据动态id查找评论
+     * 
+     * @author bs<414606094@qq.com>
+     * @param  Builder $query  [description]
+     * @param  integer $feedId [description]
+     * @return [type]          [description]
+     */
+    public function scopeByFeedId(Builder $query, int $feedId)
+    {
+        return $query->where('feed_id', $feedId);
+    }
 }
