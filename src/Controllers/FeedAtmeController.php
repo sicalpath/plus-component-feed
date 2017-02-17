@@ -34,10 +34,7 @@ class FeedAtmeController extends Controller
 					$data['feed_title'] = $value->feed->feed_title;
 					$data['feed_content'] = $value->feed->feed_content;
 					$data['created_at'] = $value->feed->created_at->timestamp;
-					if ($value->user) {
-						$data['user']['user_name'] = $value->user->name;
-						$data['user']['phone'] = $value->user->phone;
-					}
+					$data['user_id'] = $value->user_id;
 				}
 				$datas[] = $data;
 			}

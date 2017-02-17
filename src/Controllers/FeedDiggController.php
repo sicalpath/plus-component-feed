@@ -46,9 +46,7 @@ class FeedDiggController extends Controller
 		}
 		foreach ($feed->diggs as $key => $value) {
 				$user['feed_digg_id'] = $value->id;
-				$user['name'] = $value->user->name;
-				$user['phone'] = $value->user->phone;
-				$user['email'] = $value->user->email ?? '';
+				$user['user_id'] = $value->user_id;
 
 				$users[] = $user;
 		}
