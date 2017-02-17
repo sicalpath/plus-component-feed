@@ -21,7 +21,7 @@ class FeedController extends Controller
         $user_id  = $request->user()->id ?? 0;
         // 设置单页数量
         $limit = $request->limit ?? 15;
-        $feeds = Feed::orderBy('created_at', 'DESC')
+        $feeds = Feed::orderBy('id', 'DESC')
             ->where(function($query) use ($request) {
                 if($request->max_id > 0){
                     $query->where('id', '<', $request->max_id);
@@ -32,6 +32,7 @@ class FeedController extends Controller
                     $query->where('user_id', $user_id);
                 }
             }])
+            ->with('storages')
             ->take($limit)
             ->get();
         $datas = [];
@@ -43,6 +44,10 @@ class FeedController extends Controller
             $datas[$feed->id]['feed']['feed_content'] = $feed->feed_content;
             $datas[$feed->id]['feed']['created_at'] = $feed->created_at->timestamp;
             $datas[$feed->id]['feed']['feed_from'] = $feed->feed_from;
+            $datas[$feed->id]['feed']['storages'] = [];
+            foreach ($feed->storages as $value) {
+                $datas[$feed->id]['feed']['storages'][] = $value->feed_storage_id;
+            }
             // 工具数据
             $datas[$feed->id]['tool'] = [];
             $datas[$feed->id]['tool']['feed_view_count'] = $feed->feed_view_count;
