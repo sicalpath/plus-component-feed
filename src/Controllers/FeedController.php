@@ -21,7 +21,7 @@ class FeedController extends Controller
         $user_id  = $request->user()->id ?? 0;
         // 设置单页数量
         $limit = $request->limit ?? 15;
-        $feeds = Feed::orderBy('created_at', 'DESC')
+        $feeds = Feed::orderBy('id', 'DESC')
             ->where(function($query) use ($request) {
                 if($request->max_id > 0){
                     $query->where('id', '<', $request->max_id);
@@ -32,8 +32,15 @@ class FeedController extends Controller
                     $query->where('user_id', $user_id);
                 }
             }])
+            ->with([
+                'comments' => function ($query) {
+                    $query->select('id', 'created_at', 'user_id', 'to_user_id', 'reply_to_user_id', 'comment_content')
+                    ->take(3);
+                }
+            ])
             ->take($limit)
             ->get();
+        dd($feeds->toArray());
         $datas = [];
         foreach($feeds as $feed) {
             $datas[$feed->id]['user_id'] = $feed->user_id;

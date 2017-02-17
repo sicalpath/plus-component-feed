@@ -39,20 +39,22 @@ class FeedCommentController extends Controller
                 'data' => [],
             ]))->setStatusCode(200);
 		}
-
 		foreach ($comments as $key => $value) {
 			$data['comment_id'] = $value->id; 
 			$data['create_at'] = $value->created_at->timestamp;
 			$data['comment_content'] = $value->comment_content;
-			$data['user']['name'] = $value->user->name;
-			$data['user']['phone'] = $value->user->phone;
-			$data['user']['email'] = $value->user->email ?? '';
-			$data['replyUser']['name'] = $value->replyUser->name;
-			$data['replyUser']['phone'] = $value->replyUser->phone;
-			$data['replyUser']['email'] = $value->replyUser->email ?? '';
+			$data['user_id'] = $value->user->id;
+			$data['reply_to_user_id'] = $value->replyUser->id;
+			// $data['user']['name'] = $value->user->name;
+			// $data['user']['phone'] = $value->user->phone;
+			// $data['user']['email'] = $value->user->email ?? '';
+			// $data['replyUser']['name'] = $value->replyUser->name;
+			// $data['replyUser']['phone'] = $value->replyUser->phone;
+			// $data['replyUser']['email'] = $value->replyUser->email ?? '';
 
 			$datas[] = $data;
 		}
+
 	    return response()->json(static::createJsonData([
 	        'status' => true,
 	        'data' => $datas,
@@ -74,7 +76,6 @@ class FeedCommentController extends Controller
 		$feedComment['to_user_id'] = $feed->user_id;
 		$feedComment['reply_to_user_id'] = $request->reply_to_user_id ?? 0;
 		$feedComment['comment_content'] = $request->comment_content;
-
     	FeedComment::create($feedComment);
 
         return response()->json(static::createJsonData([
