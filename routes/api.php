@@ -9,7 +9,7 @@ Route::get('/feeds/{feed_id}/diggusers','FeedDiggController@getDiggList');
 //获取一条动态的评论列表
 Route::get('/feeds/{feed_id}/comments','FeedCommentController@getFeedCommentList');
 //分享详情
-Route::get('/feeds/{feed_id}', 'FeedController@read');
+Route::get('/feeds/{feed_id}', 'FeedController@read')->where(['feed_id' => '[0-9]+']);
 
 Route::group([
 	'middleware' => [
