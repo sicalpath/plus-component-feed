@@ -2,6 +2,7 @@
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models;
 
 use Zhiyi\Plus\Models\User;
+use Zhiyi\Plus\Models\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -62,12 +63,12 @@ class Feed extends Model
     }
 
     /**
-     * 动态会有多附件信息
+     * 定义动态和附件关联
      * @return [type] [description]
      */
     public function storages()
     {
-        return $this->hasMany(FeedStorage::class, 'feed_id');
+        return $this->belongsToMany(Storage::class, 'feed_storages', 'feed_id', 'feed_storage_id', 'id')->withTimestamps();
     }
 
     /**
