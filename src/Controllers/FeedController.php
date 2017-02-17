@@ -32,15 +32,8 @@ class FeedController extends Controller
                     $query->where('user_id', $user_id);
                 }
             }])
-            ->with([
-                'comments' => function ($query) {
-                    $query->select('id', 'created_at', 'user_id', 'to_user_id', 'reply_to_user_id', 'comment_content')
-                    ->take(3);
-                }
-            ])
             ->take($limit)
             ->get();
-        dd($feeds->toArray());
         $datas = [];
         foreach($feeds as $feed) {
             $datas[$feed->id]['user_id'] = $feed->user_id;
