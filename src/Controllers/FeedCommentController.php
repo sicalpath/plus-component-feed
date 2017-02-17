@@ -44,12 +44,9 @@ class FeedCommentController extends Controller
 			$data['comment_id'] = $value->id; 
 			$data['create_at'] = $value->created_at->timestamp;
 			$data['comment_content'] = $value->comment_content;
-			$data['user']['name'] = $value->user->name;
-			$data['user']['phone'] = $value->user->phone;
-			$data['user']['email'] = $value->user->email ?? '';
-			$data['replyUser']['name'] = $value->replyUser->name;
-			$data['replyUser']['phone'] = $value->replyUser->phone;
-			$data['replyUser']['email'] = $value->replyUser->email ?? '';
+			$data['user_id'] = $value->user_id;
+			$data['to_user_id'] = $value->to_user_id;
+			$data['reply_to_user_id'] = $value->reply_to_user_id;
 
 			$datas[] = $data;
 		}
