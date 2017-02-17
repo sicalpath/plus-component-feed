@@ -2,6 +2,8 @@
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Controllers;
 
 use Zhiyi\Plus\Http\Controllers\Controller;
+use Zhiyi\Plus\Models\Storage as StorageModel;
+use Zhiyi\Plus\Models\StorageTask;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
@@ -44,10 +46,9 @@ class FeedController extends Controller
             $datas[$feed->id]['feed']['feed_content'] = $feed->feed_content;
             $datas[$feed->id]['feed']['created_at'] = $feed->created_at->timestamp;
             $datas[$feed->id]['feed']['feed_from'] = $feed->feed_from;
-            $datas[$feed->id]['feed']['storages'] = [];
-            foreach ($feed->storages as $value) {
-                $datas[$feed->id]['feed']['storages'][] = $value->feed_storage_id;
-            }
+            $datas[$feed->id]['feed']['storages'] = $feed->storages->map(function($storage) {
+                return $storage->id;
+            });
             // 工具数据
             $datas[$feed->id]['tool'] = [];
             $datas[$feed->id]['tool']['feed_view_count'] = $feed->feed_view_count;
@@ -71,7 +72,7 @@ class FeedController extends Controller
                 'code'    => 0,
                 'message' => '动态列表获取成功',
                 'data' => $datas
-            ])->setStatusCode(201);
+            ])->setStatusCode(200);
     }
 
     /**
@@ -81,34 +82,38 @@ class FeedController extends Controller
      */
     public function store(Request $request)
     {
+        $user = $request->user();
         $this->validate($request, [
-            'content' => 'required',
-            'user_id' => 'required'
+            'feed_content' => 'required'
         ]);
-    	if(!$request->content) {
+    	if(!$request->feed_content) {
 	        return response()->json([
 	            'status'  => false,
 	            'code'    => 6001,
 	            'message' => '动态内容不能为空'
 	        ])->setStatusCode(400);
     	}
-        if(!$request->user_id) {
-            return response()->json([
-                'status' => false,
-                'code' => 6002,
-                'message' => '动态user_id不能为空'
-            ])->setStatusCode(400);
+        $storages = [];
+        if($request->storage_task_ids) {
+            $storage_task_ids = $request->storage_task_ids;
+            $storageTasks = StorageTask::whereIn('id', $storage_task_ids)
+                ->with('storage')
+                ->get();
+            $storages = $storageTasks->map(function ($storageTask) {
+                return $storageTask->storage->id;
+            });
         }
-        $feed = [];
-        $request->title && $feed['feed_title'] = $request->title;
-        $feed['feed_content'] = $request->content;
-        $feed['feed_client_id'] = $request->getClientIp();
-        $feed['user_id'] = intval($request->user_id);
-        // 判断动态来路,默认为来自pc
-        $feed['feed_from'] = $request->feed_from ?? 1;
-        $feed['latitude'] = $rqeuest->latitude ?? '';
-        $feed['longtitude'] = $request->longtitude ?? '';
-    	Feed::create($feed);
+        $feed = new Feed();
+    	$feed->feed_content = $request->feed_content;
+        $feed->feed_client_id = $request->getClientIp();
+        $feed->user_id = $request->user()->id;
+        $feed->feed_from = $request->feed_from;
+        $feed->feed_latitude = $request->input('latitude', '');
+        $feed->feed_longtitude = $request->input('longtitude', '');
+        $feed->feed_geohash = $request->input('geohash', '');
+        $feed->feed_title = $request->input('feed_title', '');
+        $feed->save();
+        $feed->storages()->sync($storages);
 
         return response()->json([
                 'status' => true,
@@ -172,6 +177,6 @@ class FeedController extends Controller
                 'code' => 0,
                 'message' => '获取动态成功',
                 'data' => $data
-            ])->setStatusCode(201); 
+            ])->setStatusCode(200); 
     }
 }
