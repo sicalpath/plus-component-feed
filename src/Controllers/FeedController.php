@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 use Zhiyi\Plus\Storages\Storage;
+use Validator;
 
 class FeedController extends Controller
 {
@@ -84,16 +85,16 @@ class FeedController extends Controller
     public function store(Request $request)
     {
         $user = $request->user();
-        $this->validate($request, [
+        $response = Validator::make($request->input(), [
             'feed_content' => 'required'
         ]);
-    	if(!$request->feed_content) {
-	        return response()->json([
-	            'status'  => false,
-	            'code'    => 6001,
-	            'message' => '动态内容不能为空'
-	        ])->setStatusCode(400);
-    	}
+        if($response->fails()) {
+            return response()->json([
+                'status'  => false,
+                'code'    => 6001,
+                'message' => '动态内容不能为空'
+            ])->setStatusCode(400);
+        }
         $storages = [];
         if($request->storage_task_ids) {
             $storage_task_ids = $request->storage_task_ids;
@@ -105,7 +106,7 @@ class FeedController extends Controller
             });
         }
         $feed = new Feed();
-    	$feed->feed_content = $request->feed_content;
+        $feed->feed_content = $request->feed_content;
         $feed->feed_client_id = $request->getClientIp();
         $feed->user_id = $request->user()->id;
         $feed->feed_from = $request->feed_from;
