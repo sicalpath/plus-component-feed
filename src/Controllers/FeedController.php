@@ -19,25 +19,8 @@ class FeedController extends Controller
         });
     }
 
-    public function index(Request $request)
+    protected function index($feeds, $uid)
     {   
-        $user_id  = $request->user()->id ?? 0;
-        // 设置单页数量
-        $limit = $request->limit ?? 15;
-        $feeds = Feed::orderBy('id', 'DESC')
-            ->where(function($query) use ($request) {
-                if($request->max_id > 0){
-                    $query->where('id', '<', $request->max_id);
-                }
-            })
-            ->withCount(['diggs' => function($query) use ($user_id) {
-                if($user_id) {
-                    $query->where('user_id', $user_id);
-                }
-            }])
-            ->with('storages')
-            ->take($limit)
-            ->get();
         $datas = [];
         foreach($feeds as $feed) {
             $datas[$feed->id]['user_id'] = $feed->user_id;
@@ -57,7 +40,7 @@ class FeedController extends Controller
             $datas[$feed->id]['tool']['feed_digg_count'] = $feed->feed_digg_count;
             $datas[$feed->id]['tool']['feed_comment_count'] = $feed->feed_comment_count;
             // 暂时剔除当前登录用户判定
-            $datas[$feed->id]['tool']['is_digg_feed'] = $user_id ? $feed->diggs_count : 0;
+            $datas[$feed->id]['tool']['is_digg_feed'] = $uid ? $feed->diggs_count : 0;
             // 最新3条评论
             $datas[$feed->id]['comments'] = [];
             foreach($feed->comments()->orderBy('id', 'DESC')->take(3)->get() as $comment) {
@@ -180,5 +163,96 @@ class FeedController extends Controller
                 'message' => '获取动态成功',
                 'data' => $data
             ])->setStatusCode(200); 
+    }
+
+    /**
+     * 最新动态列表构建
+     * 
+     * @author bs<414606094@qq.com>
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function getNewFeeds(Request $request)
+    {
+        $user_id  = $request->user()->id ?? 0;
+        // 设置单页数量
+        $limit = $request->limit ?? 15;
+        $feeds = Feed::orderBy('id', 'DESC')
+            ->where(function($query) use ($request) {
+                if($request->max_id > 0){
+                    $query->where('id', '<', $request->max_id);
+                }
+            })
+            ->withCount(['diggs' => function($query) use ($user_id) {
+                if($user_id) {
+                    $query->where('user_id', $user_id);
+                }
+            }])
+            ->with('storages')
+            ->take($limit)
+            ->get();
+
+        return $this->index($feeds, $user_id);
+    }
+
+    /**
+     * 我关注的动态列表构建
+     * 
+     * @author bs<414606094@qq.com>
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function getFollowFeeds(Request $request)
+    {
+        $user_id  = $request->user()->id ?? 0;
+        // 设置单页数量
+        $limit = $request->limit ?? 15;
+        $feeds = Feed::orderBy('id', 'DESC')
+            ->where(function($query) use ($request) {
+                if($request->max_id > 0){
+                    $query->where('id', '<', $request->max_id);
+                }
+            })
+            ->withCount(['diggs' => function($query) use ($user_id) {
+                if($user_id) {
+                    $query->where('user_id', $user_id);
+                }
+            }])
+            ->with('storages')
+            ->take($limit)
+            ->get();
+
+        return $this->index($feeds, $user_id);
+    }
+
+
+    /**
+     * 热门动态列表构建
+     * 
+     * @author bs<414606094@qq.com>
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function getHotFeeds(Request $request)
+    {
+        $user_id  = $request->user()->id ?? 0;
+        // 设置单页数量
+        $limit = $request->limit ?? 15;
+        $feeds = Feed::orderBy('id', 'DESC')
+            ->where(function($query) use ($request) {
+                if($request->max_id > 0){
+                    $query->where('id', '<', $request->max_id);
+                }
+            })
+            ->withCount(['diggs' => function($query) use ($user_id) {
+                if($user_id) {
+                    $query->where('user_id', $user_id);
+                }
+            }])
+            ->with('storages')
+            ->take($limit)
+            ->get();
+
+        return $this->index($feeds, $user_id);
     }
 }

@@ -2,8 +2,13 @@
 use Zhiyi\Plus\Http\Middleware;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Middleware as FeedMiddleware;
 
-//分享列表
-Route::get('/feeds', 'FeedController@index');
+//最新分享列表
+Route::get('/feeds', 'FeedController@getNewFeeds');
+//我关注的分享列表
+Route::get('/feeds/follows', 'FeedController@getFollowFeeds');
+//热门分享列表
+Route::get('/feeds/hots', 'FeedController@getHotFeeds');
+
 //获取一条动态的赞的用户列表
 Route::get('/feeds/{feed_id}/diggusers','FeedDiggController@getDiggList');
 //获取一条动态的评论列表
