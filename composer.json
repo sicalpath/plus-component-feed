@@ -13,7 +13,7 @@
         "zhiyicx/plus-install-plugin": "^1.0"
     },
     "extra": {
-        "installer-class": "Zhiyi\\Component\\ZhiyiPlus\\PlusComponentFeed\\Installer"
+        "installer-class": "Zhiyi\\Component\\ZhiyiPlus\\PlusComponentFeed\\Installer\\Installer"
     },
     "autoload": {
         "psr-4": {

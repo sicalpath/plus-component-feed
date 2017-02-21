@@ -1,5 +1,5 @@
 <?php
-namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed;
+namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Installer;
 
 use Closure;
 use Zhiyi\Component\Installer\PlusInstallPlugin\AbstractInstaller;
@@ -13,32 +13,12 @@ use function  Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\{
 };
 
 class Installer extends AbstractInstaller
-{
+{   
 
-
-	public function getName(): string
-	{
-		return 'feed';
-	}
-
-	public function getVersion(): string
-	{
-		return '1.0.0';
-	}
-
-	public function getLogo(): string
-	{
-		return asset_path('/images/logo.png');
-	}
-
-	public function getAuthor(): array
-	{
-		return [
-			'name' => 'Wayne',
-			'email' => 'idafoo@sina.com',
-			'homepage' => ''
-		];
-	}
+    public function getComponentInfo()
+    {
+        return new Info();
+    }
 
 	/**
 	 * register routers
@@ -46,7 +26,7 @@ class Installer extends AbstractInstaller
 	 */
 	public function router()
 	{
-		return __DIR__.'/router.php';
+		return dirname(__DIR__).'/router.php';
 	}
 
 	/**
@@ -154,7 +134,7 @@ class Installer extends AbstractInstaller
      */
     public function resource()
     {
-        return dirname(__DIR__).'/resource';
+        return component_base_path('/resource');
     }
 
 }
