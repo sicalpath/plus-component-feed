@@ -71,7 +71,7 @@ class FeedCommentController extends Controller
 		$feedComment['reply_to_user_id'] = $request->reply_to_user_id ?? 0;
 		$feedComment['comment_content'] = $request->comment_content;
     	FeedComment::create($feedComment);
-
+    	Feed::byFeedId($feed->id)->increment('feed_comment_count');//增加评论数量
         return response()->json(static::createJsonData([
                 'status' => true,
                 'code' => 0,
@@ -90,6 +90,7 @@ class FeedCommentController extends Controller
 	public function delComment(Request $request, int $comment_id)
 	{
 		FeedComment::where('id', $comment_id)->delete();
+		Feed::byFeedId($feed->id)->decrement('feed_comment_count');//减少评论数量
         return response()->json(static::createJsonData([
             'status' => true,
             'message' => '删除成功',

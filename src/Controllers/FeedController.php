@@ -19,8 +19,25 @@ class FeedController extends Controller
         });
     }
 
-    protected function index($feeds, $uid)
+    public function index($feeds, $uid)
     {   
+        // $user_id  = $request->user()->id ?? 0;
+        // // 设置单页数量
+        // $limit = $request->limit ?? 15;
+        // $feeds = Feed::orderBy('id', 'DESC')
+        //     ->where(function($query) use ($request) {
+        //         if($request->max_id > 0){
+        //             $query->where('id', '<', $request->max_id);
+        //         }
+        //     })
+        //     ->withCount(['diggs' => function($query) use ($user_id) {
+        //         if($user_id) {
+        //             $query->where('user_id', $user_id);
+        //         }
+        //     }])
+        //     ->with('storages')
+        //     ->take($limit)
+        //     ->get();
         $datas = [];
         foreach($feeds as $feed) {
             $datas[$feed->id]['user_id'] = $feed->user_id;
@@ -157,6 +174,7 @@ class FeedController extends Controller
             return $digg->user_id;
         });
 
+        Feed::byFeedId($feed_id)->increment('feed_view_count');
         return response()->json([
                 'status' => true,
                 'code' => 0,
@@ -208,6 +226,9 @@ class FeedController extends Controller
         // 设置单页数量
         $limit = $request->limit ?? 15;
         $feeds = Feed::orderBy('id', 'DESC')
+            // ->where(function($query) use ($user_id) {
+
+            // })
             ->where(function($query) use ($request) {
                 if($request->max_id > 0){
                     $query->where('id', '<', $request->max_id);
@@ -240,7 +261,7 @@ class FeedController extends Controller
         $limit = $request->limit ?? 15;
         $feeds = Feed::orderBy('id', 'DESC')
             ->where(function($query) use ($request) {
-                if($request->max_id > 0){
+                if($request->page > 1){
                     $query->where('id', '<', $request->max_id);
                 }
             })
