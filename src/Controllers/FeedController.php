@@ -42,6 +42,7 @@ class FeedController extends Controller
             $datas[$feed->id]['user_id'] = $feed->user_id;
             // 动态数据
             $datas[$feed->id]['feed'] = [];
+            $datas[$feed->id]['feed']['feed_id'] = $feed->id;
             $datas[$feed->id]['feed']['feed_title'] = $feed->feed_title ?? '';
             $datas[$feed->id]['feed']['feed_content'] = $feed->feed_content;
             $datas[$feed->id]['feed']['created_at'] = $feed->created_at->timestamp;
