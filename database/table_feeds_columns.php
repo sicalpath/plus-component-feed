@@ -70,3 +70,9 @@ if (!Schema::hasColumn($component_table_name, 'feed_client_id')) {
         $table->string('feed_client_id')->nullable()->default('')->comment('发布IP');
     });
 }
+
+if (!Schema::hasColumn($component_table_name, 'feed_mark')) {
+    Schema::table($component_table_name, function (Blueprint $table) {
+        $table->string('feed_client_id')->nullable()->default(0)->comment('移动端存储标记');
+    });
+}

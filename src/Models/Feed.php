@@ -18,6 +18,7 @@ class Feed extends Model
         'feed_longtitude',
         'feed_client_id',
         'feed_goehash',
+        'feed_mark',
         'user_id'
     ];
 

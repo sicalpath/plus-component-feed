@@ -33,6 +33,7 @@ class FeedController extends Controller
             $data['feed']['feed_content'] = $feed->feed_content;
             $data['feed']['created_at'] = $feed->created_at->timestamp;
             $data['feed']['feed_from'] = $feed->feed_from;
+            $data['feed']['feed_mark'] = $feed->feed_mark;
             $data['feed']['storages'] = $feed->storages->map(function($storage) {
                 return $storage->id;
             });
@@ -100,6 +101,7 @@ class FeedController extends Controller
         $feed->feed_longtitude = $request->input('longtitude', '');
         $feed->feed_geohash = $request->input('geohash', '');
         $feed->feed_title = $request->input('feed_title', '');
+        $feed->feed_mark = $request->input('feed_mark', 0);
         $feed->save();
         $feed->storages()->sync($storages);
 
