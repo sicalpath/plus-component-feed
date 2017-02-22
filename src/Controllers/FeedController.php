@@ -21,52 +21,37 @@ class FeedController extends Controller
 
     public function index($feeds, $uid)
     {   
-        // $user_id  = $request->user()->id ?? 0;
-        // // 设置单页数量
-        // $limit = $request->limit ?? 15;
-        // $feeds = Feed::orderBy('id', 'DESC')
-        //     ->where(function($query) use ($request) {
-        //         if($request->max_id > 0){
-        //             $query->where('id', '<', $request->max_id);
-        //         }
-        //     })
-        //     ->withCount(['diggs' => function($query) use ($user_id) {
-        //         if($user_id) {
-        //             $query->where('user_id', $user_id);
-        //         }
-        //     }])
-        //     ->with('storages')
-        //     ->take($limit)
-        //     ->get();
         $datas = [];
         foreach($feeds as $feed) {
-            $datas[$feed->id]['user_id'] = $feed->user_id;
+            $data = [];
+            $data['user_id'] = $feed->user_id;
             // 动态数据
-            $datas[$feed->id]['feed'] = [];
-            $datas[$feed->id]['feed']['feed_id'] = $feed->id;
-            $datas[$feed->id]['feed']['feed_title'] = $feed->feed_title ?? '';
-            $datas[$feed->id]['feed']['feed_content'] = $feed->feed_content;
-            $datas[$feed->id]['feed']['created_at'] = $feed->created_at->timestamp;
-            $datas[$feed->id]['feed']['feed_from'] = $feed->feed_from;
-            $datas[$feed->id]['feed']['storages'] = $feed->storages->map(function($storage) {
+            $data['feed'] = [];
+            $data['feed']['feed_id'] = $feed->id;
+            $data['feed']['feed_title'] = $feed->feed_title ?? '';
+            $data['feed']['feed_content'] = $feed->feed_content;
+            $data['feed']['created_at'] = $feed->created_at->timestamp;
+            $data['feed']['feed_from'] = $feed->feed_from;
+            $data['feed']['storages'] = $feed->storages->map(function($storage) {
                 return $storage->id;
             });
             // 工具数据
-            $datas[$feed->id]['tool'] = [];
-            $datas[$feed->id]['tool']['feed_view_count'] = $feed->feed_view_count;
-            $datas[$feed->id]['tool']['feed_digg_count'] = $feed->feed_digg_count;
-            $datas[$feed->id]['tool']['feed_comment_count'] = $feed->feed_comment_count;
+            $data['tool'] = [];
+            $data['tool']['feed_view_count'] = $feed->feed_view_count;
+            $data['tool']['feed_digg_count'] = $feed->feed_digg_count;
+            $data['tool']['feed_comment_count'] = $feed->feed_comment_count;
             // 暂时剔除当前登录用户判定
-            $datas[$feed->id]['tool']['is_digg_feed'] = $uid ? $feed->diggs_count : 0;
+            $data['tool']['is_digg_feed'] = $uid ? $feed->diggs_count : 0;
             // 最新3条评论
-            $datas[$feed->id]['comments'] = [];
+            $data['comments'] = [];
             foreach($feed->comments()->orderBy('id', 'DESC')->take(3)->get() as $comment) {
-                $datas[$feed->id]['comments'][$comment->id]['id'] = $comment->id;
-                $datas[$feed->id]['comments'][$comment->id]['user_id'] = $comment->user_id;
-                $datas[$feed->id]['comments'][$comment->id]['created_at'] = $comment->created_at->timestamp;
-                $datas[$feed->id]['comments'][$comment->id]['comment_content'] = $comment->comment_content;
-                $datas[$feed->id]['comments'][$comment->id]['reply_to_user_id'] = $comment->reply_to_user_id;
+                $data['comments'][$comment->id]['id'] = $comment->id;
+                $data['comments'][$comment->id]['user_id'] = $comment->user_id;
+                $data['comments'][$comment->id]['created_at'] = $comment->created_at->timestamp;
+                $data['comments'][$comment->id]['comment_content'] = $comment->comment_content;
+                $data['comments'][$comment->id]['reply_to_user_id'] = $comment->reply_to_user_id;
             };
+            $datas[] = $data;
         };
 
         return response()->json([
@@ -226,7 +211,7 @@ class FeedController extends Controller
         // 设置单页数量
         $limit = $request->limit ?? 15;
         $feeds = Feed::orderBy('id', 'DESC')
-            // ->where(function($query) use ($user_id) {
+            // ->whereIn('user_id', function($query) use ($user_id) {
 
             // })
             ->where(function($query) use ($request) {
