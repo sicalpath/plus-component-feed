@@ -73,6 +73,6 @@ if (!Schema::hasColumn($component_table_name, 'feed_client_id')) {
 
 if (!Schema::hasColumn($component_table_name, 'feed_mark')) {
     Schema::table($component_table_name, function (Blueprint $table) {
-        $table->string('feed_mark')->nullable()->default(0)->comment('移动端存储标记');
+        $table->integer('feed_mark')->default(0)->comment('移动端存储标记');
     });
 }
