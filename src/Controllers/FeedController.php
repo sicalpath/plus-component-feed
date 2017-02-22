@@ -262,7 +262,8 @@ class FeedController extends Controller
         $feeds = Feed::orderBy('id', 'DESC')
             ->where(function($query) use ($request) {
                 if($request->page > 1){
-                    $query->where('id', '<', $request->max_id);
+                    $skip = ($request->page - 1)*$limit;
+                    $query->skip($skip);
                 }
             })
             ->withCount(['diggs' => function($query) use ($user_id) {
