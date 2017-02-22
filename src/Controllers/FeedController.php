@@ -101,7 +101,7 @@ class FeedController extends Controller
         $feed->feed_longtitude = $request->input('longtitude', '');
         $feed->feed_geohash = $request->input('geohash', '');
         $feed->feed_title = $request->input('feed_title', '');
-        $feed->feed_mark = $request->input('feed_mark', 0);
+        $feed->feed_mark = $request->input('feed_mark', $user->id.Carbon::now()->timestamp);//默认uid+时间戳
         $feed->save();
         $feed->storages()->sync($storages);
 
