@@ -4,11 +4,8 @@ use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Middleware as FeedMiddleware;
 
 //最新分享列表
 Route::get('/feeds', 'FeedController@getNewFeeds');
-//我关注的分享列表
-Route::get('/feeds/follows', 'FeedController@getFollowFeeds');
 //热门分享列表
 Route::get('/feeds/hots', 'FeedController@getHotFeeds');
-
 //获取一条动态的赞的用户列表
 Route::get('/feeds/{feed_id}/diggusers','FeedDiggController@getDiggList');
 //获取一条动态的评论列表
@@ -23,6 +20,8 @@ Route::group([
 ], function() {
 	// 发送分享
 	Route::post('/feeds', 'FeedController@store');
+	//我关注的分享列表
+	Route::get('/feeds/follows', 'FeedController@getFollowFeeds');
 	// 添加评论
 	Route::post('/feeds/{feed_id}/comment', 'FeedCommentController@addComment')
 	->middleware(FeedMiddleware\CheckFeedByFeedId::class) //验证动态是否存在

@@ -208,7 +208,7 @@ class FeedController extends Controller
      */
     public function getFollowFeeds(Request $request)
     {
-        $user_id  = $request->user()->id ?? 0;
+        $user_id  = $request->user()->id;
         // 设置单页数量
         $limit = $request->limit ?? 15;
         $feeds = Feed::orderBy('id', 'DESC')
