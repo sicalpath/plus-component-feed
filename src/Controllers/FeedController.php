@@ -4,6 +4,7 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Controllers;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Plus\Models\Storage as StorageModel;
 use Zhiyi\Plus\Models\StorageTask;
+use Zhiyi\Plus\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
@@ -211,9 +212,7 @@ class FeedController extends Controller
         // 设置单页数量
         $limit = $request->limit ?? 15;
         $feeds = Feed::orderBy('id', 'DESC')
-            // ->whereIn('user_id', function($query) use ($user_id) {
-
-            // })
+            ->whereIn('user_id', User::where('id',$user_id)->first()->follows->pluck('following_user_id'))
             ->where(function($query) use ($request) {
                 if($request->max_id > 0){
                     $query->where('id', '<', $request->max_id);
@@ -227,7 +226,6 @@ class FeedController extends Controller
             ->with('storages')
             ->take($limit)
             ->get();
-
         return $this->index($feeds, $user_id);
     }
 
