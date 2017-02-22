@@ -26,6 +26,7 @@ class FeedController extends Controller
         foreach($feeds as $feed) {
             $data = [];
             $data['user_id'] = $feed->user_id;
+            $data['feed_mark'] = $feed->feed_mark;
             // 动态数据
             $data['feed'] = [];
             $data['feed']['feed_id'] = $feed->id;
@@ -33,7 +34,6 @@ class FeedController extends Controller
             $data['feed']['feed_content'] = $feed->feed_content;
             $data['feed']['created_at'] = $feed->created_at->timestamp;
             $data['feed']['feed_from'] = $feed->feed_from;
-            $data['feed']['feed_mark'] = $feed->feed_mark;
             $data['feed']['storages'] = $feed->storages->map(function($storage) {
                 return $storage->id;
             });
