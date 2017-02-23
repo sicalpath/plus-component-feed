@@ -244,19 +244,18 @@ class FeedController extends Controller
         $user_id  = $request->user()->id ?? 0;
         // 设置单页数量
         $limit = $request->limit ?? 15;
-        $feedids = FeedDigg::groupBy('feed_id')
+        $page = $request->page ?? 1;
+        $skip = ($page - 1)*$limit;
+        
+        $feeds = Feed::orderBy('id', 'DESC')
+            ->whereIn('id', FeedDigg::groupBy('feed_id')
                 ->limit($limit)
                 ->select('feed_id',DB::raw('COUNT(user_id) as diggcount'))
                 ->where('created_at', '>', Carbon::now()->subMonth()->toDateTimeString())
-                ->orderBy('diggcount', 'desc');
-        if($request->page > 1){
-            $skip = ($request->page - 1)*$limit;
-            $feedids->skip($skip);
-        }
-        $feedids = $feedids->pluck('feed_id');
-        
-        $feeds = Feed::orderBy('id', 'DESC')
-            ->whereIn('id', $feedids)
+                ->orderBy('diggcount', 'desc')
+                ->skip($skip)
+                ->pluck('feed_id')
+                )
             ->withCount(['diggs' => function($query) use ($user_id) {
                 if($user_id) {
                     $query->where('user_id', $user_id);
