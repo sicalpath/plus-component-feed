@@ -61,12 +61,16 @@ class FeedCommentController extends Controller
 	 * @author bs<414606094@qq.com>
 	 * @param  Request $request [description]
 	 */
-	public function addComment(Request $request)
+	public function addComment(Request $request, $feed_id)
 	{	
-		$feed = $request->attributes->get('feed');
-
+        $feed = Feed::find($feed_id);
+        if (!$feed) {
+            return response()->json(static::createJsonData([
+                'code' => 6004,
+            ]))->setStatusCode(403);
+        }
 		$feedComment['user_id'] = $request->user()->id;
-		$feedComment['feed_id'] = $feed->id;
+		$feedComment['feed_id'] = $feed_id;
 		$feedComment['to_user_id'] = $feed->user_id;
 		$feedComment['reply_to_user_id'] = $request->reply_to_user_id ?? 0;
 		$feedComment['comment_content'] = $request->comment_content;

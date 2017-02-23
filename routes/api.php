@@ -24,8 +24,6 @@ Route::group([
 	Route::get('/feeds/follows', 'FeedController@getFollowFeeds');
 	// 添加评论
 	Route::post('/feeds/{feed_id}/comment', 'FeedCommentController@addComment')
-	->middleware(FeedMiddleware\CheckFeedByFeedId::class) //验证动态是否存在
-	// ->middleware(F eedMiddleware\CheckReplyUser::class)  //验证被回复者是否存在 //回复动态时 此值为0
 	->middleware(FeedMiddleware\VerifyCommentContent::class); // 验证评论内容
 	// 删除分享
 	// Route::delete('/feeds/{feed_id}', 'xxx@xxx');
