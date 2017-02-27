@@ -8,9 +8,11 @@ use Zhiyi\Plus\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg;
 use Zhiyi\Plus\Storages\Storage;
 use Validator;
 use Carbon\Carbon;
+use DB;
 
 class FeedController extends Controller
 {
