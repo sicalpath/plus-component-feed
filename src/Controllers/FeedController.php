@@ -16,13 +16,6 @@ use DB;
 
 class FeedController extends Controller
 {
-    public function __construct(Request $request)
-    {
-        $request->setUserResolver(function() {
-            return Auth::guard('api')->basic();
-        });
-    }
-
     public function index($feeds, $uid)
     {   
         $datas = [];
