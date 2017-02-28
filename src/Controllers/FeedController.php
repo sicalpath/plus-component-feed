@@ -39,7 +39,7 @@ class FeedController extends Controller
             $data['tool']['feed_digg_count'] = $feed->feed_digg_count;
             $data['tool']['feed_comment_count'] = $feed->feed_comment_count;
             // 暂时剔除当前登录用户判定
-            $data['tool']['is_digg_feed'] = $uid ? $feed->diggs_count : 0;
+            $data['tool']['is_digg_feed'] = $uid ? FeedDigg::byFeedId($feed->id)->byUserId($uid)->count() : 0;
             // 最新3条评论
             $data['comments'] = [];
             foreach($feed->comments()->orderBy('id', 'DESC')->take(3)->get() as $comment) {
@@ -176,7 +176,7 @@ class FeedController extends Controller
      */
     public function getNewFeeds(Request $request)
     {
-        $user_id  = $request->user()->id ?? 0;
+        $user_id  = Auth::guard('api')->user()->id ?? 0;
         // 设置单页数量
         $limit = $request->limit ?? 15;
         $feeds = Feed::orderBy('id', 'DESC')
@@ -206,7 +206,7 @@ class FeedController extends Controller
      */
     public function getFollowFeeds(Request $request)
     {
-        $user_id  = $request->user()->id;
+        $user_id  = Auth::guard('api')->user()->id;
         // 设置单页数量
         $limit = $request->limit ?? 15;
         $feeds = Feed::orderBy('id', 'DESC')
@@ -237,7 +237,7 @@ class FeedController extends Controller
      */
     public function getHotFeeds(Request $request)
     {
-        $user_id  = $request->user()->id ?? 0;
+        $user_id  = Auth::guard('api')->user()->id ?? 0;
         // 设置单页数量
         $limit = $request->limit ?? 15;
         $page = $request->page ?? 1;
