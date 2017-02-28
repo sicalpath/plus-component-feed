@@ -124,7 +124,7 @@ class FeedDiggController extends Controller
         return response()->json(static::createJsonData([
             'status' => true,
             'message' => '取消点赞成功',
-        ]))->setStatusCode(204);
+        ]))->setStatusCode(201);
 	}
 
 	/**

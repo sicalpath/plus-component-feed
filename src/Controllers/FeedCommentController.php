@@ -98,6 +98,6 @@ class FeedCommentController extends Controller
         return response()->json(static::createJsonData([
             'status' => true,
             'message' => '删除成功',
-        ]))->setStatusCode(204);
+        ]))->setStatusCode(201);
 	}
 }
