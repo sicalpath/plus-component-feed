@@ -31,7 +31,7 @@ class FeedController extends Controller
             $data['feed']['created_at'] = $feed->created_at->timestamp;
             $data['feed']['feed_from'] = $feed->feed_from;
             $data['feed']['storages'] = $feed->storages->map(function($storage) {
-                return $storage->id;
+                return [ 'storage_id' => $storage->id, 'width' => $storage->image_width, 'height' => $storage->image_height];
             });
             // 工具数据
             $data['tool'] = [];
@@ -144,7 +144,7 @@ class FeedController extends Controller
         $data['feed']['created_at'] = $feed->created_at->timestamp;
         $data['feed']['feed_from'] = $feed->feed_from;
         $data['feed']['feed_storages'] = $feed->storages->map(function($storage) {
-            return $storage->feed_storage_id;
+            return [ 'storage_id' => $storage->id, 'width' => $storage->image_width, 'height' => $storage->image_height];
         });
         // 工具栏数据
         $data['tool'] = [];
