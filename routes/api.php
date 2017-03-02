@@ -33,6 +33,10 @@ Route::group([
 	Route::post('/feeds/{feed_id}/digg', 'FeedDiggController@diggFeed');
 	// 取消点赞
 	Route::delete('/feeds/{feed_id}/digg', 'FeedDiggController@cancelDiggFeed');
+	// 收藏
+	Route::post('/feeds/{feed_id}/collection', 'FeedCollectionController@addFeedCollection');
+	// 取消收藏
+	Route::delete('/feeds/{feed_id}/collection', 'FeedCollectionController@delFeedCollection');
 	//获取@我的分享列表
 	Route::get('/feeds/atmes', 'FeedAtmeController@getAtmeList');
 });

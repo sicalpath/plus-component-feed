@@ -25,3 +25,6 @@ feed-component for TS+
 
 [删除一条评论](/documents/删除一条评论.md)
 
+[收藏一条动态](/documents/收藏一条动态.md)
+
+[取消收藏一条动态](/documents/取消收藏一条动态.md)
