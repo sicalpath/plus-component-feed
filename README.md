@@ -7,6 +7,8 @@ feed-component for TS+
 # API文档
 [动态列表](/documents/动态列表.md)
 
+[发布动态](/documents/发布动态.md)
+
 [@我的分享列表](/documents/@我的分享列表.md)
 
 [点赞一条动态](/documents/点赞一条动态.md)
