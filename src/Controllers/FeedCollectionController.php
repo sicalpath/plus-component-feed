@@ -61,14 +61,14 @@ class FeedCollectionController extends Controller
             return response()->json(static::createJsonData([
             	'code' => 6006,
                 'status' => false,
-                'message' => '未对该动态点赞',
+                'message' => '未对该动态收藏',
             ]))->setStatusCode(400);
 		}
 
 		FeedCollection::where('feed_id', $feed_id)->where('user_id', $feedcollection['user_id'])->delete();
         return response()->json(static::createJsonData([
             'status' => true,
-            'message' => '取消点赞成功',
+            'message' => '取消点赞收藏',
         ]))->setStatusCode(201);
 	}
 }
