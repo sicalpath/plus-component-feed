@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedCollection;
 use Zhiyi\Plus\Storages\Storage;
 use Validator;
 use Carbon\Carbon;
@@ -40,6 +41,7 @@ class FeedController extends Controller
             $data['tool']['feed_comment_count'] = $feed->feed_comment_count;
             // 暂时剔除当前登录用户判定
             $data['tool']['is_digg_feed'] = $uid ? FeedDigg::byFeedId($feed->id)->byUserId($uid)->count() : 0;
+            $data['tool']['is_digg_collection'] = $uid ? FeedCollection::where('feed_id', $feed->id)->where('user_id', $uid)->count() : 0;
             // 最新3条评论
             $data['comments'] = [];
             foreach($feed->comments()->orderBy('id', 'DESC')->take(3)->get() as $comment) {
