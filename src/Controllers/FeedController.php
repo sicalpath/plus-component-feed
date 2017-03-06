@@ -70,10 +70,7 @@ class FeedController extends Controller
     public function store(Request $request)
     {
         $user = $request->user();
-        $response = Validator::make($request->input(), [
-            'feed_content' => 'required'
-        ]);
-        if($response->fails()) {
+        if(!$request->storage_task_ids && !$request->feed_content) {
             return response()->json([
                 'status'  => false,
                 'code'    => 6001,
