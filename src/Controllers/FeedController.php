@@ -17,7 +17,7 @@ use DB;
 
 class FeedController extends Controller
 {
-    public function index($feeds, $uid)
+    public function formatFeedList($feeds, $uid)
     {   
         $datas = [];
         foreach($feeds as $feed) {
@@ -44,17 +44,19 @@ class FeedController extends Controller
             $data['tool']['is_collection_feed'] = $uid ? FeedCollection::where('feed_id', $feed->id)->where('user_id', $uid)->count() : 0;
             // 最新3条评论
             $data['comments'] = [];
-            foreach($feed->comments()->orderBy('id', 'DESC')->take(3)->get() as $comment) {
-                $commentinfo = [];
 
-                $commentinfo['id'] = $comment->id;
-                $commentinfo['user_id'] = $comment->user_id;
-                $commentinfo['created_at'] = $comment->created_at->timestamp;
-                $commentinfo['comment_content'] = $comment->comment_content;
-                $commentinfo['reply_to_user_id'] = $comment->reply_to_user_id;
+            $getCommendsNumber = 3;
+            $comments = $feed->comments()
+                ->orderBy('id', 'desc')
+                ->take($getCommendsNumber)
+                ->select(['id', 'user_id', 'created_at', 'comment_content', 'reply_to_user_id'])
+                ->get();
 
-                $datas['comments'][] = $commentinfo;
-            };
+            $data['comments'] = $comments->map(function ($comment) {
+                return array_merge($comment->toArray(), [
+                    'created_at' => $comment->created_at->timestamp
+                ]);
+            });
             $datas[] = $data;
         };
 
@@ -197,7 +199,7 @@ class FeedController extends Controller
             ->take($limit)
             ->get();
 
-        return $this->index($feeds, $user_id);
+        return $this->formatFeedList($feeds, $user_id);
     }
 
     /**
@@ -227,7 +229,7 @@ class FeedController extends Controller
             ->with('storages')
             ->take($limit)
             ->get();
-        return $this->index($feeds, $user_id);
+        return $this->formatFeedList($feeds, $user_id);
     }
 
 
@@ -263,6 +265,6 @@ class FeedController extends Controller
             ->with('storages')
             ->get();
 
-        return $this->index($feeds, $user_id);
+        return $this->formatFeedList($feeds, $user_id);
     }
 }
