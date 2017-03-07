@@ -45,7 +45,7 @@ class FeedController extends Controller
             // 最新3条评论
             $data['comments'] = [];
 
-            $getCommendsNumber = 4;
+            $getCommendsNumber = 3;
             $data['comments'] = $feed->comments()
                 ->orderBy('id', 'desc')
                 ->take($getCommendsNumber)
