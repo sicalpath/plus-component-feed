@@ -45,11 +45,15 @@ class FeedController extends Controller
             // 最新3条评论
             $data['comments'] = [];
             foreach($feed->comments()->orderBy('id', 'DESC')->take(3)->get() as $comment) {
-                $data['comments'][$comment->id]['id'] = $comment->id;
-                $data['comments'][$comment->id]['user_id'] = $comment->user_id;
-                $data['comments'][$comment->id]['created_at'] = $comment->created_at->timestamp;
-                $data['comments'][$comment->id]['comment_content'] = $comment->comment_content;
-                $data['comments'][$comment->id]['reply_to_user_id'] = $comment->reply_to_user_id;
+                $commentinfo = [];
+
+                $commentinfo['id'] = $comment->id;
+                $commentinfo['user_id'] = $comment->user_id;
+                $commentinfo['created_at'] = $comment->created_at->timestamp;
+                $commentinfo['comment_content'] = $comment->comment_content;
+                $commentinfo['reply_to_user_id'] = $comment->reply_to_user_id;
+
+                $datas['comments'][] = $commentinfo;
             };
             $datas[] = $data;
         };
