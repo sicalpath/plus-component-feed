@@ -39,11 +39,7 @@ class FeedCommentController extends Controller
                 'data' => [],
             ]))->setStatusCode(200);
 		}
-		$datas = $comments->map(function ($comment) {
-			return array_merge($comment->toArray(), [
-				'created_at' => $comment->created_at->timestamp,
-			]);
-		});
+		$datas = $comments->toArray();
 
 	    return response()->json(static::createJsonData([
 	        'status' => true,

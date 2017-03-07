@@ -46,17 +46,13 @@ class FeedController extends Controller
             $data['comments'] = [];
 
             $getCommendsNumber = 3;
-            $comments = $feed->comments()
+            $data['comments'] = $feed->comments()
                 ->orderBy('id', 'desc')
                 ->take($getCommendsNumber)
                 ->select(['id', 'user_id', 'created_at', 'comment_content', 'reply_to_user_id'])
-                ->get();
+                ->get()
+                ->toArray();
 
-            $data['comments'] = $comments->map(function ($comment) {
-                return array_merge($comment->toArray(), [
-                    'created_at' => $comment->created_at->timestamp
-                ]);
-            });
             $datas[] = $data;
         };
 
