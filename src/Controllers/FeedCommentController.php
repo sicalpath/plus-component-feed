@@ -31,7 +31,7 @@ class FeedCommentController extends Controller
 			if ($max_id > 0) {
 				$query->where('id', '<', $max_id);
 			}
-		})->with(['user','replyUser'])->orderBy('id','desc')->get();	
+		})->select(['id', 'created_at', 'comment_content', 'user_id', 'to_user_id', 'reply_to_user_id'])->orderBy('id','desc')->get();	
 
 		if ($comments->isEmpty()) {
             return response()->json(static::createJsonData([
@@ -39,15 +39,11 @@ class FeedCommentController extends Controller
                 'data' => [],
             ]))->setStatusCode(200);
 		}
-		foreach ($comments as $key => $value) {
-			$data['comment_id'] = $value->id; 
-			$data['create_at'] = $value->created_at->timestamp;
-			$data['comment_content'] = $value->comment_content;
-			$data['user_id'] = $value->user_id;
-			$data['to_user_id'] = $value->to_user_id;
-			$data['reply_to_user_id'] = $value->reply_to_user_id;
-			$datas[] = $data;
-		}
+		$datas = $comments->map(function ($comment) {
+			return array_merge($comment->toArray(), [
+				'created_at' => $comment->created_at->timestamp,
+			]);
+		});
 
 	    return response()->json(static::createJsonData([
 	        'status' => true,
