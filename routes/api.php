@@ -6,6 +6,8 @@ use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Middleware as FeedMiddleware;
 Route::get('/feeds', 'FeedController@getNewFeeds');
 //热门分享列表
 Route::get('/feeds/hots', 'FeedController@getHotFeeds');
+// 某个用户的分享列表
+Route::get('/feeds/users/{user_id}', 'FeedController@getUserFeeds');
 //获取一条动态的赞的用户列表
 Route::get('/feeds/{feed_id}/diggusers','FeedDiggController@getDiggList');
 //获取一条动态的评论列表

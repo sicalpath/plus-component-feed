@@ -263,4 +263,35 @@ class FeedController extends Controller
 
         return $this->formatFeedList($feeds, $user_id);
     }
+    /**
+     * 获取单个用户的动态列表
+     * 
+     * @author bs<414606094@qq.com>
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function getUserFeeds(Request $request, int $user_id)
+    {
+        $auth_id  = Auth::guard('api')->user()->id ?? 0;
+        $limit = $request->input('limit', 15);
+        $max_id = intval($request->input('max_id'));
+
+        $feeds = Feed::orderBy('id', 'DESC')
+        ->where('user_id', $user_id)
+        ->where(function ($query) use($max_id) {
+            if ($max_id > 0) {
+                $query->where('id', '<', $max_id);
+            }
+        })        
+        ->withCount(['diggs' => function($query) use ($user_id) {
+            if($user_id) {
+                $query->where('user_id', $user_id);
+            }
+        }])
+        ->with('storages')
+        ->take($limit)
+        ->get();
+
+        return $this->formatFeedList($feeds, $auth_id);
+    }
 }
