@@ -137,17 +137,51 @@ class FeedDiggController extends Controller
 	 */
 	protected function countdigg($uid, $method = 'increment')
 	{
+		$pars = ['increment', 'decrement'];
+		if (in_array($method, $pars)) {
+			return false;
+		}
+
 		$key = 'diggs_count';
-		$datas = false;
-		if ($method == 'increment' || $method == 'decrement') {
-			if (!UserDatas::byKey($key)->byUserId($uid)->first()) {
-				$insert = ['key' => $key, 'user_id' => $uid, 'value' => 0];
-				UserDatas::create($insert);
-			}
-		
-			$datas = UserDatas::where('key', $key)->byUserId($uid)->$method('value');
+		$notEmpty = !(UserDatas::byKey($key)->byUserId($uid)->first());
+		if ($notEmpty) {
+			$countModel = new UserDatas();
+			$countModel->key = $key;
+			$countModel->user_id = $uid;
+			$countModel->value = 0;
+			$countModel->save();
+		}
+
+		return tap(UserDatas::where('key', $key)->byUserId($uid), function ($query) use ($method) {
+			$query->$method('value');
+		});
+	}
+
+
+	/**
+	 * 我收到的赞
+	 * 
+	 * @author bs<414606094@qq.com>
+	 * @param  Request $request [description]
+	 * @return [type]           [description]
+	 */
+	public function mydiggs(Request $request)
+	{
+		$user_id = $request->user()->id;
+		$limit = $request->input('limit', 15);
+		$max_id = intval($request->input('max_id'));
+		$diggs = FeedDigg::rightJoin('feeds', function ($query) use($user_id) {
+			$query->on('feeds.id', '=', 'feed_diggs.feed_id')->where('feeds.user_id', $user_id);
+		})->select(['feed_diggs.id', 'feed_diggs.created_at', 'feed_diggs.feed_id', 'feeds.feed_content', 'feeds.feed_title'])
+		->get()->toArray();
+		foreach ($diggs as $key => &$value) {
+			$value['storages'] = FeedStorage::where('feed_id', $value['feed_id'])->select('feed_storage_id')->get()->toArray();
 		}
 		
-		return $datas;
+        return response()->json(static::createJsonData([
+            'status' => true,
+            'message' => '获取成功',
+            'data' => $diggs,
+        ]))->setStatusCode(200);
 	}
 }

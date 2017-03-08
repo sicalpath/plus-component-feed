@@ -29,6 +29,10 @@ Route::group([
 	// Route::delete('/feeds/{feed_id}', 'xxx@xxx');
 	//删除评论 TODO 根据权限及实际需求增加中间件
 	Route::delete('/feeds/{feed_id}/comment/{comment_id}', 'FeedCommentController@delComment');
+	// 我收到的评论
+	Route::get('/feeds/commentmes', 'FeedCommentController@myComment');
+	// 我收到的点赞
+	Route::get('/feeds/diggmes', 'FeedDiggController@mydiggs');
 	// 点赞
 	Route::post('/feeds/{feed_id}/digg', 'FeedDiggController@diggFeed');
 	// 取消点赞

@@ -92,4 +92,35 @@ class FeedCommentController extends Controller
             'message' => '删除成功',
         ]))->setStatusCode(201);
 	}
+
+	/**
+	 * 我收到的评论
+	 * 
+	 * @author bs<414606094@qq.com>
+	 * @return [type] [description]
+	 */
+	public function myComment(Request $request)
+	{
+		$user_id = $request->user()->id;
+		$limit = $request->input('limit', 15);
+		$max_id = intval($request->input('max_id'));
+		$comments = FeedComment::where(function ($query) use ($user_id) {
+			$query->where('to_user_id', $user_id)->orwhere('reply_to_user_id', $user_id);
+		})->where(function ($query) use ($max_id) {
+			if ($max_id > 0) {
+				$query->where('id', '<', $max_id);
+			}
+		})
+		->take($limit)->with(['feed' => function ($query) {
+			$query->select(['id', 'created_at', 'user_id', 'feed_content', 'feed_title'])->with(['storages' => function ($query) {
+				$query->select(['feed_storage_id']);
+			}]);
+		}])->get();
+		
+        return response()->json(static::createJsonData([
+            'status' => true,
+            'message' => '获取成功',
+            'data' => $comments,
+        ]))->setStatusCode(200);
+	}
 }
