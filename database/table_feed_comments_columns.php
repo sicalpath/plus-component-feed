@@ -35,3 +35,8 @@ if (!Schema::hasColumn($component_table_name, 'comment_content')) {
     });
 }
 
+if (!Schema::hasColumn($component_table_name, 'comment_mark')) {
+    Schema::table($component_table_name, function (Blueprint $table) {
+        $table->bigInteger('comment_mark')->default(0)->comment('移动端存储标记');
+    });
+}

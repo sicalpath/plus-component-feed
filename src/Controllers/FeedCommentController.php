@@ -5,6 +5,7 @@ use Zhiyi\Plus\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedComment;
+use Carbon\Carbon;
 
 class FeedCommentController extends Controller
 {
@@ -31,7 +32,7 @@ class FeedCommentController extends Controller
 			if ($max_id > 0) {
 				$query->where('id', '<', $max_id);
 			}
-		})->select(['id', 'created_at', 'comment_content', 'user_id', 'to_user_id', 'reply_to_user_id'])->orderBy('id','desc')->get();	
+		})->select(['id', 'created_at', 'comment_content', 'user_id', 'to_user_id', 'reply_to_user_id', 'comment_mark'])->orderBy('id','desc')->get();	
 
 		if ($comments->isEmpty()) {
             return response()->json(static::createJsonData([
@@ -66,6 +67,7 @@ class FeedCommentController extends Controller
 		$feedComment['to_user_id'] = $feed->user_id;
 		$feedComment['reply_to_user_id'] = $request->reply_to_user_id ?? 0;
 		$feedComment['comment_content'] = $request->comment_content;
+		$feedComment['comment_mark'] = $request->input('comment_mark', ($user->id.Carbon::now()->timestamp)*1000);//默认uid+毫秒时间戳
     	FeedComment::create($feedComment);
     	Feed::byFeedId($feed->id)->increment('feed_comment_count');//增加评论数量
 		$push = new Feedpush();

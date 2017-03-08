@@ -49,7 +49,7 @@ class FeedController extends Controller
             $data['comments'] = $feed->comments()
                 ->orderBy('id', 'desc')
                 ->take($getCommendsNumber)
-                ->select(['id', 'user_id', 'created_at', 'comment_content', 'reply_to_user_id'])
+                ->select(['id', 'user_id', 'created_at', 'comment_content', 'reply_to_user_id', 'comment_mark'])
                 ->get()
                 ->toArray();
 
