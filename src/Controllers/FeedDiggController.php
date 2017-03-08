@@ -82,7 +82,15 @@ class FeedDiggController extends Controller
                 'message' => '已赞过该动态',
             ]))->setStatusCode(400);
 		}
+		$push = new Feedpush();
+		if ($push) {
+			$extras = ['action' => 'digg'];
+			$alert = '有人赞了你的动态，去看看吧';
+			$audience = 'all';
 
+			$push->push($alert, $audience, $extras);
+		}
+		
 		FeedDigg::create($feeddigg);
 		Feed::byFeedId($feed_id)->increment('feed_digg_count');//增加点赞数量
 		$this->countdigg($feed->user_id, $method = 'increment');//更新动态作者收到的赞数量

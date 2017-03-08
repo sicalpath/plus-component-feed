@@ -68,6 +68,14 @@ class FeedCommentController extends Controller
 		$feedComment['comment_content'] = $request->comment_content;
     	FeedComment::create($feedComment);
     	Feed::byFeedId($feed->id)->increment('feed_comment_count');//增加评论数量
+		$push = new Feedpush();
+		if ($push) {
+			$extras = ['action' => 'comment'];
+			$alert = '有人评论了你，去看看吧';
+			$audience = 'all';
+
+			$push->push($alert, $audience, $extras);
+		}
         return response()->json(static::createJsonData([
                 'status' => true,
                 'code' => 0,
