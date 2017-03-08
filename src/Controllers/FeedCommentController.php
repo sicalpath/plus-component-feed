@@ -93,7 +93,7 @@ class FeedCommentController extends Controller
 	 * @param  int     $comment_id [description]
 	 * @return [type]              [description]
 	 */
-	public function delComment(Request $request, int $comment_id, int $feed_id)
+	public function delComment(Request $request, int $feed_id, int $comment_id)
 	{
 		FeedComment::where('id', $comment_id)->delete();
 		Feed::byFeedId($feed_id)->decrement('feed_comment_count');//减少评论数量
