@@ -109,7 +109,8 @@ class FeedController extends Controller
         return response()->json([
                 'status' => true,
                 'code' => 0,
-                'message' => '动态创建成功'
+                'message' => '动态创建成功',
+                'data' => $feed->id
             ])->setStatusCode(201);
     }
 

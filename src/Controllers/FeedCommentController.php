@@ -62,13 +62,15 @@ class FeedCommentController extends Controller
                 'code' => 6004,
             ]))->setStatusCode(403);
         }
-		$feedComment['user_id'] = $request->user()->id;
-		$feedComment['feed_id'] = $feed_id;
-		$feedComment['to_user_id'] = $feed->user_id;
-		$feedComment['reply_to_user_id'] = $request->reply_to_user_id ?? 0;
-		$feedComment['comment_content'] = $request->comment_content;
-		$feedComment['comment_mark'] = $request->input('comment_mark', ($request->user()->id.Carbon::now()->timestamp)*1000);//默认uid+毫秒时间戳
-    	FeedComment::create($feedComment);
+        $feedComment = new FeedComment();
+		$feedComment->user_id = $request->user()->id;
+		$feedComment->feed_id = $feed_id;
+		$feedComment->to_user_id = $feed->user_id;
+		$feedComment->reply_to_user_id = $request->reply_to_user_id ?? 0;
+		$feedComment->comment_content = $request->comment_content;
+		$feedComment->comment_mark = $request->input('comment_mark', ($request->user()->id.Carbon::now()->timestamp)*1000);//默认uid+毫秒时间戳
+    	
+    	$feedComment->save();
     	Feed::byFeedId($feed->id)->increment('feed_comment_count');//增加评论数量
 		// $push = new Feedpush();
 		// if ($push) {
@@ -81,7 +83,8 @@ class FeedCommentController extends Controller
         return response()->json(static::createJsonData([
                 'status' => true,
                 'code' => 0,
-                'message' => '评论成功'
+                'message' => '评论成功',
+                'data' => $feedComment->id
             ]))->setStatusCode(201);
 	}
 
