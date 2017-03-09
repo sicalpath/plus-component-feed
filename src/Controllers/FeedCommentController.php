@@ -67,7 +67,7 @@ class FeedCommentController extends Controller
 		$feedComment['to_user_id'] = $feed->user_id;
 		$feedComment['reply_to_user_id'] = $request->reply_to_user_id ?? 0;
 		$feedComment['comment_content'] = $request->comment_content;
-		$feedComment['comment_mark'] = $request->input('comment_mark', ($user->id.Carbon::now()->timestamp)*1000);//默认uid+毫秒时间戳
+		$feedComment['comment_mark'] = $request->input('comment_mark', ($request->user()->id.Carbon::now()->timestamp)*1000);//默认uid+毫秒时间戳
     	FeedComment::create($feedComment);
     	Feed::byFeedId($feed->id)->increment('feed_comment_count');//增加评论数量
 		// $push = new Feedpush();
