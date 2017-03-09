@@ -5,6 +5,7 @@ use Zhiyi\Plus\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Services\FeedCount;
 use Zhiyi\Plus\Models\UserDatas;
 
 class FeedDiggController extends Controller
@@ -93,7 +94,10 @@ class FeedDiggController extends Controller
 		
 		FeedDigg::create($feeddigg);
 		Feed::byFeedId($feed_id)->increment('feed_digg_count');//增加点赞数量
-		$this->countdigg($feed->user_id, $method = 'increment');//更新动态作者收到的赞数量
+
+		$count = new FeedCount();
+		$count->count($feed->user_id, 'diggs_count', $method = 'increment');//更新动态作者收到的赞数量
+
         return response()->json(static::createJsonData([
             'status' => true,
             'message' => '点赞成功',
@@ -128,43 +132,15 @@ class FeedDiggController extends Controller
 
 		FeedDigg::byFeedId($feed_id)->byUserId($feeddigg['user_id'])->delete();
 		Feed::byFeedId($feed_id)->decrement('feed_digg_count');//减少点赞数量
-		$this->countdigg($feed->user_id, $method = 'decrement');//更新动态作者收到的赞数量
+		
+		$count = new FeedCount();
+		$count->count($feed->user_id, 'diggs_count', $method = 'decrement');//更新动态作者收到的赞数量
+
         return response()->json(static::createJsonData([
             'status' => true,
             'message' => '取消点赞成功',
         ]))->setStatusCode(201);
 	}
-
-	/**
-	 * 对用户收到的赞数进行统计
-	 * 
-	 * @author bs<414606094@qq.com>
-	 * @param  [type] $uid    [description]
-	 * @param  string $method increment -点赞统计数加1  decrement - 点赞统计数减1
-	 * @return [type]         [description]
-	 */
-	protected function countdigg($uid, $method = 'increment')
-	{
-		$pars = ['increment', 'decrement'];
-		if (in_array($method, $pars)) {
-			return false;
-		}
-
-		$key = 'diggs_count';
-		$notEmpty = !(UserDatas::byKey($key)->byUserId($uid)->first());
-		if ($notEmpty) {
-			$countModel = new UserDatas();
-			$countModel->key = $key;
-			$countModel->user_id = $uid;
-			$countModel->value = 0;
-			$countModel->save();
-		}
-
-		return tap(UserDatas::where('key', $key)->byUserId($uid), function ($query) use ($method) {
-			$query->$method('value');
-		});
-	}
-
 
 	/**
 	 * 我收到的赞

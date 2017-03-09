@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedCollection;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Services\FeedCount;
 use Zhiyi\Plus\Storages\Storage;
 use Validator;
 use Carbon\Carbon;
@@ -101,6 +102,9 @@ class FeedController extends Controller
         $feed->feed_mark = $request->input('feed_mark', ($user->id.Carbon::now()->timestamp)*1000);//默认uid+毫秒时间戳
         $feed->save();
         $feed->storages()->sync($storages);
+
+        $count = new FeedCount();
+        $count->count($request->user()->id, 'feeds_count', $method = 'increment');//更新动态作者的动态数量
 
         return response()->json([
                 'status' => true,
