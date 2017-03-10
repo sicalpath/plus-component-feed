@@ -71,6 +71,12 @@ if (!Schema::hasColumn($component_table_name, 'feed_client_id')) {
     });
 }
 
+if (!Schema::hasColumn($component_table_name, 'audit_status')) {
+    Schema::table($component_table_name, function (Blueprint $table) {
+        $table->tinyInteger('audit_status')->default(1)->comment('审核状态 0-未审核 1-已审核 2-未通过');
+    });
+}
+
 if (!Schema::hasColumn($component_table_name, 'feed_mark')) {
     Schema::table($component_table_name, function (Blueprint $table) {
         $table->bigInteger('feed_mark')->default(null)->comment('移动端存储标记');

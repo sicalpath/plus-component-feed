@@ -95,5 +95,19 @@ class Feed extends Model
     {
         return $query->where('id', $feedId);
     }
+
+
+    /**
+     * 筛选已审核动态
+     * 
+     * @author bs<414606094@qq.com>
+     * @param  Builder $query [description]
+     * @return [type]         [description]
+     */
+    public function scopeByAudit(Builder $query): Builder
+    {
+        return $query->where('audit_status', 1);
+    }
+
 }
 

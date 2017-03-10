@@ -196,6 +196,7 @@ class FeedController extends Controller
                     $query->where('user_id', $user_id);
                 }
             }])
+            ->byAudit()
             ->with('storages')
             ->take($limit)
             ->get();
@@ -227,6 +228,7 @@ class FeedController extends Controller
                     $query->where('user_id', $user_id);
                 }
             }])
+            ->byAudit()
             ->with('storages')
             ->take($limit)
             ->get();
@@ -263,6 +265,7 @@ class FeedController extends Controller
                     $query->where('user_id', $user_id);
                 }
             }])
+            ->byAudit()
             ->with('storages')
             ->get();
 
@@ -293,6 +296,7 @@ class FeedController extends Controller
                 $query->where('user_id', $user_id);
             }
         }])
+        ->byAudit()
         ->with('storages')
         ->take($limit)
         ->get();
