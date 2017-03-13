@@ -5,6 +5,7 @@ use Zhiyi\Plus\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedStorage;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Services\FeedCount;
 use Zhiyi\Plus\Models\UserDatas;
 
@@ -156,7 +157,7 @@ class FeedDiggController extends Controller
 		$max_id = intval($request->input('max_id'));
 		$diggs = FeedDigg::rightJoin('feeds', function ($query) use($user_id) {
 			$query->on('feeds.id', '=', 'feed_diggs.feed_id')->where('feeds.user_id', $user_id);
-		})->select(['feed_diggs.id', 'feed_diggs.created_at', 'feed_diggs.feed_id', 'feeds.feed_content', 'feeds.feed_title'])
+		})->select(['feed_diggs.id', 'feed_diggs.user_id', 'feed_diggs.created_at', 'feed_diggs.feed_id', 'feeds.feed_content', 'feeds.feed_title'])
 		->get()->toArray();
 		foreach ($diggs as $key => &$value) {
 			$value['storages'] = FeedStorage::where('feed_id', $value['feed_id'])->select('feed_storage_id')->get()->toArray();
