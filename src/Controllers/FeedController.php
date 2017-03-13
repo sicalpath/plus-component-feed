@@ -253,7 +253,7 @@ class FeedController extends Controller
         
         $feeds = Feed::orderBy('id', 'DESC')
             ->whereIn('id', FeedDigg::groupBy('feed_id')
-                ->limit($limit)
+                ->take($limit)
                 ->select('feed_id',DB::raw('COUNT(user_id) as diggcount'))
                 ->where('created_at', '>', Carbon::now()->subMonth()->toDateTimeString())
                 ->orderBy('diggcount', 'desc')
