@@ -27,7 +27,7 @@ class FeedDiggController extends Controller
 					if (intval($max_id) > 0)  {
 						$query->where('id', '<', intval($max_id));
 					}
-					$query->take($limit);
+					$query->take($limit)->orderBy('id', 'desc');
 				},
 				'diggs.user'
 			])
