@@ -138,7 +138,6 @@ class FeedDiggController extends Controller
 			$count->count($feed->user_id, 'diggs_count', $method = 'decrement');//更新动态作者收到的赞数量
 		}
 
-
         return response()->json(static::createJsonData([
             'status' => true,
             'message' => '取消点赞成功',
@@ -157,7 +156,7 @@ class FeedDiggController extends Controller
 		$user_id = $request->user()->id;
 		$limit = $request->input('limit', 15);
 		$max_id = intval($request->input('max_id'));
-		$diggs = FeedDigg::rightJoin('feeds', function ($query) use($user_id) {
+		$diggs = FeedDigg::join('feeds', function ($query) use($user_id) {
 			$query->on('feeds.id', '=', 'feed_diggs.feed_id')->where('feeds.user_id', $user_id);
 		})->select(['feed_diggs.id', 'feed_diggs.user_id', 'feed_diggs.created_at', 'feed_diggs.feed_id', 'feeds.feed_content', 'feeds.feed_title'])
 		->get()->toArray();
