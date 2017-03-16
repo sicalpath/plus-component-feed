@@ -123,7 +123,7 @@ class FeedDiggController extends Controller
 		}
 		$feeddigg['user_id'] = $request->user()->id;
 		$feeddigg['feed_id'] = $feed_id;
-		if (!FeedDigg::byFeedId($feed_id)->byUserId($feeddigg['user_id'])->first()) {
+		if (!FeedDigg::where($feeddigg)->first()) {
             return response()->json(static::createJsonData([
             	'code' => 6006,
                 'status' => false,
@@ -131,11 +131,13 @@ class FeedDiggController extends Controller
             ]))->setStatusCode(400);
 		}
 
-		FeedDigg::byFeedId($feed_id)->byUserId($feeddigg['user_id'])->delete();
-		Feed::byFeedId($feed_id)->decrement('feed_digg_count');//减少点赞数量
+		if(FeedDigg::byFeedId($feed_id)->byUserId($feeddigg['user_id'])->delete()){
+			Feed::byFeedId($feed_id)->decrement('feed_digg_count');//减少点赞数量
 		
-		$count = new FeedCount();
-		$count->count($feed->user_id, 'diggs_count', $method = 'decrement');//更新动态作者收到的赞数量
+			$count = new FeedCount();
+			$count->count($feed->user_id, 'diggs_count', $method = 'decrement');//更新动态作者收到的赞数量
+		}
+
 
         return response()->json(static::createJsonData([
             'status' => true,
