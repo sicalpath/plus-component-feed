@@ -303,4 +303,21 @@ class FeedController extends Controller
 
         return $this->formatFeedList($feeds, $auth_id);
     }
+
+    /**
+     * 增加浏览量
+     * 
+     * @author bs<414606094@qq.com>
+     * @param  int $feed_id [description]
+     */
+    public function addFeedViewCount(int $feed_id)
+    {
+        Feed::byFeedId($feed_id)->increment('feed_view_count');
+        return response()->json([
+            'status' => true,
+            'code' => 0,
+            'message' => 'ok',
+            'data' => null
+        ])->setStatusCode(201); 
+    }
 }

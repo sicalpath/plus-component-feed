@@ -22,6 +22,8 @@ Route::group([
 ], function() {
 	// 发送分享
 	Route::post('/feeds', 'FeedController@store');
+	// 增加分享浏览量
+	Route::post('/feeds/{feed_id}/viewcount', 'FeedController@addFeedViewCount');
 	//我关注的分享列表
 	Route::get('/feeds/follows', 'FeedController@getFollowFeeds');
 	// 添加评论
