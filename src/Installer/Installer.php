@@ -83,6 +83,15 @@ class Installer extends AbstractInstaller
         	include component_base_path('/database/table_feed_storages_columns.php');
         }
 
+        if (!Schema::hasTable('feed_collections')) {
+            Schema::create('feed_collections', function (Blueprint $table) {
+                $table->engine = 'InnoDB';
+                $table->increments('id')->comment('primary key');
+                $table->timestamps();
+            });
+            include component_base_path('/database/table_feed_collections_columns.php');
+        }
+
         if (!Schema::hasTable('feed_views')) {
             Schema::create('feed_views', function (Blueprint $table) {
                 $table->engine = 'InnoDB';
@@ -110,6 +119,7 @@ class Installer extends AbstractInstaller
         include component_base_path('/database/table_feed_diggs_columns.php');
         include component_base_path('/database/table_feed_comments_columns.php');
         include component_base_path('/database/table_feed_storages_columns.php');
+        include component_base_path('/database/table_feed_collections_columns.php');
         $next();
     }
 
@@ -125,6 +135,7 @@ class Installer extends AbstractInstaller
         Schema::dropIfExists('feed_diggs');
         Schema::dropIfExists('feed_comments');
         Schema::dropIfExists('feed_storages');
+        Schema::dropIfExists('feed_collections');
         $next();
     }
 

@@ -4,69 +4,57 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Controllers;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Plus\Models\Storage as StorageModel;
 use Zhiyi\Plus\Models\StorageTask;
+use Zhiyi\Plus\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedCollection;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Services\FeedCount;
 use Zhiyi\Plus\Storages\Storage;
 use Validator;
+use Carbon\Carbon;
+use DB;
 
 class FeedController extends Controller
 {
-    public function __construct(Request $request)
-    {
-        $request->setUserResolver(function() {
-            return Auth::guard('api')->basic();
-        });
-    }
-
-    public function index($feeds, $uid)
+    public function formatFeedList($feeds, $uid)
     {   
-        // $user_id  = $request->user()->id ?? 0;
-        // // 设置单页数量
-        // $limit = $request->limit ?? 15;
-        // $feeds = Feed::orderBy('id', 'DESC')
-        //     ->where(function($query) use ($request) {
-        //         if($request->max_id > 0){
-        //             $query->where('id', '<', $request->max_id);
-        //         }
-        //     })
-        //     ->withCount(['diggs' => function($query) use ($user_id) {
-        //         if($user_id) {
-        //             $query->where('user_id', $user_id);
-        //         }
-        //     }])
-        //     ->with('storages')
-        //     ->take($limit)
-        //     ->get();
         $datas = [];
         foreach($feeds as $feed) {
-            $datas[$feed->id]['user_id'] = $feed->user_id;
+            $data = [];
+            $data['user_id'] = $feed->user_id;
+            $data['feed_mark'] = $feed->feed_mark;
             // 动态数据
-            $datas[$feed->id]['feed'] = [];
-            $datas[$feed->id]['feed']['feed_id'] = $feed->id;
-            $datas[$feed->id]['feed']['feed_title'] = $feed->feed_title ?? '';
-            $datas[$feed->id]['feed']['feed_content'] = $feed->feed_content;
-            $datas[$feed->id]['feed']['created_at'] = $feed->created_at->timestamp;
-            $datas[$feed->id]['feed']['feed_from'] = $feed->feed_from;
-            $datas[$feed->id]['feed']['storages'] = $feed->storages->map(function($storage) {
-                return $storage->id;
+            $data['feed'] = [];
+            $data['feed']['feed_id'] = $feed->id;
+            $data['feed']['feed_title'] = $feed->feed_title ?? '';
+            $data['feed']['feed_content'] = $feed->feed_content;
+            $data['feed']['created_at'] = $feed->created_at->toDateTimeString();
+            $data['feed']['feed_from'] = $feed->feed_from;
+            $data['feed']['storages'] = $feed->storages->map(function($storage) {
+                return [ 'storage_id' => $storage->id, 'width' => $storage->image_width, 'height' => $storage->image_height];
             });
             // 工具数据
-            $datas[$feed->id]['tool'] = [];
-            $datas[$feed->id]['tool']['feed_view_count'] = $feed->feed_view_count;
-            $datas[$feed->id]['tool']['feed_digg_count'] = $feed->feed_digg_count;
-            $datas[$feed->id]['tool']['feed_comment_count'] = $feed->feed_comment_count;
+            $data['tool'] = [];
+            $data['tool']['feed_view_count'] = $feed->feed_view_count;
+            $data['tool']['feed_digg_count'] = $feed->feed_digg_count;
+            $data['tool']['feed_comment_count'] = $feed->feed_comment_count;
             // 暂时剔除当前登录用户判定
-            $datas[$feed->id]['tool']['is_digg_feed'] = $uid ? $feed->diggs_count : 0;
+            $data['tool']['is_digg_feed'] = $uid ? FeedDigg::byFeedId($feed->id)->byUserId($uid)->count() : 0;
+            $data['tool']['is_collection_feed'] = $uid ? FeedCollection::where('feed_id', $feed->id)->where('user_id', $uid)->count() : 0;
             // 最新3条评论
-            $datas[$feed->id]['comments'] = [];
-            foreach($feed->comments()->orderBy('id', 'DESC')->take(3)->get() as $comment) {
-                $datas[$feed->id]['comments'][$comment->id]['id'] = $comment->id;
-                $datas[$feed->id]['comments'][$comment->id]['user_id'] = $comment->user_id;
-                $datas[$feed->id]['comments'][$comment->id]['created_at'] = $comment->created_at->timestamp;
-                $datas[$feed->id]['comments'][$comment->id]['comment_content'] = $comment->comment_content;
-                $datas[$feed->id]['comments'][$comment->id]['reply_to_user_id'] = $comment->reply_to_user_id;
-            };
+            $data['comments'] = [];
+
+            $getCommendsNumber = 3;
+            $data['comments'] = $feed->comments()
+                ->orderBy('id', 'desc')
+                ->take($getCommendsNumber)
+                ->select(['id', 'user_id', 'created_at', 'comment_content', 'reply_to_user_id', 'comment_mark'])
+                ->get()
+                ->toArray();
+
+            $datas[] = $data;
         };
 
         return response()->json([
@@ -85,10 +73,7 @@ class FeedController extends Controller
     public function store(Request $request)
     {
         $user = $request->user();
-        $response = Validator::make($request->input(), [
-            'feed_content' => 'required'
-        ]);
-        if($response->fails()) {
+        if(!$request->storage_task_ids && !$request->feed_content) {
             return response()->json([
                 'status'  => false,
                 'code'    => 6001,
@@ -114,13 +99,18 @@ class FeedController extends Controller
         $feed->feed_longtitude = $request->input('longtitude', '');
         $feed->feed_geohash = $request->input('geohash', '');
         $feed->feed_title = $request->input('feed_title', '');
+        $feed->feed_mark = $request->input('feed_mark', ($user->id.Carbon::now()->timestamp)*1000);//默认uid+毫秒时间戳
         $feed->save();
         $feed->storages()->sync($storages);
+
+        $count = new FeedCount();
+        $count->count($request->user()->id, 'feeds_count', $method = 'increment');//更新动态作者的动态数量
 
         return response()->json([
                 'status' => true,
                 'code' => 0,
-                'message' => '动态创建成功'
+                'message' => '动态创建成功',
+                'data' => $feed->id
             ])->setStatusCode(201);
     }
 
@@ -160,7 +150,7 @@ class FeedController extends Controller
         $data['feed']['created_at'] = $feed->created_at->timestamp;
         $data['feed']['feed_from'] = $feed->feed_from;
         $data['feed']['feed_storages'] = $feed->storages->map(function($storage) {
-            return $storage->feed_storage_id;
+            return [ 'storage_id' => $storage->id, 'width' => $storage->image_width, 'height' => $storage->image_height];
         });
         // 工具栏数据
         $data['tool'] = [];
@@ -192,7 +182,7 @@ class FeedController extends Controller
      */
     public function getNewFeeds(Request $request)
     {
-        $user_id  = $request->user()->id ?? 0;
+        $user_id  = Auth::guard('api')->user()->id ?? 0;
         // 设置单页数量
         $limit = $request->limit ?? 15;
         $feeds = Feed::orderBy('id', 'DESC')
@@ -206,11 +196,12 @@ class FeedController extends Controller
                     $query->where('user_id', $user_id);
                 }
             }])
+            ->byAudit()
             ->with('storages')
             ->take($limit)
             ->get();
 
-        return $this->index($feeds, $user_id);
+        return $this->formatFeedList($feeds, $user_id);
     }
 
     /**
@@ -222,13 +213,11 @@ class FeedController extends Controller
      */
     public function getFollowFeeds(Request $request)
     {
-        $user_id  = $request->user()->id ?? 0;
+        $user_id  = Auth::guard('api')->user()->id;
         // 设置单页数量
         $limit = $request->limit ?? 15;
         $feeds = Feed::orderBy('id', 'DESC')
-            // ->where(function($query) use ($user_id) {
-
-            // })
+            ->whereIn('user_id', $request->user()->follows->pluck('following_user_id'))
             ->where(function($query) use ($request) {
                 if($request->max_id > 0){
                     $query->where('id', '<', $request->max_id);
@@ -239,11 +228,11 @@ class FeedController extends Controller
                     $query->where('user_id', $user_id);
                 }
             }])
+            ->byAudit()
             ->with('storages')
             ->take($limit)
             ->get();
-
-        return $this->index($feeds, $user_id);
+        return $this->formatFeedList($feeds, $user_id);
     }
 
 
@@ -256,24 +245,79 @@ class FeedController extends Controller
      */
     public function getHotFeeds(Request $request)
     {
-        $user_id  = $request->user()->id ?? 0;
+        $user_id  = Auth::guard('api')->user()->id ?? 0;
         // 设置单页数量
         $limit = $request->limit ?? 15;
+        $page = $request->page ?? 1;
+        $skip = ($page - 1)*$limit;
+        
         $feeds = Feed::orderBy('id', 'DESC')
-            ->where(function($query) use ($request) {
-                if($request->page > 1){
-                    $query->where('id', '<', $request->max_id);
-                }
-            })
+            ->whereIn('id', FeedDigg::groupBy('feed_id')
+                ->take($limit)
+                ->select('feed_id',DB::raw('COUNT(user_id) as diggcount'))
+                ->where('created_at', '>', Carbon::now()->subMonth()->toDateTimeString())
+                ->orderBy('diggcount', 'desc')
+                ->skip($skip)
+                ->pluck('feed_id')
+                )
             ->withCount(['diggs' => function($query) use ($user_id) {
                 if($user_id) {
                     $query->where('user_id', $user_id);
                 }
             }])
+            ->byAudit()
             ->with('storages')
-            ->take($limit)
             ->get();
 
-        return $this->index($feeds, $user_id);
+        return $this->formatFeedList($feeds, $user_id);
+    }
+    /**
+     * 获取单个用户的动态列表
+     * 
+     * @author bs<414606094@qq.com>
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function getUserFeeds(Request $request, int $user_id)
+    {
+        $auth_id  = Auth::guard('api')->user()->id ?? 0;
+        $limit = $request->input('limit', 15);
+        $max_id = intval($request->input('max_id'));
+
+        $feeds = Feed::orderBy('id', 'DESC')
+        ->where('user_id', $user_id)
+        ->where(function ($query) use($max_id) {
+            if ($max_id > 0) {
+                $query->where('id', '<', $max_id);
+            }
+        })        
+        ->withCount(['diggs' => function($query) use ($user_id) {
+            if($user_id) {
+                $query->where('user_id', $user_id);
+            }
+        }])
+        ->byAudit()
+        ->with('storages')
+        ->take($limit)
+        ->get();
+
+        return $this->formatFeedList($feeds, $auth_id);
+    }
+
+    /**
+     * 增加浏览量
+     * 
+     * @author bs<414606094@qq.com>
+     * @param  int $feed_id [description]
+     */
+    public function addFeedViewCount(int $feed_id)
+    {
+        Feed::byFeedId($feed_id)->increment('feed_view_count');
+        return response()->json([
+            'status' => true,
+            'code' => 0,
+            'message' => 'ok',
+            'data' => null
+        ])->setStatusCode(201); 
     }
 }

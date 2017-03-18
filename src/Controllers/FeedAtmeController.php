@@ -24,32 +24,12 @@ class FeedAtmeController extends Controller
 			if ( intval($request->max_id) > 0) {
 				$query->where('id', '<', intval($request->max_id));
 			}
-		})->orderBy('id', 'desc')->get();
-
-		if (!$list->isEmpty()) {
-			foreach ($list as $key => $value) {
-				if ($value->feed) {
-					$data['atme_id'] = $value->id;
-					$data['feed_id'] = $value->feed->id;
-					$data['feed_title'] = $value->feed->feed_title;
-					$data['feed_content'] = $value->feed->feed_content;
-					$data['created_at'] = $value->feed->created_at->timestamp;
-					$data['user_id'] = $value->user_id;
-				}
-				$datas[] = $data;
-			}
-
-            return response()->json(static::createJsonData([
-                'code'   => 0,
-                'status' => true,
-                'data' => $datas,
-            ]))->setStatusCode(200);
-		}
+		})->with('feed')->orderBy('id', 'desc')->get();
 
         return response()->json(static::createJsonData([
             'code'   => 0,
             'status' => true,
-            'data' => [],
+            'data' => $list,
         ]))->setStatusCode(200);
 	}
 }
