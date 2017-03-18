@@ -17,7 +17,7 @@ class FeedDiggController extends Controller
 	public function getDiggList(Request $request, int $feed_id)
 	{
 		$limit = $request->get('limit', 10);
-		//intval($request->limit) ? : 10;
+		// intval($request->limit) ? : 10;
 		$max_id = $request->get('max_id');
 		$feed = Feed::byFeedId($feed_id)
 			->with([
