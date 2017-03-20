@@ -68,7 +68,7 @@ class FeedCollectionController extends Controller
 		FeedCollection::where('feed_id', $feed_id)->where('user_id', $feedcollection['user_id'])->delete();
         return response()->json(static::createJsonData([
             'status' => true,
-            'message' => '取消点赞收藏',
-        ]))->setStatusCode(201);
+            'message' => '取消收藏成功',
+        ]))->setStatusCode(204);
 	}
 }
