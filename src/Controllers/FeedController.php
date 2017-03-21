@@ -100,11 +100,18 @@ class FeedController extends Controller
         $feed->feed_geohash = $request->input('geohash', '');
         $feed->feed_title = $request->input('feed_title', '');
         $feed->feed_mark = $request->input('feed_mark', ($user->id.Carbon::now()->timestamp)*1000);//默认uid+毫秒时间戳
-        $feed->save();
-        $feed->storages()->sync($storages);
 
-        $count = new FeedCount();
-        $count->count($request->user()->id, 'feeds_count', $method = 'increment');//更新动态作者的动态数量
+        DB::transaction(function () use ($feed, $storages, $request) { // 创建动态时的数据连贯操作
+            $feed->save();
+            $feed->storages()->sync($storages);
+
+            $request->isatuser == 1 && $this->analysisAtme($feed->feed_content);
+
+            $count = new FeedCount();
+            $count->count($request->user()->id, 'feeds_count', $method = 'increment');//更新动态作者的动态数量
+        });
+
+
 
         return response()->json([
                 'status' => true,
@@ -257,6 +264,7 @@ class FeedController extends Controller
                 ->select('feed_id',DB::raw('COUNT(user_id) as diggcount'))
                 ->where('created_at', '>', Carbon::now()->subMonth()->toDateTimeString())
                 ->orderBy('diggcount', 'desc')
+                ->orderBy('feed_id', 'desc')
                 ->skip($skip)
                 ->pluck('feed_id')
                 )
@@ -319,5 +327,16 @@ class FeedController extends Controller
             'message' => 'ok',
             'data' => null
         ])->setStatusCode(201); 
+    }
+
+    /**
+     * 解析动态中的@用户
+     * 
+     * @author bs<414606094@qq.com>
+     * @param  [type] $content [description]
+     */
+    protected function analysisAtme($content)
+    {
+
     }
 }
