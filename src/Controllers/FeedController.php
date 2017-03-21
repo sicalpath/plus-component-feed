@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedAtme;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedCollection;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Services\FeedCount;
 use Zhiyi\Plus\Storages\Storage;
@@ -105,7 +106,7 @@ class FeedController extends Controller
             $feed->save();
             $feed->storages()->sync($storages);
 
-            $request->isatuser == 1 && $this->analysisAtme($feed->feed_content);
+            $request->isatuser == 1 && $this->analysisAtme($feed->feed_content, $feed->user_id, $feed->id);
 
             $count = new FeedCount();
             $count->count($request->user()->id, 'feeds_count', $method = 'increment');//更新动态作者的动态数量
@@ -335,8 +336,18 @@ class FeedController extends Controller
      * @author bs<414606094@qq.com>
      * @param  [type] $content [description]
      */
-    protected function analysisAtme($content)
+    protected function analysisAtme(string $content, int $user_id, int $feed_id)
     {
+        $pattern = '/\[tsplus:(\d+):(\w+)\]/is';
+        preg_match_all($pattern, $content, $matchs);
+        $uids = $matchs[1];
+        $time = Carbon::now();
+        if (is_array($uids)) {
+            $datas = array_map(function($v) use ($user_id, $feed_id, $time) { 
+                return ['at_user_id' => $v, 'user_id' => $user_id, 'feed_id' => $feed_id, 'created_at' => $time, 'updated_at' => $time];
+            }, $uids);
 
+            FeedAtme::insert($datas); // 批量插入数据需要手动维护时间
+        }
     }
 }

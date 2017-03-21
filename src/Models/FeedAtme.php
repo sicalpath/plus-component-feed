@@ -11,6 +11,8 @@ class FeedAtme extends Model
     protected $table = 'feed_atmes';
 
     protected $primaryKey = 'id';
+
+    protected $fillable = ['at_user_id', 'user_id', 'feed_id', 'created_at', 'updated_at'];
     /**
      * 获取被@用户的基本信息
      * 
