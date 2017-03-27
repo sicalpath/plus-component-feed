@@ -1,6 +1,7 @@
 <?php
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Controllers;
 
+use DB;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
@@ -70,8 +71,11 @@ class FeedCommentController extends Controller
 		$feedComment->comment_content = $request->comment_content;
 		$feedComment->comment_mark = $request->input('comment_mark', ($request->user()->id.Carbon::now()->timestamp)*1000);//默认uid+毫秒时间戳
     	
-    	$feedComment->save();
-    	Feed::byFeedId($feed->id)->increment('feed_comment_count');//增加评论数量
+    	DB::transaction(function () use ($feedComment, $feed) {
+	    	$feedComment->save();
+    		Feed::byFeedId($feed->id)->increment('feed_comment_count');//增加评论数量
+    	});
+
 		// $push = new Feedpush();
 		// if ($push) {
 		// 	$extras = ['action' => 'comment'];
@@ -98,9 +102,15 @@ class FeedCommentController extends Controller
 	 */
 	public function delComment(Request $request, int $feed_id, int $comment_id)
 	{
-		if (FeedComment::where('id', $comment_id)->delete()) {
-			Feed::byFeedId($feed_id)->decrement('feed_comment_count');//减少评论数量
+		$comment = FeedComment::find($comment_id);
+
+		if ($comment) {
+	        DB::transaction(function () use ($comment, $feed_id) {
+				$comment->delete();
+				Feed::byFeedId($feed_id)->decrement('feed_comment_count');//减少评论数量
+	        });
 		}
+
         return response()->json(static::createJsonData([
             'status' => true,
             'message' => '删除成功',
