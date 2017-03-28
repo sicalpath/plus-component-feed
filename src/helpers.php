@@ -11,7 +11,7 @@ use function view as plus_view;
  * @author Seven Du <shiweidu@outlook.com>
  * @homepage http://medz.cn
  */
-function asset($path, $secure)
+function asset($path, $secure = null)
 {
     $path = asset_path($path);
     return plus_asset($path, $secure);
