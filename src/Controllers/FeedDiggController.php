@@ -88,7 +88,7 @@ class FeedDiggController extends Controller
 		// if ($push) {
 		// 	$extras = ['action' => 'digg'];
 		// 	$alert = '有人赞了你的动态，去看看吧';
-		// 	$audience = 'all';
+		// 	$audience = $request->reply_to_user_id ?? $feed->user_id;
 
 		// 	$push->push($alert, $audience, $extras);
 		// }

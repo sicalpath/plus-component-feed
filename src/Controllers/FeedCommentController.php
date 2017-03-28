@@ -80,7 +80,7 @@ class FeedCommentController extends Controller
 		// if ($push) {
 		// 	$extras = ['action' => 'comment'];
 		// 	$alert = '有人评论了你，去看看吧';
-		// 	$audience = 'all';
+		// 	$audience = $request->reply_to_user_id ?? $feed->user_id;
 
 		// 	$push->push($alert, $audience, $extras);
 		// }
