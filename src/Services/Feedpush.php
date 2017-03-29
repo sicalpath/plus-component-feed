@@ -16,13 +16,8 @@ class Feedpush
 		$this->client = new Client($appkey, $secret);
 	}
 
-	public function push($alert, $audience = 'all', $extras = array())
+	public function push($alert, $alias, $extras = array())
 	{
-        if ($audience != 'all') {
-            $alias = explode(',', $audience);
-            $audience = $alias;
-        }
-
         $extras = array_merge($extras, ['type' => 'feed']);
 
         $notification = array(
@@ -34,7 +29,7 @@ class Feedpush
             $result = $this->client->push()
                 ->setOptions(1, null, null, false, null)
                 ->setPlatform('all') //全部平台
-                ->setAudience($audience) // 指定用户
+                ->addAlias($alias) // 指定用户
                 ->iosNotification($alert, $notification)
                 ->androidNotification($alert, $notification)
                 ->send();

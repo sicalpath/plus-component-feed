@@ -89,9 +89,9 @@ class FeedDiggController extends Controller
 		if ($push) {
 			$extras = ['action' => 'digg'];
 			$alert = '有人赞了你的动态，去看看吧';
-			$audience = $request->reply_to_user_id ?? $feed->user_id;
+			$alias = $request->reply_to_user_id ?? $feed->user_id;
 
-			$push->push($alert, $audience, $extras);
+			$push->push($alert, $alias, $extras);
 		}
 		
 		FeedDigg::create($feeddigg);

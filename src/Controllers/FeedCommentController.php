@@ -81,9 +81,9 @@ class FeedCommentController extends Controller
 		if ($push) {
 			$extras = ['action' => 'comment'];
 			$alert = '有人评论了你，去看看吧';
-			$audience = $request->reply_to_user_id ?? $feed->user_id;
+			$alias = $request->reply_to_user_id ?? $feed->user_id;
 
-			$push->push($alert, $audience, $extras);
+			$push->push($alert, $alias, $extras);
 		}
         return response()->json(static::createJsonData([
                 'status' => true,
