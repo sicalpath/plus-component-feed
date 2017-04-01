@@ -90,8 +90,8 @@ class FeedDiggController extends Controller
 		$extras = ['action' => 'digg'];
 		$alert = '有人赞了你的动态，去看看吧';
 		$alias = $request->reply_to_user_id ?? $feed->user_id;
-		
-		dispatch(new PushMessage($alert, $alias, $extras));
+
+		dispatch(new PushMessage($alert, (string)$alias, $extras));
 		
 		FeedDigg::create($feeddigg);
 		Feed::byFeedId($feed_id)->increment('feed_digg_count');//增加点赞数量

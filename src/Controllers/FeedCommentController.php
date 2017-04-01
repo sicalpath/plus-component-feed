@@ -82,7 +82,7 @@ class FeedCommentController extends Controller
 		$alert = '有人评论了你，去看看吧';
 		$alias = $request->reply_to_user_id > 0 ? : $feed->user_id;
 
-		dispatch(new PushMessage($alert, $alias, $extras));
+		dispatch(new PushMessage($alert,(string)$alias, $extras));
 
         return response()->json(static::createJsonData([
                 'status' => true,
