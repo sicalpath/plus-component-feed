@@ -92,7 +92,7 @@ class FeedController extends Controller
             });
         }
         $feed = new Feed();
-        $feed->feed_content = $request->feed_content;
+        $feed->feed_content = $request->feed_content ?? '';
         $feed->feed_client_id = $request->getClientIp();
         $feed->user_id = $request->user()->id;
         $feed->feed_from = $request->feed_from;

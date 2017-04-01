@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedComment;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Services\Feedpush;
+use Zhiyi\Plus\Jobs\PushMessage;
 use Carbon\Carbon;
 
 class FeedCommentController extends Controller
@@ -77,14 +78,12 @@ class FeedCommentController extends Controller
     		Feed::byFeedId($feed->id)->increment('feed_comment_count');//增加评论数量
     	});
 
-		$push = new Feedpush();
-		if ($push) {
-			$extras = ['action' => 'comment'];
-			$alert = '有人评论了你，去看看吧';
-			$alias = $request->reply_to_user_id ?? $feed->user_id;
+		$extras = ['action' => 'comment'];
+		$alert = '有人评论了你，去看看吧';
+		$alias = $request->reply_to_user_id > 0 ? : $feed->user_id;
 
-			$push->push($alert, $alias, $extras);
-		}
+		dispatch(new PushMessage($alert, $extras, $audience));
+
         return response()->json(static::createJsonData([
                 'status' => true,
                 'code' => 0,

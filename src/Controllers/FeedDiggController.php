@@ -8,6 +8,7 @@ use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedStorage;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Services\FeedCount;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Services\Feedpush;
+use Zhiyi\Plus\Jobs\PushMessage;
 use Zhiyi\Plus\Models\UserDatas;
 
 class FeedDiggController extends Controller
@@ -85,14 +86,12 @@ class FeedDiggController extends Controller
                 'message' => '已赞过该动态',
             ]))->setStatusCode(400);
 		}
-		$push = new Feedpush();
-		if ($push) {
-			$extras = ['action' => 'digg'];
-			$alert = '有人赞了你的动态，去看看吧';
-			$alias = $request->reply_to_user_id ?? $feed->user_id;
 
-			$push->push($alert, $alias, $extras);
-		}
+		$extras = ['action' => 'digg'];
+		$alert = '有人赞了你的动态，去看看吧';
+		$alias = $request->reply_to_user_id ?? $feed->user_id;
+		
+		dispatch(new PushMessage($alert, $extras, $audience));
 		
 		FeedDigg::create($feeddigg);
 		Feed::byFeedId($feed_id)->increment('feed_digg_count');//增加点赞数量
