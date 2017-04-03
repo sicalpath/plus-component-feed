@@ -18,5 +18,10 @@
   "dependencies": {
     "react": "^15.4.2",
     "react-dom": "^15.4.2"
+  },
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development webpack --display-error-details --progress --colors --hide-modules",
+    "dist": "cross-env NODE_ENV=production webpack --display-error-details --progress --colors",
+    "watch": "cross-env NODE_ENV=development webpack --display-error-details --progress --hide-modules --colors --watch",
   }
 }
