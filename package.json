@@ -23,5 +23,8 @@
     "dev": "cross-env NODE_ENV=development webpack --display-error-details --progress --colors --hide-modules",
     "dist": "cross-env NODE_ENV=production webpack --display-error-details --progress --colors",
     "watch": "cross-env NODE_ENV=development webpack --display-error-details --progress --hide-modules --colors --watch",
+    "dev:r": "cross-env PLUS_DEV_FEED=1 npm run dev",
+    "dist:r": "npm run dev --repositorie",
+    "watch:r": "npm run dev --repositorie"
   }
 }

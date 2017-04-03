@@ -36,6 +36,17 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 const isProd = NODE_ENV === 'production';
 
 /*
+|--------------------------------------------------------
+| 获取编译模式
+|--------------------------------------------------------
+|
+| 判断是否是使用 plus-component 内置开发模式的静态资源编译。
+|
+*/
+
+const isRepositorie = !!parseInt(process.env.PLUS_DEV_FEED || 0);
+
+/*
 |---------------------------------------------------------
 | 源代码根
 |---------------------------------------------------------
@@ -104,7 +115,7 @@ entry: {
 */
 
 output: {
-  path: path.join(__dirname, 'asstes'),
+  path: isRepositorie ? path.join(__dirname, '../../../../public/zhiyicx/plus-component-feed') : path.join(__dirname, 'assets'),
   filename: '[name].js'
 },
 
