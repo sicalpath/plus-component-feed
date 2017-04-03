@@ -17,7 +17,7 @@ class Info implements ComponentInfoInterface
      */
     public function getName(): string
     {
-        return 'feed';
+        return '动态分享';
     }
 
     /**
