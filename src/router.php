@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\base_path as component_base_path;
 
 Route::middleware('web')
