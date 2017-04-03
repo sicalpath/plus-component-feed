@@ -28,7 +28,7 @@ class Info implements ComponentInfoInterface
      */
     public function getLogo(): string
     {
-        return asset('images/logo.png');
+        return asset('logo.png');
     }
 
     /**
@@ -39,7 +39,7 @@ class Info implements ComponentInfoInterface
      */
     public function getIcon(): string
     {
-        return asset('images/logo.png');
+        return asset('feed-icon.png');
     }
 
     /**
