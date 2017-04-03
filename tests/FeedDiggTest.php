@@ -1,11 +1,11 @@
 <?php
+
 namespace  Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\tests;
 
 use Tests\TestCase;
-use Zhiyi\Plus\Models\AuthToken;
 use Zhiyi\Plus\Models\User;
+use Zhiyi\Plus\Models\AuthToken;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
-use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedComment;
 
 class FeedDiggTest extends TestCase
 {
@@ -60,8 +60,8 @@ class FeedDiggTest extends TestCase
     }
 
     /**
-     * 测试点赞情况
-     * 
+     * 测试点赞情况.
+     *
      * @author bs<414606094@qq.com>
      * @return [type] [description]
      */
@@ -81,8 +81,8 @@ class FeedDiggTest extends TestCase
     }
 
     /**
-     * 测试重复点赞情况
-     * 
+     * 测试重复点赞情况.
+     *
      * @author bs<414606094@qq.com>
      * @return [type] [description]
      */
@@ -100,12 +100,12 @@ class FeedDiggTest extends TestCase
             'status' => false,
             'message' => '已赞过该动态',
         ];
-        $response->assertJson($json);  
+        $response->assertJson($json);
     }
 
     /**
-     * 测试正常取消点赞的情况
-     * 
+     * 测试正常取消点赞的情况.
+     *
      * @author bs<414606094@qq.com>
      * @return [type] [description]
      */
@@ -120,8 +120,8 @@ class FeedDiggTest extends TestCase
     }
 
     /**
-     * 测试重复取消点赞的情况
-     * 
+     * 测试重复取消点赞的情况.
+     *
      * @author bs<414606094@qq.com>
      * @return [type] [description]
      */
@@ -135,11 +135,11 @@ class FeedDiggTest extends TestCase
         $response = $this->deleteJson($uri, $responseBody, $responseHeader);
         $response->assertStatus(400);
 
-        $json = [               
+        $json = [
                 'code' => 6006,
                 'status' => false,
                 'message' => '未对该动态点赞',
         ];
-        $response->assertJson($json); 
+        $response->assertJson($json);
     }
 }

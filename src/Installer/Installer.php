@@ -1,42 +1,37 @@
 <?php
+
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Installer;
 
 use Closure;
-use Zhiyi\Component\Installer\PlusInstallPlugin\AbstractInstaller;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use function  Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\{
-    asset_path,
-    route_path,
-    resource_path,
-    base_path as component_base_path
-};
+use Illuminate\Database\Schema\Blueprint;
+use Zhiyi\Component\Installer\PlusInstallPlugin\AbstractInstaller;
+use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\base_path as component_base_path;
 
 class Installer extends AbstractInstaller
-{   
-
+{
     public function getComponentInfo()
     {
         return new Info();
     }
 
-	/**
-	 * register routers
-	 * @return [type] [description]
-	 */
-	public function router()
-	{
-		return dirname(__DIR__).'/router.php';
-	}
+    /**
+     * register routers.
+     * @return [type] [description]
+     */
+    public function router()
+    {
+        return dirname(__DIR__).'/router.php';
+    }
 
-	/**
-	 * component installer
-	 * @param  Closure $next [description]
-	 * @return [type]        [description]
-	 */
-	public function install(Closure $next)
-	{
-		if (!Schema::hasTable('feed_atmes')) {
+    /**
+     * component installer.
+     * @param  Closure $next [description]
+     * @return [type]        [description]
+     */
+    public function install(Closure $next)
+    {
+        if (! Schema::hasTable('feed_atmes')) {
             Schema::create('feed_atmes', function (Blueprint $table) {
                 $table->engine = 'InnoDB';
                 $table->increments('id')->comment('主键');
@@ -45,45 +40,45 @@ class Installer extends AbstractInstaller
             include component_base_path('/database/table_feed_atmes_columns.php');
         }
 
-        if (!Schema::hasTable('feeds')) {
-        	Schema::create('feeds', function (Blueprint $table) {
-        		$table->engine = 'InnoDB';
-        		$table->increments('id')->comment('primary key');
-        		$table->timestamps();
-        		$table->softDeletes();
-        	});
-        	include component_base_path('/database/table_feeds_columns.php');
+        if (! Schema::hasTable('feeds')) {
+            Schema::create('feeds', function (Blueprint $table) {
+                $table->engine = 'InnoDB';
+                $table->increments('id')->comment('primary key');
+                $table->timestamps();
+                $table->softDeletes();
+            });
+            include component_base_path('/database/table_feeds_columns.php');
         }
 
-        if (!Schema::hasTable('feed_diggs')) {
-        	Schema::create('feed_diggs', function (Blueprint $table) {
-        		$table->engine = 'InnoDB';
-        		$table->increments('id')->comment('primary key');
-        		$table->timestamps();
-        	});
-        	include component_base_path('/database/table_feed_diggs_columns.php');
+        if (! Schema::hasTable('feed_diggs')) {
+            Schema::create('feed_diggs', function (Blueprint $table) {
+                $table->engine = 'InnoDB';
+                $table->increments('id')->comment('primary key');
+                $table->timestamps();
+            });
+            include component_base_path('/database/table_feed_diggs_columns.php');
         }
 
-        if (!Schema::hasTable('feed_comments')) {
-        	Schema::create('feed_comments', function (Blueprint $table) {
-        		$table->engine = 'InnoDB';
-        		$table->increments('id')->comment('primary key');
-        		$table->timestamps();
-        		$table->softDeletes();
-        	});
-        	include component_base_path('/database/table_feed_comments_columns.php');
+        if (! Schema::hasTable('feed_comments')) {
+            Schema::create('feed_comments', function (Blueprint $table) {
+                $table->engine = 'InnoDB';
+                $table->increments('id')->comment('primary key');
+                $table->timestamps();
+                $table->softDeletes();
+            });
+            include component_base_path('/database/table_feed_comments_columns.php');
         }
 
-        if (!Schema::hasTable('feed_storages')) {
-        	Schema::create('feed_storages', function (Blueprint $table) {
-        		$table->engine = 'InnoDB';
-        		$table->increments('id')->comment('primary key');
-        		$table->timestamps();
-        	});
-        	include component_base_path('/database/table_feed_storages_columns.php');
+        if (! Schema::hasTable('feed_storages')) {
+            Schema::create('feed_storages', function (Blueprint $table) {
+                $table->engine = 'InnoDB';
+                $table->increments('id')->comment('primary key');
+                $table->timestamps();
+            });
+            include component_base_path('/database/table_feed_storages_columns.php');
         }
 
-        if (!Schema::hasTable('feed_collections')) {
+        if (! Schema::hasTable('feed_collections')) {
             Schema::create('feed_collections', function (Blueprint $table) {
                 $table->engine = 'InnoDB';
                 $table->increments('id')->comment('primary key');
@@ -92,7 +87,7 @@ class Installer extends AbstractInstaller
             include component_base_path('/database/table_feed_collections_columns.php');
         }
 
-        if (!Schema::hasTable('feed_views')) {
+        if (! Schema::hasTable('feed_views')) {
             Schema::create('feed_views', function (Blueprint $table) {
                 $table->engine = 'InnoDB';
                 $table->increments('id')->comment('primary key');
@@ -100,11 +95,11 @@ class Installer extends AbstractInstaller
             });
             include component_base_path('/database/table_feed_views_columns.php');
         }
-        
-		$next();
-	}
 
-	/**
+        $next();
+    }
+
+    /**
      * Do run update the compoent.
      *
      * @param Closure $next
@@ -124,7 +119,7 @@ class Installer extends AbstractInstaller
     }
 
     /**
-     * uninstall component
+     * uninstall component.
      * @param  Closure $next [description]
      * @return [type]        [description]
      */
@@ -140,12 +135,11 @@ class Installer extends AbstractInstaller
     }
 
     /**
-     * setting static files
+     * setting static files.
      * @return [type] [description]
      */
     public function resource()
     {
         return component_base_path('/resource');
     }
-
 }

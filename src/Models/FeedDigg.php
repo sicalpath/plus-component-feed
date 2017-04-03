@@ -1,18 +1,20 @@
 <?php
+
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models;
 
 use Zhiyi\Plus\Models\User;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class FeedDigg extends Model
 {
     protected $table = 'feed_diggs';
 
     protected $fillable = ['user_id', 'feed_id'];
+
     /**
-     * 赞分享的用户信息
-     * 
+     * 赞分享的用户信息.
+     *
      * @author bs<414606094@qq.com>
      * @return object
      */
@@ -22,8 +24,8 @@ class FeedDigg extends Model
     }
 
     /**
-     * 被赞的分享信息
-     * 
+     * 被赞的分享信息.
+     *
      * @author bs<414606094@qq.com>
      * @return object
      */
@@ -33,7 +35,7 @@ class FeedDigg extends Model
     }
 
     /**
-     * 根据被@动态id查找
+     * 根据被@动态id查找.
      * @author bs<414606094@qq.com>
      * @param  Builder $query  [description]
      * @param  int     $feedId [description]
@@ -45,8 +47,8 @@ class FeedDigg extends Model
     }
 
     /**
-     * 根据被@用户id查找
-     * 
+     * 根据被@用户id查找.
+     *
      * @author bs<414606094@qq.com>
      * @param  Builder $query    [description]
      * @param  int $userId [description]

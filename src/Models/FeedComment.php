@@ -1,11 +1,12 @@
 <?php
+
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models;
 
 use DB;
 use Zhiyi\Plus\Models\User;
 use Zhiyi\Plus\Models\Comment;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class FeedComment extends Model
 {
@@ -16,11 +17,11 @@ class FeedComment extends Model
         'reply_to_user_id',
         'to_user_id',
         'feed_id',
-        'comment_content'
+        'comment_content',
     ];
 
     /**
-     * 单条评论属于一个评论发起用户
+     * 单条评论属于一个评论发起用户.
      * @return [type] [description]
      */
     public function user()
@@ -29,7 +30,7 @@ class FeedComment extends Model
     }
 
     /**
-     * 单条评论属于一个评论发起用户
+     * 单条评论属于一个评论发起用户.
      * @return [type] [description]
      */
     public function replyUser()
@@ -47,9 +48,9 @@ class FeedComment extends Model
     }
 
     /**
-     * 根据用户ID查找评论
+     * 根据用户ID查找评论.
      * @param  Builder $query  [description]
-     * @param  integer $userId [description]
+     * @param  int $userId [description]
      * @return [type]          [description]
      */
     public function scopeByUserId(Builder $query, integer $userId)
@@ -58,9 +59,9 @@ class FeedComment extends Model
     }
 
     /**
-     * 根据被评论者ID构建查询器
+     * 根据被评论者ID构建查询器.
      * @param  Builder $query    [description]
-     * @param  integer $toUserId [description]
+     * @param  int $toUserId [description]
      * @return [type]            [description]
      */
     public function scopeByToUserId(Builder $query, integer $toUserId)
@@ -69,9 +70,9 @@ class FeedComment extends Model
     }
 
     /**
-     * 查找评论中的二级回复
+     * 查找评论中的二级回复.
      * @param  Builder $query         [description]
-     * @param  integer $replyToUserId [description]
+     * @param  int $replyToUserId [description]
      * @return [type]                 [description]
      */
     public function scopeByReplyToUserId(Builder $query, integer $replyToUserId)
@@ -80,11 +81,11 @@ class FeedComment extends Model
     }
 
     /**
-     * 根据动态id查找评论
-     * 
+     * 根据动态id查找评论.
+     *
      * @author bs<414606094@qq.com>
      * @param  Builder $query  [description]
-     * @param  integer $feedId [description]
+     * @param  int $feedId [description]
      * @return [type]          [description]
      */
     public function scopeByFeedId(Builder $query, int $feedId)
@@ -93,8 +94,8 @@ class FeedComment extends Model
     }
 
     /**
-     * 覆盖删除方法  同步到tsplus评论表
-     * 
+     * 覆盖删除方法  同步到tsplus评论表.
+     *
      * @author bs<414606094@qq.com>
      * @param  array  $options [description]
      * @return [type]          [description]
@@ -105,7 +106,7 @@ class FeedComment extends Model
             'component' => 'feed',
             'user_id' => $this->user_id,
             'to_user_id' => $this->to_user_id,
-            'reply_to_user_id' => $this->reply_to_user_id,            
+            'reply_to_user_id' => $this->reply_to_user_id,
         ];
 
         DB::transaction(function () use ($comment) {
@@ -118,8 +119,8 @@ class FeedComment extends Model
     }
 
     /**
-     * 同步删除
-     * 
+     * 同步删除.
+     *
      * @author bs<414606094@qq.com>
      * @return [type] [description]
      */

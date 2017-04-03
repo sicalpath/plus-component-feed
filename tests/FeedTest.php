@@ -1,9 +1,10 @@
 <?php
+
 namespace  Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\tests;
 
 use Tests\TestCase;
-use Zhiyi\Plus\Models\AuthToken;
 use Zhiyi\Plus\Models\User;
+use Zhiyi\Plus\Models\AuthToken;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 
 class FeedTest extends TestCase
@@ -61,8 +62,8 @@ class FeedTest extends TestCase
     }
 
     /**
-     * 测试正常获取动态列表
-     * 
+     * 测试正常获取动态列表.
+     *
      * @author bs<414606094@qq.com>
      * @return [type] [description]
      */
@@ -81,14 +82,14 @@ class FeedTest extends TestCase
     }
 
     /**
-     * 测试正常获取单条数据
-     * 
+     * 测试正常获取单条数据.
+     *
      * @author bs<414606094@qq.com>
      * @return [type] [description]
      */
     public function testGetFeedInfo()
     {
-        $uri = $this->uri . '/' . $this->feed->id;
+        $uri = $this->uri.'/'.$this->feed->id;
         $response = $this->get($uri);
         $response->assertStatus(200);
         $json = [
@@ -97,13 +98,13 @@ class FeedTest extends TestCase
             'message' => '获取动态成功',
         ];
 
-        $response->assertJson($json); 
-        $feed->delete();  
+        $response->assertJson($json);
+        $feed->delete();
     }
-    
+
     /**
-     * 测试传入错误id获取动态的情况
-     * 
+     * 测试传入错误id获取动态的情况.
+     *
      * @author bs<414606094@qq.com>
      * @return [type] [description]
      */
@@ -118,12 +119,12 @@ class FeedTest extends TestCase
             'code'    => 6004,
             'message' => '动态不存在或已被删除',
         ];
-        $response->assertJson($json);   
+        $response->assertJson($json);
     }
 
     /**
-     * 测试正常发送数据的情况
-     * 
+     * 测试正常发送数据的情况.
+     *
      * @author bs<414606094@qq.com>
      * @return [type] [description]
      */
@@ -149,13 +150,12 @@ class FeedTest extends TestCase
             'code'    => 0,
             'message' => '动态创建成功',
         ];
-        $response->assertJson($json);   
+        $response->assertJson($json);
     }
-
 
     /**
      * 测试发送不含内容的动态
-     * 
+     *
      * @author bs<414606094@qq.com>
      * @return [type] [description]
      */
@@ -180,7 +180,6 @@ class FeedTest extends TestCase
             'code' => 6001,
             'message' => '动态内容不能为空',
         ];
-        $response->assertJson($json);   
+        $response->assertJson($json);
     }
-
 }

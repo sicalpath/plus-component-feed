@@ -1,11 +1,11 @@
 <?php
+
 namespace  Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\tests;
 
 use Tests\TestCase;
-use Zhiyi\Plus\Models\AuthToken;
 use Zhiyi\Plus\Models\User;
+use Zhiyi\Plus\Models\AuthToken;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
-use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedComment;
 
 class FeedCommentTest extends TestCase
 {
@@ -60,13 +60,13 @@ class FeedCommentTest extends TestCase
     }
 
     /**
-     * 测试正常添加评论的情况
-     * 
+     * 测试正常添加评论的情况.
+     *
      * @author bs<414606094@qq.com>
      * @return [type] [description]
      */
     public function testAddComment()
-    {   
+    {
         $uri = '/api/v1/feeds/'.$this->feed->id.'/comment';
         $responseHeader = ['ACCESS-TOKEN' => $this->auth->token];
         $responseBody = [
@@ -80,12 +80,12 @@ class FeedCommentTest extends TestCase
             'code'    => 0,
             'message' => '评论成功',
         ];
-        $response->assertJson($json);  
+        $response->assertJson($json);
     }
 
     /**
-     * 测试正常获取评论列表情况
-     * 
+     * 测试正常获取评论列表情况.
+     *
      * @author bs<414606094@qq.com>
      * @return [type] [description]
      */
@@ -99,12 +99,12 @@ class FeedCommentTest extends TestCase
         $json = [
             'status'  => true,
         ];
-        $response->assertJson($json);  
+        $response->assertJson($json);
     }
-        
+
     /**
-     * 测试添加空评论
-     * 
+     * 测试添加空评论.
+     *
      * @author bs<414606094@qq.com>
      * @return [type] [description]
      */
@@ -121,14 +121,14 @@ class FeedCommentTest extends TestCase
         $json = [
             'status' => false,
             'code' => 6007,
-            'message' => '评论内容不能为空'
+            'message' => '评论内容不能为空',
         ];
         $response->assertJson($json);
     }
 
     /**
-     * 测试删除评论
-     * 
+     * 测试删除评论.
+     *
      * @author bs<414606094@qq.com>
      * @return [type] [description]
      */

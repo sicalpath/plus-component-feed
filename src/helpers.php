@@ -1,7 +1,10 @@
 <?php
+
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed;
-use function asset as plus_asset;
+
 use function view as plus_view;
+use function asset as plus_asset;
+
 /**
  * Generate an asset path for the application.
  *
@@ -14,6 +17,7 @@ use function view as plus_view;
 function asset($path, $secure = null)
 {
     $path = asset_path($path);
+
     return plus_asset($path, $secure);
 }
 /**
@@ -91,5 +95,6 @@ function view($view = null, $data = [], $mergeData = [])
     if (func_num_args() === 0) {
         return $factory;
     }
+
     return $factory->make($view, $data, $mergeData);
 }

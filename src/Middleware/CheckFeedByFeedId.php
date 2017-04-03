@@ -10,7 +10,7 @@ use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 class CheckFeedByFeedId
 {
     use CreateJsonResponseData;
-    
+
     /**
      * 验证动态是否存在.
      *
@@ -20,21 +20,22 @@ class CheckFeedByFeedId
      * @return mixed
      */
     public function handle(Request $request, Closure $next)
-    {   
+    {
         $feed_id = intval($request->input('feed_id'));
 
-        if (!$feed_id) {
+        if (! $feed_id) {
             return response()->json(static::createJsonData([
                 'code' => 6003,
             ]))->setStatusCode(400);
         }
         $feed = Feed::find($feed_id);
-        if (!$feed) {
+        if (! $feed) {
             return response()->json(static::createJsonData([
                 'code' => 6004,
             ]))->setStatusCode(403);
         }
         $request->attributes->set('feed', $feed);
+
         return $next($request);
     }
 }
