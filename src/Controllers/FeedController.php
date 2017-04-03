@@ -222,7 +222,7 @@ class FeedController extends Controller
         // 设置单页数量
         $limit = $request->limit ?? 15;
         $feeds = Feed::orderBy('id', 'DESC')
-            ->whereIn('user_id', $request->user()->follows->pluck('following_user_id'))
+            ->whereIn('user_id', array_merge([$user_id],$request->user()->follows->pluck('following_user_id')->toArray()))
             ->where(function ($query) use ($request) {
                 if ($request->max_id > 0) {
                     $query->where('id', '<', $request->max_id);
