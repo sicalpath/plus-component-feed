@@ -60,18 +60,6 @@ function component_name()
 }
 
 /**
- * Get the component resource path.
- *
- * @return string
- * @author Seven Du <shiweidu@outlook.com>
- * @homepage http://medz.cn
- */
-function resource_path()
-{
-    return base_path('/resource');
-}
-
-/**
  * Get the evaluated view contents for the given view.
  *
  * @param  string  $view
