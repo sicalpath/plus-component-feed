@@ -20,6 +20,7 @@ function asset($path, $secure = null)
 
     return plus_asset($path, $secure);
 }
+
 /**
  * Get The component resource asset path.
  *
@@ -32,6 +33,7 @@ function asset_path($path)
 {
     return component_name().'/'.$path;
 }
+
 /**
  * Get the component base path.
  *
@@ -44,6 +46,7 @@ function base_path($path = '')
 {
     return dirname(__DIR__).$path;
 }
+
 /**
  * Get the component name.
  *
@@ -55,17 +58,7 @@ function component_name()
 {
     return 'zhiyicx/plus-component-feed';
 }
-/**
- * Get the component route filename.
- *
- * @return string
- * @author Seven Du <shiweidu@outlook.com>
- * @homepage http://medz.cn
- */
-function route_path()
-{
-    return base_path('/router.php');
-}
+
 /**
  * Get the component resource path.
  *
@@ -77,6 +70,7 @@ function resource_path()
 {
     return base_path('/resource');
 }
+
 /**
  * Get the evaluated view contents for the given view.
  *
