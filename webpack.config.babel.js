@@ -21,6 +21,7 @@ import webpack from 'webpack';
 | 获取变量的用处用于判断当前运行环境是否属于正式编译使用。
 |
 */
+
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 /*
@@ -31,6 +32,7 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 | 定义该常量的用处便于程序中多处的判断，用于快捷判断条件。
 |
 */
+
 const isProd = NODE_ENV === 'production';
 
 /*
@@ -41,6 +43,7 @@ const isProd = NODE_ENV === 'production';
 | 获取源代码所处的根路径
 |
 */
+
 const src = path.join(__dirname, 'resource');
 
 /*
@@ -51,6 +54,7 @@ const src = path.join(__dirname, 'resource');
 | 解析并正确的返回已经存在的相对于根下的文件或者目录路径。
 |
 */
+
 const resolve = pathname => path.resolve(src, pathname);
 
 /*
@@ -61,6 +65,7 @@ const resolve = pathname => path.resolve(src, pathname);
 | 合并得到相对于源根路径下的文件路径。
 |
 */
+
 const join = pathname => path.join(src, pathname);
 
 const webpackConfig = {
@@ -73,6 +78,7 @@ const webpackConfig = {
 | 判断是不是正式环境，非正式环境，加载 source-map
 |
 */
+
 devtool: isProd ? false : 'source-map',
 
 /*
@@ -83,9 +89,90 @@ devtool: isProd ? false : 'source-map',
 | 入口配置，多个入口增加更多配置项。这里配置需要编译的资源入口。
 |
 */
+
 entry: {
   admin: resolve('main.js')
 },
+
+/*
+|---------------------------------------------------------
+| 输出配置
+|---------------------------------------------------------
+|
+| 输出配置用于配制输出的文件路径和 js 文件的地方
+|
+*/
+
+output: {
+  path: path.join(__dirname, 'asstes'),
+  filename: '[name].js'
+},
+
+/*
+|---------------------------------------------------------
+| 解决配置
+|---------------------------------------------------------
+|
+| 用语解决和处理路径配置和后缀自动加载
+|
+*/
+
+resolve: {
+  // 忽略加载的后缀
+  extensions: [ '.js', '.jsx', '.json' ],
+  // 模块所处的目录
+  modules: [ src, path.resolve(__dirname, 'node_modules') ]
+},
+
+/*
+|---------------------------------------------------------
+| 模块
+|---------------------------------------------------------
+|
+| 配置模块相关的设置
+|
+*/
+
+module: {
+  rules: [
+    // js文件加载规则
+    {
+      test: /\.jsx?$/,
+      include: [ src ],
+      use: [ 'babel-loader' ]
+    }
+  ]
+},
+
+/*
+|---------------------------------------------------------
+| 插件配置
+|---------------------------------------------------------
+|
+| 定义在编译环境中所使用的插件
+|
+*/
+
+plugins: [
+  // Defined build env.
+  new webpack.DefinePlugin({
+    'process.env': {
+      NODE_ENV: JSON.stringify(NODE_ENV)
+    }
+  }),
+  ...(isProd ? [
+    // Prod env.
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false
+      },
+      sourceMap: false
+    }),
+  ] : [
+    // Development env.
+    new webpack.NoEmitOnErrorsPlugin(),
+  ])
+],
 
 };
 
