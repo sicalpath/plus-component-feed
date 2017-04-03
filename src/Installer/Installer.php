@@ -146,6 +146,6 @@ class Installer extends AbstractInstaller
      */
     public function resource()
     {
-        return component_base_path('/resource');
+        return component_base_path('/assets');
     }
 }
