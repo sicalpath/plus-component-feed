@@ -7,6 +7,11 @@
         {
             "name": "boxshadow",
             "email": "idafoo@sina.com"
+        },
+        {
+            "name": "Seven Du",
+            "email": "shiweidu@outlook.com",
+            "homepage": "http://medz.cn"
         }
     ],
     "require": {
