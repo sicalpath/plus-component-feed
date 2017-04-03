@@ -10,9 +10,15 @@ use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\base_path as component_
 
 class Installer extends AbstractInstaller
 {
+    /**
+     * Get the application info.
+     *
+     * @return void|\Zhiyi\Component\Installer\PlusInstallPlugin\ComponentInfoInterface
+     * @author Seven Du <shiweidu@outlook.com>
+     */
     public function getComponentInfo()
     {
-        return new Info();
+        return app(Info::class);
     }
 
     /**
