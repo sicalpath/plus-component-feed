@@ -4,5 +4,8 @@
   "description": "为 ThinkSNS+ 添加分享功能拓展包",
   "repository": "https://github.com/zhiyicx/plus-component-feed",
   "author": "Seven Du <shiweidu@outlook.com>",
-  "license": "Apache-2"
+  "license": "Apache-2",
+  "devDependencies": {
+    "webpack": "^2.3.2"
+  }
 }
