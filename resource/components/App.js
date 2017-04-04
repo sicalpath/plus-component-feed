@@ -39,7 +39,7 @@ class AppComponent extends Component {
     return (
       <div
         style={{
-          paddingTop: 48,
+          padding: '58px 16px',
         }}
       >
         <Tabs
@@ -49,6 +49,8 @@ class AppComponent extends Component {
             position: 'fixed',
             width: '100%',
             top: 0,
+            right: 0,
+            left: 0,
           }}
         >
           <Tab label="动态信息" value="/" />
