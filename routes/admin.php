@@ -2,4 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', 'HomeContaoller@show');
+Route::middleware('auth')->group(function () {
+    Route::get('/', 'HomeContaoller@show');
+});
