@@ -7,5 +7,8 @@
 </head>
 <body>
     <div id="app"></div>
+    @foreach ($scripts as $script)
+        <script src="{{ $script }}"></script>
+    @endforeach
 </body>
 </html>

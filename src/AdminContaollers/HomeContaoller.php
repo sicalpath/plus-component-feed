@@ -4,6 +4,7 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\AdminContaollers;
 
 use Zhiyi\Plus\Http\Controllers\Controller;
 use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\view;
+use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\asset;
 
 class HomeContaoller extends Controller
 {
@@ -15,6 +16,12 @@ class HomeContaoller extends Controller
      */
     public function show()
     {
-        return view('admin');
+        $scripts = [
+            asset('admin.js')
+        ];
+
+        return view('admin', [
+            'scripts' => $scripts,
+        ]);
     }
 }
