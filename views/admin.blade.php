@@ -15,6 +15,13 @@
             'csrfToken' => $csrf_token,
         ]) !!};
     </script>
+    <style type="text/css">
+        html, body, * {
+            margin: 0;
+            padding: 0;
+            font-family: Roboto, sans-serif, serif, Microsoft Yahei, "微软雅黑";
+        }
+    </style>
 </head>
 <body>
     <div id="app"></div>

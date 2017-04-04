@@ -8,12 +8,16 @@ import React from 'react';
 import { render } from 'react-dom';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import { HashRouter as Router } from 'react-router-dom';
 import theme from './theme';
+import AppComponent from './components/App';
 
 // The app entry.
 const App = () => (
   <MuiThemeProvider muiTheme={theme}>
-    <div>222</div>
+    <Router>
+      <AppComponent />
+    </Router>
   </MuiThemeProvider>
 );
 
