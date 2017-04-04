@@ -1,10 +1,13 @@
 import React, { Component, PropTypes } from 'react';
 import { Tabs, Tab } from 'material-ui/Tabs';
+import { Route } from 'react-router-dom';
+import Home from './Home';
 
 class AppComponent extends Component {
 
   static contextTypes = {
     router: PropTypes.object.isRequired,
+    muiTheme: PropTypes.object.isRequired,
   };
 
   handleChange = (value) => {
@@ -18,15 +21,30 @@ class AppComponent extends Component {
   }
 
   render() {
-    console.log(this.getPathname());
+    console.log(this.context.muiTheme);
     return (
-      <Tabs
-        value={this.getPathname()}
-        onChange={this.handleChange}
+      <div
+        style={{
+          paddingTop: 48,
+        }}
       >
-        <Tab label="分享管理" value="/">a</Tab>
-        <Tab label="评论管理" value="/comment">b</Tab>
-      </Tabs>
+        <Tabs
+          value={this.getPathname()}
+          onChange={this.handleChange}
+          style={{
+            position: 'fixed',
+            width: '100%',
+            top: 0,
+          }}
+        >
+          <Tab label="动态信息" value="/" />
+          <Tab label="动态管理" value="/feeds" />
+          <Tab label="评论管理" value="/comments" />
+        </Tabs>
+
+        <Route exact path="/" component={Home} />
+
+      </div>
     );
   }
 
