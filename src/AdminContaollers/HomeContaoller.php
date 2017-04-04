@@ -16,6 +16,6 @@ class HomeContaoller extends Contaoller
      */
     public function show()
     {
-        return view(base_path('views/admin.blabe.php'));
+        return view('admin');
     }
 }
