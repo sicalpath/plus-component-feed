@@ -2,7 +2,6 @@
 
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed;
 
-use function view as plus_view;
 use function asset as plus_asset;
 
 /**
@@ -72,8 +71,14 @@ function component_name()
  */
 function view($view = null, $data = [], $mergeData = [])
 {
-    $factory = plus_view();
-    $factory->addLocation(base_path('/view'));
+    $finder = app(\Illuminate\View\FileViewFinder::class, [
+        'files' => app(\Illuminate\Filesystem\Filesystem::class),
+        'paths' => [base_path('/views')]
+    ]);
+
+    $factory = app(\Illuminate\Contracts\View\Factory::class);
+    $factory->setFinder($finder);
+    
     if (func_num_args() === 0) {
         return $factory;
     }
