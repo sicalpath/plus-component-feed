@@ -9,7 +9,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ $csrf_token }}">
 
-    <script type="text/javascript">
+    <script>
         window.FEED = {!! json_encode([
             'baseURL' => $base_url,
             'csrfToken' => $csrf_token,
