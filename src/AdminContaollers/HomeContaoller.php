@@ -16,12 +16,7 @@ class HomeContaoller extends Controller
      */
     public function show()
     {
-        $scripts = [
-            asset('admin.js'),
-        ];
-
         return view('admin', [
-            'scripts' => $scripts,
             'base_url' => route('feed:admin'),
             'csrf_token' => csrf_token(),
         ]);

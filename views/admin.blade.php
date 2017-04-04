@@ -18,8 +18,6 @@
 </head>
 <body>
     <div id="app"></div>
-    @foreach ($scripts as $script)
-        <script src="{{ $script }}"></script>
-    @endforeach
+    <script src="{{ \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\asset('admin.js') }}"></script>
 </body>
 </html>
