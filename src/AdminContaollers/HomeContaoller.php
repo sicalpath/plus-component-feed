@@ -4,7 +4,6 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\AdminContaollers;
 
 use Zhiyi\Plus\Http\Controllers\Controller;
 use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\view;
-use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\asset;
 
 class HomeContaoller extends Controller
 {
