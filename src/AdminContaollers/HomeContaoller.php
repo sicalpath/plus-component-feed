@@ -17,7 +17,7 @@ class HomeContaoller extends Controller
     public function show()
     {
         $scripts = [
-            asset('admin.js')
+            asset('admin.js'),
         ];
 
         return view('admin', [
