@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Tabs, Tab } from 'material-ui/Tabs';
+import { matchPath } from 'react-router';
 import { Route } from 'react-router-dom';
 import Home from './Home';
 
@@ -20,8 +21,21 @@ class AppComponent extends Component {
     return pathname;
   }
 
+  matchPath() {
+    const pathname = this.getPathname();
+
+    if (matchPath(pathname, { exact: true })) {
+      return '/';
+    } else if (matchPath(pathname, { path: '/feeds' })) {
+      return '/feeds';
+    } else if (matchPath(pathname, { path: '/comments' })) {
+      return '/comments';
+    }
+
+    return null;
+  }
+
   render() {
-    console.log(this.context.muiTheme);
     return (
       <div
         style={{
@@ -29,7 +43,7 @@ class AppComponent extends Component {
         }}
       >
         <Tabs
-          value={this.getPathname()}
+          value={this.matchPath()}
           onChange={this.handleChange}
           style={{
             position: 'fixed',
