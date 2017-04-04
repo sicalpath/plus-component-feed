@@ -73,12 +73,12 @@ function view($view = null, $data = [], $mergeData = [])
 {
     $finder = app(\Illuminate\View\FileViewFinder::class, [
         'files' => app(\Illuminate\Filesystem\Filesystem::class),
-        'paths' => [base_path('/views')]
+        'paths' => [base_path('/views')],
     ]);
 
     $factory = app(\Illuminate\Contracts\View\Factory::class);
     $factory->setFinder($finder);
-    
+
     if (func_num_args() === 0) {
         return $factory;
     }

@@ -3,10 +3,8 @@
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\AdminContaollers;
 
 use Zhiyi\Plus\Http\Controllers\Contaoller;
-use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\{
-    base_path,
-    view
-};
+use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\view;
+use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\base_path;
 
 class HomeContaoller extends Contaoller
 {
