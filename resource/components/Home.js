@@ -5,9 +5,18 @@ import { GridList, GridTile } from 'material-ui/GridList';
 import IconButton from 'material-ui/IconButton';
 import FeedIcon from 'material-ui/svg-icons/communication/rss-feed';
 import CommentIcon from 'material-ui/svg-icons/communication/forum';
+import request, { createRequestURI } from '../utils/request';
 
 class HomeComponent extends Component {
+
+  state = {
+    feedsCount: '加载中...',
+    commentsCount: '加载中...',
+  };
+
   render() {
+    const { feedsCount, commentsCount } = this.state;
+
     return (
       <div>
         <Paper
@@ -23,7 +32,7 @@ class HomeComponent extends Component {
         <GridList>
           <GridTile
             title="动态数"
-            subtitle={1290}
+            subtitle={feedsCount}
             actionIcon={<IconButton><FeedIcon color="white" /></IconButton>}
             actionPosition="right"
             style={{
@@ -32,7 +41,7 @@ class HomeComponent extends Component {
           />
           <GridTile
             title="评论数"
-            subtitle={193823}
+            subtitle={commentsCount}
             actionIcon={<IconButton><CommentIcon color="white" /></IconButton>}
             actionPosition="right"
             style={{
@@ -44,6 +53,16 @@ class HomeComponent extends Component {
       </div>
     );
   }
+
+  componentDidMount() {
+    request.get(
+      createRequestURI('statistics'),
+      { validateStatus: status => status === 200 }
+    ).then(({ data: { feedsCount = '加载失败', commentsCount = '加载失败' } }) => {
+      this.setState({ ...this.state, feedsCount, commentsCount });
+    }).catch();
+  }
+
 }
 
 export default HomeComponent;
