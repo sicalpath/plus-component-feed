@@ -3,5 +3,5 @@
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', 'HomeContaoller@show');
+    Route::get('/', 'HomeContaoller@show')->name('feed:admin');
 });

@@ -2,10 +2,10 @@
 
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\AdminContaollers;
 
-use Zhiyi\Plus\Http\Controllers\Contaoller;
+use Zhiyi\Plus\Http\Controllers\Controller;
 use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\view;
 
-class HomeContaoller extends Contaoller
+class HomeContaoller extends Controller
 {
     /**
      * 分享管理后台入口.

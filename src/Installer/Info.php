@@ -43,13 +43,13 @@ class Info implements ComponentInfoInterface
     }
 
     /**
-     * 后台入口.
+     * 获取后台入口地址.
      *
-     * @author bs<414606094@qq.com>
      * @return string
+     * @author Seven Du <shiweidu@outlook.com>
      */
     public function getAdminEntry()
     {
-        return 'http://www.baidu.com';
+        return route('feed:admin');
     }
 }
