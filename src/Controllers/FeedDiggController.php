@@ -2,6 +2,7 @@
 
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Controllers;
 
+use DB;
 use Illuminate\Http\Request;
 use Zhiyi\Plus\Jobs\PushMessage;
 use Zhiyi\Plus\Http\Controllers\Controller;
@@ -93,11 +94,13 @@ class FeedDiggController extends Controller
 
         dispatch(new PushMessage($alert, (string) $alias, $extras));
 
-        FeedDigg::create($feeddigg);
-        Feed::byFeedId($feed_id)->increment('feed_digg_count'); //增加点赞数量
+        DB::transaction(function () use ($feeddigg, $feed, $feed_id) {
+            FeedDigg::create($feeddigg);
+            Feed::byFeedId($feed_id)->increment('feed_digg_count'); //增加点赞数量
 
-        $count = new FeedCount();
-        $count->count($feed->user_id, 'diggs_count', $method = 'increment'); //更新动态作者收到的赞数量
+            $count = new FeedCount();
+            $count->count($feed->user_id, 'diggs_count', $method = 'increment'); //更新动态作者收到的赞数量
+        });
 
         return response()->json(static::createJsonData([
             'status' => true,
@@ -123,7 +126,8 @@ class FeedDiggController extends Controller
         }
         $feeddigg['user_id'] = $request->user()->id;
         $feeddigg['feed_id'] = $feed_id;
-        if (! FeedDigg::where($feeddigg)->first()) {
+        $digg = FeedDigg::where($feeddigg)->first();
+        if (!$digg) {
             return response()->json(static::createJsonData([
                 'code' => 6006,
                 'status' => false,
@@ -131,12 +135,13 @@ class FeedDiggController extends Controller
             ]))->setStatusCode(400);
         }
 
-        if (FeedDigg::byFeedId($feed_id)->byUserId($feeddigg['user_id'])->delete()) {
+        DB::transaction(function () use ($digg, $feed, $feed_id) {
+            $digg->delete();
             Feed::byFeedId($feed_id)->decrement('feed_digg_count'); //减少点赞数量
 
             $count = new FeedCount();
             $count->count($feed->user_id, 'diggs_count', $method = 'decrement'); //更新动态作者收到的赞数量
-        }
+        });
 
         return response()->json(static::createJsonData([
             'status' => true,
