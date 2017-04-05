@@ -23,6 +23,8 @@ Route::group([
 ], function () {
     // 发送分享
     Route::post('/feeds', 'FeedController@store');
+    // 删除分享
+    Route::delete('/feeds/{feed_id}', 'FeedController@delFeed')->where(['feed_id' => '[0-9]+']);
     // 增加分享浏览量
     Route::post('/feeds/{feed_id}/viewcount', 'FeedController@addFeedViewCount');
     //我关注的分享列表

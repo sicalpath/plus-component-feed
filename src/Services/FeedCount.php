@@ -51,13 +51,13 @@ class FeedCount
      * @param  string $method   [description]
      * @return [type]           [description]
      */
-    public function count($uid, $countKey, $method = 'increment')
+    public function count($uid, $countKey, $method = 'increment', $countnum = 1)
     {
         if ($this->checkKey($countKey) && $this->checkMethod($method)) {
             $this->checkEmptyData($uid, $countKey);
 
             return tap(UserDatas::where('key', $countKey)->byUserId($uid), function ($query) use ($method) {
-                $query->$method('value');
+                $query->$method('value', $countnum);
             });
         }
 

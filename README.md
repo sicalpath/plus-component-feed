@@ -11,6 +11,8 @@ feed-component for TS+
 
 [发布动态](/documents/发布动态.md)
 
+[删除动态](/documents/删除一条动态.md)
+
 [@我的分享列表](/documents/@我的分享列表.md)
 
 [点赞一条动态](/documents/点赞一条动态.md)
