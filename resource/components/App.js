@@ -3,6 +3,7 @@ import { Tabs, Tab } from 'material-ui/Tabs';
 import { matchPath } from 'react-router';
 import { Route } from 'react-router-dom';
 import Home from './Home';
+import Feeds from './Feeds';
 
 class AppComponent extends Component {
 
@@ -59,6 +60,7 @@ class AppComponent extends Component {
         </Tabs>
 
         <Route exact path="/" component={Home} />
+        <Route path="/feeds" component={Feeds} />
 
       </div>
     );
