@@ -127,7 +127,7 @@ class FeedDiggController extends Controller
         $feeddigg['user_id'] = $request->user()->id;
         $feeddigg['feed_id'] = $feed_id;
         $digg = FeedDigg::where($feeddigg)->first();
-        if (!$digg) {
+        if (! $digg) {
             return response()->json(static::createJsonData([
                 'code' => 6006,
                 'status' => false,
