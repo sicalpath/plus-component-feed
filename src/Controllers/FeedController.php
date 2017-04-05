@@ -353,7 +353,7 @@ class FeedController extends Controller
 
     /**
      * 删除动态
-     * 
+     *
      * @author bs<414606094@qq.com>
      * @param  int    $feed_id [description]
      * @return [type]          [description]
@@ -361,12 +361,11 @@ class FeedController extends Controller
     public function delFeed(Request $request, int $feed_id)
     {
         $user_id = $request->user()->id;
-        
+
         $feed = new Feed();
         $feed = $feed->where('id', $feed_id)->where('user_id', $user_id)->first();
         if ($feed) {
             DB::transaction(function () use ($feed, $user_id) {
-
                 $comments = new FeedComment();
                 $comments->where('feed_id', $feed->id)->delete(); // 删除相关评论
 
