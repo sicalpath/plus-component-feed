@@ -56,7 +56,7 @@ class FeedCount
         if ($this->checkKey($countKey) && $this->checkMethod($method)) {
             $this->checkEmptyData($uid, $countKey);
 
-            return tap(UserDatas::where('key', $countKey)->byUserId($uid), function ($query) use ($method) {
+            return tap(UserDatas::where('key', $countKey)->byUserId($uid), function ($query) use ($method, $countnum) {
                 $query->$method('value', $countnum);
             });
         }
