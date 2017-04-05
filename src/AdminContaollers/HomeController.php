@@ -9,7 +9,7 @@ use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\view;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedComment;
 
-class HomeContaoller extends Controller
+class HomeController extends Controller
 {
     /**
      * 分享管理后台入口.
