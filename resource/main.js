@@ -4,6 +4,9 @@
  * @author Seven Du <shiweidu@outlook.com>
  */
 
+const runtime = 'plus-component-feed:manage runtime';
+console.time(runtime);
+
 import React from 'react';
 import { render } from 'react-dom';
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -31,4 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
     <App />,
     document.getElementById('app')
   );
+
+  console.timeEnd(runtime);
 });
