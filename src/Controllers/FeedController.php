@@ -12,6 +12,7 @@ use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedAtme;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedComment;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Services\FeedCount;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedCollection;
 
@@ -347,6 +348,54 @@ class FeedController extends Controller
             }, $uids);
 
             FeedAtme::insert($datas); // 批量插入数据需要手动维护时间
+        }
+    }
+
+    /**
+     * 删除动态
+     * 
+     * @author bs<414606094@qq.com>
+     * @param  int    $feed_id [description]
+     * @return [type]          [description]
+     */
+    public function delFeed(Request $request, int $feed_id)
+    {
+        $user_id = $request->user()->id;
+        
+        $feed = new Feed();
+        $feed = $feed->where('id', $feed_id)->where('user_id', $user_id)->first();
+        if ($feed) {
+            DB::transaction(function () use ($feed, $user_id) {
+
+                $comments = new FeedComment();
+                $comments->where('feed_id', $feed->id)->delete(); // 删除相关评论
+
+                $digg = new FeedDigg();
+                $digg->where('feed_id', $feed->id)->delete(); // 删除相关点赞
+
+                $collection = new FeedCollection();
+                $collection->where('feed_id', $feed->id)->delete(); // 删除相关收藏
+
+                $count = new FeedCount();
+                $count->count($user_id, 'feeds_count', 'decrement'); // 更新动态作者的动态数量
+                $count->count($user_id, 'diggs_count', 'decrement', $feed->feed_digg_count); // 更新动态作者收到的点赞数量
+
+                $feed->delete();
+            });
+
+            return response()->json([
+                'status'  => true,
+                'code'    => 0,
+                'message' => '删除成功',
+                'data' => null,
+            ])->setStatusCode(204);
+        } else {
+            return response()->json([
+                'status'  => false,
+                'code'    => 6010,
+                'message' => '操作失败',
+                'data' => null,
+            ])->setStatusCode(403);
         }
     }
 }
