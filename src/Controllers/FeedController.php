@@ -121,6 +121,7 @@ class FeedController extends Controller
 
     public function read($feed_id)
     {
+        $uid = Auth::guard('api')->user()->id ?? 0;
         if (! $feed_id) {
             return response()->json([
                 'status' => false,
@@ -159,9 +160,12 @@ class FeedController extends Controller
         });
         // 工具栏数据
         $data['tool'] = [];
-        $data['tool']['digg'] = $feed->feed_digg_count;
-        $data['tool']['view'] = $feed->feed_view_count;
-        $data['tool']['comment'] = $feed->feed_comment_count;
+        $data['tool']['feed_view_count'] = $feed->feed_view_count;
+        $data['tool']['feed_digg_count'] = $feed->feed_digg_count;
+        $data['tool']['feed_comment_count'] = $feed->feed_comment_count;
+        // 暂时剔除当前登录用户判定
+        $data['tool']['is_digg_feed'] = $uid ? FeedDigg::byFeedId($feed->id)->byUserId($uid)->count() : 0;
+        $data['tool']['is_collection_feed'] = $uid ? FeedCollection::where('feed_id', $feed->id)->where('user_id', $uid)->count() : 0;
         // 动态评论,详情默认为空，自动获取评论列表接口
         $data['comments'] = [];
         // 动态最新8条点赞的用户id
