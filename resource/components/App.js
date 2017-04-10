@@ -60,8 +60,7 @@ class AppComponent extends Component {
         </Tabs>
 
         <Route exact path="/" component={Home} />
-        <Route path="/feeds" component={Feeds} />
-
+        <Route path="/feeds" params={{ha:1}} component={Feeds} />
       </div>
     );
   }
