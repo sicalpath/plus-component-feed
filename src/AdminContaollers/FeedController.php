@@ -19,8 +19,15 @@ class FeedController extends Controller
     public function showFeeds(Request $request)
     {
         $limit = (int) $request->query('limit', 20);
+        $showUser = (bool) $request->query('show_user', false);
 
-        $paginator = Feed::simplePaginate($limit);
+        $query = app(Feed::class)->newQuery();
+
+        if ($showUser) {
+            $query->with('user');
+        }
+
+        $paginator = $query->simplePaginate($limit);
 
         $data = [
             'feeds' => $paginator->getCollection()->toArray(),
