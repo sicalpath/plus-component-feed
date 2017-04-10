@@ -77,6 +77,7 @@ class FeedCommentController extends Controller
         if (FeedComment::where($markmap)->first()) {
             return response()->json(static::createJsonData([
                 'code' => 6010,
+                'message' => '请勿重复操作',
             ]))->setStatusCode(403);
         }
 
@@ -85,7 +86,7 @@ class FeedCommentController extends Controller
             Feed::byFeedId($feed->id)->increment('feed_comment_count'); //增加评论数量
         });
 
-        $extras = ['action' => 'comment'];
+        $extras = ['action' => 'comment', 'type' => 'feed'];
         $alert = '有人评论了你，去看看吧';
         $alias = $request->reply_to_user_id > 0 ?: $feed->user_id;
 
