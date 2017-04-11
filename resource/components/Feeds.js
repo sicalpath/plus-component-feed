@@ -47,7 +47,7 @@ class FeedsComponent extends Component {
             stripedRows={tableState.stripedRows}
           >
             {this.state.feeds.map(({ id, feed_title, feed_content, user = {}, ...feed }) => (
-              <TableRow>
+              <TableRow key={id}>
                 <TableRowColumn>{ id }</TableRowColumn>
                 <TableRowColumn>
                   {feed_title && (<h3>{ feed_title }</h3>)}
@@ -70,6 +70,14 @@ class FeedsComponent extends Component {
                         }}
                       >
                         通过审核
+                      </a>&nbsp;|&nbsp;
+                      <a
+                        href="#"
+                        style={{
+                          color:'#03a9f4'
+                        }}
+                      >
+                        不通过
                       </a>
                     </div>
                   )}
