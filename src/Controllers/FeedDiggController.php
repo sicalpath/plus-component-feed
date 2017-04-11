@@ -106,7 +106,14 @@ class FeedDiggController extends Controller
             $count = new FeedCount();
             $count->count($feed->user_id, 'diggs_count', $method = 'increment'); //更新动态作者收到的赞数量
 
-            Digg::create(['component' => 'feed', 'digg_id' => $digg->id, 'user_id' => $feeddigg['user_id'], 'to_user_id' => $feed->user_id]); // 统计到点赞总表
+            Digg::create(['component' => 'feed',
+                        'digg_table' => 'feed_diggs',
+                        'digg_id' => $digg->id,
+                        'source_table' => 'feeds',
+                        'source_id' => $feed_id,
+                        'user_id' => $feeddigg['user_id'], 
+                        'to_user_id' => $feed->user_id
+                        ]); // 统计到点赞总表
         });
 
         return response()->json(static::createJsonData([
