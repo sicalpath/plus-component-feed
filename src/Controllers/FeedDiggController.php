@@ -4,6 +4,7 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Controllers;
 
 use DB;
 use Illuminate\Http\Request;
+use Zhiyi\Plus\Models\Digg;
 use Zhiyi\Plus\Jobs\PushMessage;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
@@ -90,16 +91,22 @@ class FeedDiggController extends Controller
 
         $extras = ['action' => 'digg'];
         $alert = '有人赞了你的动态，去看看吧';
-        $alias = $request->reply_to_user_id ?? $feed->user_id;
+        $alias = $feed->user_id;
 
         dispatch(new PushMessage($alert, (string) $alias, $extras));
 
         DB::transaction(function () use ($feeddigg, $feed, $feed_id) {
-            FeedDigg::create($feeddigg);
+            $digg = new FeedDigg();
+            $digg->user_id = $feeddigg['user_id'];
+            $digg->feed_id = $feeddigg['feed_id'];
+            $digg->save();
+
             Feed::byFeedId($feed_id)->increment('feed_digg_count'); //增加点赞数量
 
             $count = new FeedCount();
             $count->count($feed->user_id, 'diggs_count', $method = 'increment'); //更新动态作者收到的赞数量
+
+            Digg::create(['component' => 'feed', 'digg_id' => $digg->id, 'user_id' => $feeddigg['user_id'], 'to_user_id' => $feed->user_id]); // 统计到点赞总表 
         });
 
         return response()->json(static::createJsonData([
@@ -134,13 +141,14 @@ class FeedDiggController extends Controller
                 'message' => '未对该动态点赞',
             ]))->setStatusCode(400);
         }
-
         DB::transaction(function () use ($digg, $feed, $feed_id) {
             $digg->delete();
             Feed::byFeedId($feed_id)->decrement('feed_digg_count'); //减少点赞数量
 
             $count = new FeedCount();
             $count->count($feed->user_id, 'diggs_count', $method = 'decrement'); //更新动态作者收到的赞数量
+
+            Digg::where(['component' => 'feed', 'digg_id' => $digg->id])->delete(); // 统计到点赞总表
         });
 
         return response()->json(static::createJsonData([
