@@ -3,8 +3,8 @@
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Controllers;
 
 use DB;
-use Illuminate\Http\Request;
 use Zhiyi\Plus\Models\Digg;
+use Illuminate\Http\Request;
 use Zhiyi\Plus\Jobs\PushMessage;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
@@ -106,7 +106,7 @@ class FeedDiggController extends Controller
             $count = new FeedCount();
             $count->count($feed->user_id, 'diggs_count', $method = 'increment'); //更新动态作者收到的赞数量
 
-            Digg::create(['component' => 'feed', 'digg_id' => $digg->id, 'user_id' => $feeddigg['user_id'], 'to_user_id' => $feed->user_id]); // 统计到点赞总表 
+            Digg::create(['component' => 'feed', 'digg_id' => $digg->id, 'user_id' => $feeddigg['user_id'], 'to_user_id' => $feed->user_id]); // 统计到点赞总表
         });
 
         return response()->json(static::createJsonData([
