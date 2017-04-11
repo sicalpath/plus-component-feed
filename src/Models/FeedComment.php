@@ -104,6 +104,9 @@ class FeedComment extends Model
     {
         $comment = [
             'component' => 'feed',
+            'comment_table' => 'feed_comments',
+            'source_table' => 'feeds',
+            'source_id' => $this->feed_id,
             'user_id' => $this->user_id,
             'to_user_id' => $this->to_user_id,
             'reply_to_user_id' => $this->reply_to_user_id,
