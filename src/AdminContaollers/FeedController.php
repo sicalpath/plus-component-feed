@@ -39,6 +39,37 @@ class FeedController extends Controller
     }
 
     /**
+     * 审核动态状态.
+     *
+     * @param Request $request
+     * @param \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed $feed
+     * @return mixed
+     * @author Seven Du <shiweidu@outlook.com>
+     */
+    public function reviewFeed(Request $request, Feed $feed)
+    {
+        $audit = (int) $request->input('audit', $feed->audit_status);
+
+        if (!in_array($audit, [1, 2])) {
+            return response()->json([
+                'message' => '审核状态错误',
+            ])->setStatusCode(422);
+        }
+
+        $feed->audit_status = $audit;
+
+        if (! $feed->save()) {
+            return response()->json([
+                'message' => '操作失败',
+            ])->setStatusCode(500);
+        }
+
+        return response()->json([
+            'message' => '操作成功',
+        ])->setStatusCode(201);
+    }
+
+    /**
      * 获取下一页页码.
      *
      * @param PaginatorContract $paginator

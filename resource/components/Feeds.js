@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
 import FlatButton from 'material-ui/FlatButton';
+import Snackbar from 'material-ui/Snackbar';
 import request, { createRequestURI, queryString } from '../utils/request';
 
 const tableState = {
@@ -9,8 +10,14 @@ const tableState = {
   stripedRows: false,
 };
 
-const style = {
-  margin: 12,
+const styles = {
+  actionStyle: {
+    color: '#03a9f4',
+    cursor: 'pointer',
+  },
+  actionDelete: {
+    color: 'red',
+  }
 };
 
 class FeedsComponent extends Component {
@@ -21,6 +28,10 @@ class FeedsComponent extends Component {
     pervPage: null,
     nextPage: null,
     limit: 20,
+    snackbar: {
+      open: false,
+      message: '',
+    }
   };
 
   render() {
@@ -59,41 +70,15 @@ class FeedsComponent extends Component {
                   <p>查看：{ feed.feed_view_count }</p>
                   <p>评论：{ feed.feed_comment_count }</p>
                 </TableRowColumn>
-                <TableRowColumn>{ this.getAuditStatus(feed.audit_status) }</TableRowColumn>
+                <TableRowColumn>{ this.getAuditStatus(feed.audit_status, id) }</TableRowColumn>
                 <TableRowColumn>
-                  {parseInt(feed.audit_status) === 0 && (
-                    <div>
-                      <a
-                        href="#"
-                        style={{
-                          color: '#03a9f4'
-                        }}
-                      >
-                        通过审核
-                      </a>&nbsp;|&nbsp;
-                      <a
-                        href="#"
-                        style={{
-                          color:'#03a9f4'
-                        }}
-                      >
-                        不通过
-                      </a>
-                    </div>
-                  )}
-                  <a
-                    href="#"
-                    style={{
-                      color: 'red'
-                    }}
-                  >
-                    删除
-                  </a>
+                  <span style={{...styles.actionStyle, ...styles.actionDelete}}>删除</span>
                 </TableRowColumn>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+        <Snackbar {...this.state.snackbar} />
       </div>
     );
   }
@@ -129,7 +114,7 @@ class FeedsComponent extends Component {
     return page || 1;
   }
 
-  getAuditStatus(status) {
+  getAuditStatus(status, feedId) {
     switch (parseInt(status)) {
       case 1:
         return '已审核';
@@ -139,8 +124,72 @@ class FeedsComponent extends Component {
 
       case 0:
       default:
-        return '未审核';
+        return (<div>
+          <span style={styles.actionStyle} onTouchTap={() => this.reviewFeed(feedId, 1)} >通过</span>
+          &nbsp;|&nbsp;
+          <span style={styles.actionStyle} onTouchTap={() => this.reviewFeed(feedId, 2)} >不通过</span>
+        </div>);
     }
+  }
+
+  reviewFeed = (feedId, audit) => {
+    request.patch(
+      createRequestURI(`feeds/${feedId}/review`),
+      { audit },
+      { validateStatus: status => status === 201 }
+    ).then(({ data: { message = '操作成功' } }) => {
+      this.updateFeed(feedId, { audit_status: audit });
+      this.setSnackbar({
+        open: true,
+        autoHideDuration: 2500,
+        message,
+      });
+    }).catch(({ response: { data: { message = '操作失败' } = {} } = {} }) => {
+      this.setSnackbar({
+        open: true,
+        autoHideDuration: 2500,
+        message,
+      });
+    });
+  };
+
+  updateFeed = (feedId, data) => {
+    let feeds = [];
+    this.state.feeds.forEach(feed => {
+      if (feed.id === feedId) {
+        feeds.push({
+          ...feed,
+          ...data
+        });
+
+        return ;
+      }
+
+      feeds.push(feed);
+    });
+
+    this.setState({
+      ...this.state,
+      feeds,
+    });
+  }
+
+  setSnackbar = snackbar => {
+    this.setState({
+      ...this.state,
+      snackbar,
+      onRequestClose: this.onSnackbarClose,
+    });
+  }
+
+  onSnackbarClose = () => {
+    this.setState({
+      ...this.state,
+      snackbar: {
+        open: false,
+        message: '',
+      }
+    });
   }
 }
 
