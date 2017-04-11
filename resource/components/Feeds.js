@@ -72,7 +72,7 @@ class FeedsComponent extends Component {
                 </TableRowColumn>
                 <TableRowColumn>{ this.getAuditStatus(feed.audit_status, id) }</TableRowColumn>
                 <TableRowColumn>
-                  <span style={{...styles.actionStyle, ...styles.actionDelete}}>删除</span>
+                  <span style={{...styles.actionStyle, ...styles.actionDelete}} onTouchTap={() => this.deleteFeed(id)} >删除</span>
                 </TableRowColumn>
               </TableRow>
             ))}
@@ -153,6 +153,41 @@ class FeedsComponent extends Component {
     });
   };
 
+  deleteFeed = feedId => {
+    request.delete(
+      createRequestURI(`feeds/${feedId}`),
+      { validateStatus: status => status === 204 }
+    ).then(() => {
+      this.deleteFeedInState(feedId);
+      this.setSnackbar({
+        open: true,
+        message: '删除成功',
+        autoHideDuration: 2500,
+      });
+    }).catch(({ response: { data: { message = '删除失败' } = {} } = {} }) => {
+      this.setSnackbar({
+        open: true,
+        autoHideDuration: 2500,
+        message,
+      });
+    });
+  };
+
+  deleteFeedInState = feedId => {
+    let feeds = [];
+
+    this.state.feeds.forEach(feed => {
+      if (feed.id !== feedId) {
+        feeds.push(feed);
+      }
+    });
+
+    this.setState({
+      ...this.state,
+      feeds,
+    });
+  };
+
   updateFeed = (feedId, data) => {
     let feeds = [];
     this.state.feeds.forEach(feed => {
@@ -177,8 +212,10 @@ class FeedsComponent extends Component {
   setSnackbar = snackbar => {
     this.setState({
       ...this.state,
-      snackbar,
-      onRequestClose: this.onSnackbarClose,
+      snackbar: {
+        onRequestClose: this.onSnackbarClose,
+        ...snackbar,
+      },
     });
   }
 

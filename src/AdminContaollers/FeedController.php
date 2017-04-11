@@ -70,6 +70,24 @@ class FeedController extends Controller
     }
 
     /**
+     * 删除分享接口.
+     *
+     * @param Feed $feed
+     * @return mixed
+     * @author Seven Du <shiweidu@outlook.com>
+     */
+    public function deleteFeed(Feed $feed)
+    {
+        if (! $feed->delete()) {
+            return response()->json([
+                'message' => '删除失败',
+            ])->setStatusCode(500);
+        }
+
+        return response(null, 204);
+    }
+
+    /**
      * 获取下一页页码.
      *
      * @param PaginatorContract $paginator
