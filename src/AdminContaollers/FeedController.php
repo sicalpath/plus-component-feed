@@ -50,7 +50,7 @@ class FeedController extends Controller
     {
         $audit = (int) $request->input('audit', $feed->audit_status);
 
-        if (!in_array($audit, [1, 2])) {
+        if (! in_array($audit, [1, 2])) {
             return response()->json([
                 'message' => '审核状态错误',
             ])->setStatusCode(422);
