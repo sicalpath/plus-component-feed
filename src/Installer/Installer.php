@@ -3,6 +3,7 @@
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Installer;
 
 use Closure;
+use Zhiyi\Plus\Models\Comment;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Zhiyi\Component\Installer\PlusInstallPlugin\AbstractInstaller;
@@ -130,7 +131,8 @@ class Installer extends AbstractInstaller
      * @return [type]        [description]
      */
     public function uninstall(Closure $next)
-    {
+    {   
+        Comment::where('component', 'feed')->delete();
         Schema::dropIfExists('feeds');
         Schema::dropIfExists('feed_atmes');
         Schema::dropIfExists('feed_diggs');
