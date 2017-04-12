@@ -131,7 +131,7 @@ class Installer extends AbstractInstaller
      * @return [type]        [description]
      */
     public function uninstall(Closure $next)
-    {   
+    {
         Comment::where('component', 'feed')->delete();
         Schema::dropIfExists('feeds');
         Schema::dropIfExists('feed_atmes');
