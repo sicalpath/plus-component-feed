@@ -157,8 +157,8 @@ class FeedCommentController extends Controller
     }
 
     /**
-     * 根据评论id获取评论信息
-     * 
+     * 根据评论id获取评论信息.
+     *
      * @author bs<414606094@qq.com>
      * @param  Request $request [description]
      * @return [type]           [description]
