@@ -94,7 +94,7 @@ class FeedComment extends Model
     }
 
     /**
-     * 覆盖删除方法  同步到tsplus评论表.
+     * 覆盖保存方法  同步到tsplus评论表.
      *
      * @author bs<414606094@qq.com>
      * @param  array  $options [description]
@@ -105,8 +105,11 @@ class FeedComment extends Model
         $comment = [
             'component' => 'feed',
             'comment_table' => 'feed_comments',
+            'comment_content' => $this->comment_content,
             'source_table' => 'feeds',
             'source_id' => $this->feed_id,
+            'source_cover' => 0,
+            'source_content' => $this->feed->feed_content,
             'user_id' => $this->user_id,
             'to_user_id' => $this->to_user_id,
             'reply_to_user_id' => $this->reply_to_user_id,
