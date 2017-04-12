@@ -111,6 +111,8 @@ class FeedDiggController extends Controller
                         'digg_id' => $digg->id,
                         'source_table' => 'feeds',
                         'source_id' => $feed_id,
+                        'source_content' => $feed->feed_content,
+                        'source_cover' => 0,
                         'user_id' => $feeddigg['user_id'],
                         'to_user_id' => $feed->user_id,
                         ]); // 统计到点赞总表
