@@ -27,6 +27,8 @@ feed-component for TS+
 
 [一条动态的评论列表](/documents/一条动态的评论列表.md)
 
+[根据id获取评论列表](/documents/根据id获取评论列表.md)
+
 [对一条动态或一条动态评论进行评论](/documents/对一条动态或一条动态评论进行评论.md)
 
 [删除一条评论](/documents/删除一条评论.md)

@@ -155,4 +155,30 @@ class FeedCommentController extends Controller
             'data' => $comments,
         ]))->setStatusCode(200);
     }
+
+    /**
+     * 根据评论id获取评论信息
+     * 
+     * @author bs<414606094@qq.com>
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function getComment(Request $request)
+    {
+        $comment_ids = $request->input('comment_ids');
+        is_string($comment_ids) && $comment_ids = explode(',', $comment_ids);
+
+        $comments = FeedComment::whereIn('id', $comment_ids)
+        ->with(['feed' => function ($query) {
+            $query->select(['id', 'created_at', 'user_id', 'feed_content', 'feed_title'])->with(['storages' => function ($query) {
+                $query->select(['feed_storage_id']);
+            }]);
+        }])->get();
+
+        return response()->json(static::createJsonData([
+            'status' => true,
+            'message' => '获取成功',
+            'data' => $comments,
+        ]))->setStatusCode(200);
+    }
 }

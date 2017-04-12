@@ -32,6 +32,8 @@ Route::group([
     // 添加评论
     Route::post('/feeds/{feed_id}/comment', 'FeedCommentController@addComment')
     ->middleware(FeedMiddleware\VerifyCommentContent::class); // 验证评论内容
+    // 获取评论
+    Route::get('/feeds/comments', 'FeedCommentController@getComment');
     // 删除分享
     // Route::delete('/feeds/{feed_id}', 'xxx@xxx');
     //删除评论 TODO 根据权限及实际需求增加中间件
