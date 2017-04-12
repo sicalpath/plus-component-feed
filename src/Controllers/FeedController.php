@@ -193,12 +193,19 @@ class FeedController extends Controller
     public function getNewFeeds(Request $request)
     {
         $user_id = Auth::guard('api')->user()->id ?? 0;
+        $feed_ids = $request->input('feed_ids');
+        is_string($feed_ids) && $feed_ids = explode(',', $feed_ids);
         // 设置单页数量
         $limit = $request->limit ?? 15;
         $feeds = Feed::orderBy('id', 'DESC')
             ->where(function ($query) use ($request) {
                 if ($request->max_id > 0) {
                     $query->where('id', '<', $request->max_id);
+                }
+            })
+            ->where(function ($query) use ($feed_ids) {
+                if (count($feed_ids) > 0) {
+                    $query->whereIn('id', $feed_ids);
                 }
             })
             ->withCount(['diggs' => function ($query) use ($user_id) {
