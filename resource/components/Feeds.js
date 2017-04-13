@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
-import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
 import Snackbar from 'material-ui/Snackbar';
 import request, { createRequestURI, queryString } from '../utils/request';
 
@@ -17,6 +17,15 @@ const styles = {
   },
   actionDelete: {
     color: 'red',
+  },
+  pageButtonBox: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  pageButton: {
+    margin: 12
   }
 };
 
@@ -35,7 +44,6 @@ class FeedsComponent extends Component {
   };
 
   render() {
-    // console.log(this.state.feeds);
     return (
       <div>
         <Table>
@@ -78,6 +86,10 @@ class FeedsComponent extends Component {
             ))}
           </TableBody>
         </Table>
+        <div style={styles.pageButtonBox}>
+          <RaisedButton style={styles.pageButton} label="上一页" />
+          <RaisedButton style={styles.pageButton} label="下一页" />
+        </div>
         <Snackbar {...this.state.snackbar} />
       </div>
     );
