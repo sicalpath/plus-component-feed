@@ -3,6 +3,7 @@
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\AdminContaollers;
 
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
@@ -17,8 +18,12 @@ class HomeController extends Controller
      * @return mixed
      * @author Seven Du <shiweidu@outlook.com>
      */
-    public function show()
+    public function show(Request $request)
     {
+        if (! $request->user()) {
+            return redirect(route('admin'), 302);
+        }
+
         return view('admin', [
             'base_url' => route('feed:admin'),
             'csrf_token' => csrf_token(),
