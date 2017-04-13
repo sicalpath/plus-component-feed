@@ -108,7 +108,7 @@ class FeedComment extends Model
             'comment_content' => $this->comment_content,
             'source_table' => 'feeds',
             'source_id' => $this->feed_id,
-            'source_cover' => 0,
+            'source_cover' => $this->feed->storages->isEmpty() ? 0 : $this->feed->storages->toArray()[0]['id'],
             'source_content' => $this->feed->feed_content,
             'user_id' => $this->user_id,
             'to_user_id' => $this->to_user_id,

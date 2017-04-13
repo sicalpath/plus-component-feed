@@ -112,7 +112,7 @@ class FeedDiggController extends Controller
                         'source_table' => 'feeds',
                         'source_id' => $feed_id,
                         'source_content' => $feed->feed_content,
-                        'source_cover' => 0,
+                        'source_cover' => $feed->storages->isEmpty() ? 0 : $feed->storages->toArray()[0]['id'],
                         'user_id' => $feeddigg['user_id'],
                         'to_user_id' => $feed->user_id,
                         ]); // 统计到点赞总表
