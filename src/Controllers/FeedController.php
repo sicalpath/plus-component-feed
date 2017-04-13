@@ -344,10 +344,8 @@ class FeedController extends Controller
                 $query->where('id', '<', $max_id);
             }
         })
-        ->withCount(['diggs' => function ($query) use ($user_id) {
-            if ($user_id) {
-                $query->where('user_id', $user_id);
-            }
+        ->withCount(['diggs' => function ($query) use ($uid) {
+            $query->where('user_id', $uid);
         }])
         ->byAudit()
         ->with('storages')
