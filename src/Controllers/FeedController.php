@@ -324,8 +324,8 @@ class FeedController extends Controller
     }
 
     /**
-     * 获取用户收藏列表
-     * 
+     * 获取用户收藏列表.
+     *
      * @author bs<414606094@qq.com>
      * @param  Request $request [description]
      * @param  int     $user_id [description]
