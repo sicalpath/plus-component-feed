@@ -324,6 +324,40 @@ class FeedController extends Controller
     }
 
     /**
+     * 获取用户收藏列表
+     * 
+     * @author bs<414606094@qq.com>
+     * @param  Request $request [description]
+     * @param  int     $user_id [description]
+     * @return [type]           [description]
+     */
+    public function getUserCollection(Request $request)
+    {
+        $uid = $request->user()->id;
+        $limit = $request->input('limit', 15);
+        $max_id = intval($request->input('max_id'));
+
+        $feeds = Feed::orderBy('id', 'DESC')
+        ->where(function ($query) use ($max_id, $uid) {
+            $query->whereIn('id', FeedCollection::where('user_id', $uid)->pluck('feed_id'));
+            if ($max_id > 0) {
+                $query->where('id', '<', $max_id);
+            }
+        })
+        ->withCount(['diggs' => function ($query) use ($user_id) {
+            if ($user_id) {
+                $query->where('user_id', $user_id);
+            }
+        }])
+        ->byAudit()
+        ->with('storages')
+        ->take($limit)
+        ->get();
+
+        return $this->formatFeedList($feeds, $uid);
+    }
+
+    /**
      * 增加浏览量.
      *
      * @author bs<414606094@qq.com>

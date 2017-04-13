@@ -29,6 +29,8 @@ Route::group([
     Route::post('/feeds/{feed_id}/viewcount', 'FeedController@addFeedViewCount');
     //我关注的分享列表
     Route::get('/feeds/follows', 'FeedController@getFollowFeeds');
+    // 我的收藏列表
+    Route::get('/feeds/collections', 'FeedController@getUserCollection');
     // 添加评论
     Route::post('/feeds/{feed_id}/comment', 'FeedCommentController@addComment')
     ->middleware(FeedMiddleware\VerifyCommentContent::class); // 验证评论内容
