@@ -78,11 +78,13 @@ class FeedCommentController extends Controller
             Feed::byFeedId($feed->id)->increment('feed_comment_count'); //增加评论数量
         });
 
-        $extras = ['action' => 'comment', 'type' => 'feed', 'uid' => $request->user()->id, 'feed_id' => $feed_id, 'comment_id' => $feedComment->id];
-        $alert = '有人评论了你，去看看吧';
-        $alias = $request->reply_to_user_id > 0 ?: $feed->user_id;
+        if ($feedComment->reply_to_user_id > 0 && $feedComment->reply_to_user_id != $feedComment->user_id) {
+            $extras = ['action' => 'comment', 'type' => 'feed', 'uid' => $request->user()->id, 'feed_id' => $feed_id, 'comment_id' => $feedComment->id];
+            $alert = '有人评论了你，去看看吧';
+            $alias = $request->reply_to_user_id > 0 ?: $feed->user_id;
 
-        dispatch(new PushMessage($alert, (string) $alias, $extras));
+            dispatch(new PushMessage($alert, (string) $alias, $extras));
+        }
 
         return response()->json(static::createJsonData([
                 'status' => true,

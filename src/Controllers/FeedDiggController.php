@@ -89,11 +89,13 @@ class FeedDiggController extends Controller
             ]))->setStatusCode(400);
         }
 
-        $extras = ['action' => 'digg'];
-        $alert = '有人赞了你的动态，去看看吧';
-        $alias = $feed->user_id;
+        if ($feed->user_id != $request->user()->id) {
+            $extras = ['action' => 'digg'];
+            $alert = '有人赞了你的动态，去看看吧';
+            $alias = $feed->user_id;
 
-        dispatch(new PushMessage($alert, (string) $alias, $extras));
+            dispatch(new PushMessage($alert, (string) $alias, $extras));
+        }
 
         DB::transaction(function () use ($feeddigg, $feed, $feed_id) {
             $digg = new FeedDigg();
