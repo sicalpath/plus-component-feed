@@ -4,6 +4,7 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Controllers;
 
 use DB;
 use Carbon\Carbon;
+use Zhiyi\Plus\Models\Digg;
 use Illuminate\Http\Request;
 use Zhiyi\Plus\Storages\Storage;
 use Zhiyi\Plus\Models\StorageTask;
@@ -414,6 +415,8 @@ class FeedController extends Controller
 
                 $digg = new FeedDigg();
                 $digg->where('feed_id', $feed->id)->delete(); // 删除相关点赞
+
+                Digg::where(['component' => 'feed', 'digg_table' => 'feed_diggs', 'source_id' => $feed->id])->delete(); // 删除点赞总表记录
 
                 $collection = new FeedCollection();
                 $collection->where('feed_id', $feed->id)->delete(); // 删除相关收藏
