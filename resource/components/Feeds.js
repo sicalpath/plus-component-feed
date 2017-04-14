@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
 import RaisedButton from 'material-ui/RaisedButton';
 import Snackbar from 'material-ui/Snackbar';
@@ -31,12 +31,17 @@ const styles = {
 
 class FeedsComponent extends Component {
 
+  static propTypes = {
+    history: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
+  };
+
   state = {
     feeds: [],
     page: 1,
     pervPage: null,
     nextPage: null,
-    limit: 20,
+    limit: 1,
     snackbar: {
       open: false,
       message: '',
@@ -44,6 +49,7 @@ class FeedsComponent extends Component {
   };
 
   render() {
+    // console.log(this.getCurrentPage());
     return (
       <div>
         <Table>
@@ -87,8 +93,8 @@ class FeedsComponent extends Component {
           </TableBody>
         </Table>
         <div style={styles.pageButtonBox}>
-          <RaisedButton style={styles.pageButton} label="上一页" />
-          <RaisedButton style={styles.pageButton} label="下一页" />
+          {this.state.pervPage > 0 ? (<RaisedButton style={styles.pageButton} onTouchTap={this.handleGoPervPage} label="上一页" />) : (<div />)}
+          {this.state.nextPage > 0 && (<RaisedButton style={styles.pageButton} onTouchTap={this.handleGoNextPage} label="下一页" />)}
         </div>
         <Snackbar {...this.state.snackbar} />
       </div>
@@ -96,8 +102,37 @@ class FeedsComponent extends Component {
   }
   
   componentDidMount() {
+    this.showFeeds();
+  }
+
+  getCurrentPage() {
+    const { search } = this.props.location;
+    const { page = this.state.page } = queryString(search);
+
+    return parseInt(page) || 1;
+  }
+
+  getAuditStatus(status, feedId) {
+    switch (parseInt(status)) {
+      case 1:
+        return '已审核';
+
+      case 2:
+        return '未通过';
+
+      case 0:
+      default:
+        return (<div>
+          <span style={styles.actionStyle} onTouchTap={() => this.reviewFeed(feedId, 1)} >通过</span>
+          &nbsp;|&nbsp;
+          <span style={styles.actionStyle} onTouchTap={() => this.reviewFeed(feedId, 2)} >不通过</span>
+        </div>);
+    }
+  }
+
+  showFeeds(currentPage = false) {
     const { limit } = this.state;
-    const page = this.getCurrentPage();
+    const page = currentPage || this.getCurrentPage();
     request.get(
       createRequestURI('feeds'),
       {
@@ -119,30 +154,19 @@ class FeedsComponent extends Component {
     });
   }
 
-  getCurrentPage() {
-    const { search } = this.props.location;
-    const { page = this.state.page } = queryString(search);
+  handleGoNextPage = () => {
+    const { history: { push } } = this.props;
+    const page = this.getCurrentPage() + 1;
+    push(`/feeds?page=${page}`);
+    this.showFeeds(page);
+  };
 
-    return page || 1;
-  }
-
-  getAuditStatus(status, feedId) {
-    switch (parseInt(status)) {
-      case 1:
-        return '已审核';
-
-      case 2:
-        return '未通过';
-
-      case 0:
-      default:
-        return (<div>
-          <span style={styles.actionStyle} onTouchTap={() => this.reviewFeed(feedId, 1)} >通过</span>
-          &nbsp;|&nbsp;
-          <span style={styles.actionStyle} onTouchTap={() => this.reviewFeed(feedId, 2)} >不通过</span>
-        </div>);
-    }
-  }
+  handleGoPervPage = () => {
+    const { history: { push } } = this.props;
+    const page = this.getCurrentPage() - 1;
+    push(`/feeds?page=${page}`);
+    this.showFeeds(page);
+  };
 
   reviewFeed = (feedId, audit) => {
     request.patch(
