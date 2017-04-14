@@ -37,17 +37,9 @@ class FeedCommentController extends Controller
             }
         })->select(['id', 'created_at', 'comment_content', 'user_id', 'to_user_id', 'reply_to_user_id', 'comment_mark'])->orderBy('id', 'desc')->get();
 
-        if ($comments->isEmpty()) {
-            return response()->json(static::createJsonData([
-                'status' => true,
-                'data' => [],
-            ]))->setStatusCode(200);
-        }
-        $datas = $comments->toArray();
-
         return response()->json(static::createJsonData([
             'status' => true,
-            'data' => $datas,
+            'data' => $comments,
         ]))->setStatusCode(200);
     }
 
