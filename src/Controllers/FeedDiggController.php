@@ -90,7 +90,7 @@ class FeedDiggController extends Controller
         }
 
         if ($feed->user_id != $request->user()->id) {
-            $extras = ['action' => 'digg'];
+            $extras = ['action' => 'digg', 'type' => 'feed'];
             $alert = '有人赞了你的动态，去看看吧';
             $alias = $feed->user_id;
 
