@@ -109,7 +109,7 @@ class FeedController extends Controller
             $request->isatuser == 1 && $this->analysisAtme($feed->feed_content, $feed->user_id, $feed->id);
 
             $count = new FeedCount();
-            $count->count($request->user()->id, 'feeds_count', $method = 'increment'); //更新动态作者的动态数量
+            $count->count($request->user()->id, 'feeds_count', 'increment'); //更新动态作者的动态数量
         });
 
         return response()->json([
