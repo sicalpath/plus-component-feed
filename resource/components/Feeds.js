@@ -41,7 +41,7 @@ class FeedsComponent extends Component {
     page: 1,
     pervPage: null,
     nextPage: null,
-    limit: 1,
+    limit: 20,
     snackbar: {
       open: false,
       message: '',
