@@ -9,4 +9,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/feeds', 'FeedController@showFeeds');
     Route::delete('/feeds/{feed}', 'FeedController@deleteFeed');
     Route::patch('/feeds/{feed}/review', 'FeedController@reviewFeed');
+    Route::get('/comments', 'CommentController@show');
 });
