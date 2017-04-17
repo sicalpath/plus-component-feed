@@ -184,7 +184,7 @@ class FeedDiggController extends Controller
             $query->on('feeds.id', '=', 'feed_diggs.feed_id')->where('feeds.user_id', $user_id);
         })
         ->select(['feed_diggs.id', 'feed_diggs.user_id', 'feed_diggs.created_at', 'feed_diggs.feed_id', 'feeds.feed_content', 'feeds.feed_title'])
-        ->where(function($query) use ($max_id) {
+        ->where(function ($query) use ($max_id) {
             if ($max_id > 0) {
                 $query->where('feed_diggs.id', '<', $max_id);
             }
