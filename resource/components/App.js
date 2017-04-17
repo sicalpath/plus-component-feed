@@ -4,6 +4,7 @@ import { matchPath } from 'react-router';
 import { Route } from 'react-router-dom';
 import Home from './Home';
 import Feeds from './Feeds';
+import Comments from './Comments';
 
 class AppComponent extends Component {
 
@@ -60,7 +61,8 @@ class AppComponent extends Component {
         </Tabs>
 
         <Route exact path="/" component={Home} />
-        <Route path="/feeds" params={{ha:1}} component={Feeds} />
+        <Route path="/feeds" component={Feeds} />
+        <Route path="/comments" component={Comments} />
       </div>
     );
   }
