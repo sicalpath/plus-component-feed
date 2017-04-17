@@ -182,7 +182,15 @@ class FeedDiggController extends Controller
         $max_id = intval($request->input('max_id'));
         $diggs = FeedDigg::join('feeds', function ($query) use ($user_id) {
             $query->on('feeds.id', '=', 'feed_diggs.feed_id')->where('feeds.user_id', $user_id);
-        })->select(['feed_diggs.id', 'feed_diggs.user_id', 'feed_diggs.created_at', 'feed_diggs.feed_id', 'feeds.feed_content', 'feeds.feed_title'])
+        })
+        ->select(['feed_diggs.id', 'feed_diggs.user_id', 'feed_diggs.created_at', 'feed_diggs.feed_id', 'feeds.feed_content', 'feeds.feed_title'])
+        ->where(function($query) use ($max_id) {
+            if ($max_id > 0) {
+                $query->where('feed_diggs.id', '<', $max_id);
+            }
+        })
+        ->take($limit)
+        ->orderBy('id', 'desc')
         ->get()->toArray();
         foreach ($diggs as &$digg) {
             $digg['storages'] = FeedStorage::where('feed_id', $digg['feed_id'])->select('feed_storage_id')->get()->toArray();
