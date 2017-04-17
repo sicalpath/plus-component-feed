@@ -106,7 +106,7 @@ class FeedDiggController extends Controller
             Feed::byFeedId($feed_id)->increment('feed_digg_count'); //增加点赞数量
 
             $count = new FeedCount();
-            $count->count($feed->user_id, 'diggs_count', $method = 'increment'); //更新动态作者收到的赞数量
+            $count->count($feed->user_id, 'diggs_count', 'increment'); //更新动态作者收到的赞数量
 
             Digg::create(['component' => 'feed',
                         'digg_table' => 'feed_diggs',
@@ -157,7 +157,7 @@ class FeedDiggController extends Controller
             Feed::byFeedId($feed_id)->decrement('feed_digg_count'); //减少点赞数量
 
             $count = new FeedCount();
-            $count->count($feed->user_id, 'diggs_count', $method = 'decrement'); //更新动态作者收到的赞数量
+            $count->count($feed->user_id, 'diggs_count', 'decrement'); //更新动态作者收到的赞数量
 
             Digg::where(['component' => 'feed', 'digg_id' => $digg->id])->delete(); // 统计到点赞总表
         });
@@ -184,8 +184,8 @@ class FeedDiggController extends Controller
             $query->on('feeds.id', '=', 'feed_diggs.feed_id')->where('feeds.user_id', $user_id);
         })->select(['feed_diggs.id', 'feed_diggs.user_id', 'feed_diggs.created_at', 'feed_diggs.feed_id', 'feeds.feed_content', 'feeds.feed_title'])
         ->get()->toArray();
-        foreach ($diggs as $key => &$value) {
-            $value['storages'] = FeedStorage::where('feed_id', $value['feed_id'])->select('feed_storage_id')->get()->toArray();
+        foreach ($diggs as &$digg) {
+            $digg['storages'] = FeedStorage::where('feed_id', $digg['feed_id'])->select('feed_storage_id')->get()->toArray();
         }
 
         return response()->json(static::createJsonData([
