@@ -104,9 +104,10 @@ class FeedCommentController extends Controller
      */
     public function delComment(Request $request, int $feed_id, int $comment_id)
     {
+        $uid = $request->user()->id;
         $comment = FeedComment::find($comment_id);
 
-        if ($comment) {
+        if ($comment && $uid == $comment->user_id) {
             DB::transaction(function () use ($comment, $feed_id) {
                 $comment->delete();
                 Feed::byFeedId($feed_id)->decrement('feed_comment_count'); //减少评论数量
