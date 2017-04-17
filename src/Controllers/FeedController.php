@@ -387,8 +387,8 @@ class FeedController extends Controller
         $uids = $matchs[1];
         $time = Carbon::now();
         if (is_array($uids)) {
-            $datas = array_map(function ($v) use ($user_id, $feed_id, $time) {
-                return ['at_user_id' => $v, 'user_id' => $user_id, 'feed_id' => $feed_id, 'created_at' => $time, 'updated_at' => $time];
+            $datas = array_map(function ($data) use ($user_id, $feed_id, $time) {
+                return ['at_user_id' => $data, 'user_id' => $user_id, 'feed_id' => $feed_id, 'created_at' => $time, 'updated_at' => $time];
             }, $uids);
 
             FeedAtme::insert($datas); // 批量插入数据需要手动维护时间
