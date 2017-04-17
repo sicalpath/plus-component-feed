@@ -5,10 +5,12 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\AdminContaollers;
 use Illuminate\Http\Request;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
-use Illuminate\Contracts\Pagination\Paginator as PaginatorContract;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Traits\PaginatorPage;
 
 class FeedController extends Controller
 {
+    use PaginatorPage;
+
     /**
      * 显示所有feeds.
      *
@@ -85,33 +87,5 @@ class FeedController extends Controller
         }
 
         return response(null, 204);
-    }
-
-    /**
-     * 获取下一页页码.
-     *
-     * @param PaginatorContract $paginator
-     * @return int|null|void
-     * @author Seven Du <shiweidu@outlook.com>
-     */
-    protected function getNextPage(PaginatorContract $paginator)
-    {
-        if ($paginator->hasMorePages()) {
-            return $paginator->currentPage() + 1;
-        }
-    }
-
-    /**
-     * 获取上一页的页码.
-     *
-     * @param PaginatorContract $paginator
-     * @return int|null|void
-     * @author Seven Du <shiweidu@outlook.com>
-     */
-    protected function getPrevPage(PaginatorContract $paginator)
-    {
-        if ($paginator->currentPage() > 1) {
-            return $paginator->currentPage() - 1;
-        }
     }
 }
