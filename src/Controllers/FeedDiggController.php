@@ -50,9 +50,9 @@ class FeedDiggController extends Controller
                 'data' => [],
             ]))->setStatusCode(200);
         }
-        foreach ($feed->diggs as $key => $value) {
-            $user['feed_digg_id'] = $value->id;
-            $user['user_id'] = $value->user_id;
+        foreach ($feed->diggs as $digg) {
+            $user['feed_digg_id'] = $digg->id;
+            $user['user_id'] = $digg->user_id;
 
             $users[] = $user;
         }
