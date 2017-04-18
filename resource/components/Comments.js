@@ -144,7 +144,7 @@ class CommentsComponent extends Component {
                   {this.state.deleteIds.indexOf(id) !== -1 ? (
                     <CircularProgress size={20} />
                   ) : (
-                    <span style={{...styles.actionStyle, ...styles.actionDelete}}>删除</span>
+                    <span style={{...styles.actionStyle, ...styles.actionDelete}} onTouchTap={() => this.deleteComment(id)}>删除</span>
                   )}
                 </TableRowColumn>
               </TableRow>
@@ -210,6 +210,48 @@ class CommentsComponent extends Component {
       autoHideDuration: 2500,
     }));
   }
+
+  /**
+   * Delete Comment.
+   *
+   * @param {Number} id comment ID.
+   * @return {void}
+   * @author Seven Du <shiweidu@outlook.com>
+   */
+  deleteComment = id => {
+    this.pushDeleteRrogress(id);
+    request.delete(
+      createRequestURI(`comments/${id}`),
+      { validateStatus: status => status === 204 }
+    ).then(() => {
+      this.pullDeleteProgress(id);
+      this.pullComment(id);
+    }).catch(({ response: { data: { message = '删除失败' } = {} } = {} } = {}) => {
+      this.pullDeleteProgress(id);
+      this.setSnackbar({ open: true, autoHideDuration: 2500, message });
+    });
+  };
+
+  /**
+   * Pull comment.
+   *
+   * @param {Number} id comment ID.
+   * @return {void}
+   * @author Seven Du <shiweidu@outlook.com>
+   */
+  pullComment = id => {
+    let comments = [];
+    this.state.comments.forEach(comment => {
+      if (parseInt(id) !== parseInt(comment.id)) {
+        comments.push(comment);
+      }
+    });
+
+    this.setState({
+      ...this.state,
+      comments,
+    });
+  };
 
   /**
    * Push delete IDs.
