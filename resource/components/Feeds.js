@@ -243,7 +243,7 @@ class FeedsComponent extends Component {
       ...this.state,
       feeds,
     });
-  }
+  };
 
   setSnackbar = snackbar => {
     this.setState({
@@ -253,7 +253,7 @@ class FeedsComponent extends Component {
         ...snackbar,
       },
     });
-  }
+  };
 
   onSnackbarClose = () => {
     this.setState({
@@ -263,7 +263,7 @@ class FeedsComponent extends Component {
         message: '',
       }
     });
-  }
+  };
 }
 
 export default FeedsComponent;
