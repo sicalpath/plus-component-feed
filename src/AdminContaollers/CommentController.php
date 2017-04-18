@@ -34,4 +34,16 @@ class CommentController extends Controller
 
         return response()->json($data)->setStatusCode(200);
     }
+
+    /**
+     * Delete comment.
+     *
+     * @param Comment $comment
+     * @return mixed
+     * @author Seven Du <shiweidu@outlook.com>
+     */
+    public function delete(Comment $comment)
+    {
+        var_dump($comment);
+    }
 }
