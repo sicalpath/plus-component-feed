@@ -44,6 +44,10 @@ class CommentController extends Controller
      */
     public function delete(Comment $comment)
     {
-        var_dump($comment);
+        if (! $comment->delete()) {
+            return response()->json()->setStatusCode(500);
+        }
+
+        return response(null, 204);
     }
 }
