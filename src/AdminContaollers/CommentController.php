@@ -23,6 +23,7 @@ class CommentController extends Controller
         $limit = (int) $request->query('limit', 20);
 
         $query = app(Comment::class)->newQuery();
+        $query->with(['user']);
         $paginator = $query->simplePaginate($limit);
 
         $data = [
