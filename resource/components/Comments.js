@@ -79,7 +79,7 @@ class CommentsComponent extends Component {
      *
      * @type {Number}
      */
-    limit: 1,
+    limit: 20,
 
     /**
      * Snackbar options.
