@@ -110,7 +110,7 @@ class FeedCommentController extends Controller
         if ($comment && $uid == $comment->user_id) {
             DB::transaction(function () use ($comment, $feed_id) {
                 $comment->delete();
-                Feed::byFeedId($feed_id)->decrement('feed_comment_count'); //减少评论数量
+                $comment->feed()->decrement('feed_comment_count'); // 减少评论数量
             });
         }
 
