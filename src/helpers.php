@@ -43,7 +43,11 @@ function asset_path($path)
  */
 function base_path($path = '')
 {
-    return dirname(__DIR__).$path;
+    if (! $path) {
+        return dirname(__DIR__);
+    }
+
+    return dirname(__DIR__).'/'.$path;
 }
 
 /**
