@@ -46,6 +46,7 @@ class CommentController extends Controller
     {
         if (! $comment->delete()) {
             $comment->feed()->decrement('feed_comment_count');
+
             return response()->json()->setStatusCode(500);
         }
 
