@@ -67,7 +67,7 @@ class FeedCommentController extends Controller
 
         $markmap = ['user_id' => $feedComment->user_id, 'comment_mark' => $feedComment->comment_mark]; // 根据用户及移动端标记进行查重 以防移动端重复调用
         if ($existComment = FeedComment::where($markmap)->first()) {
-         return response()->json(static::createJsonData([
+            return response()->json(static::createJsonData([
                 'status' => true,
                 'code' => 0,
                 'message' => '评论成功',
