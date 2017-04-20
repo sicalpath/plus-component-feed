@@ -66,11 +66,13 @@ class FeedCommentController extends Controller
         $feedComment->comment_mark = $request->input('comment_mark', ($request->user()->id.Carbon::now()->timestamp) * 1000); //默认uid+毫秒时间戳
 
         $markmap = ['user_id' => $feedComment->user_id, 'comment_mark' => $feedComment->comment_mark]; // 根据用户及移动端标记进行查重 以防移动端重复调用
-        if (FeedComment::where($markmap)->first()) {
-            return response()->json(static::createJsonData([
-                'code' => 6010,
-                'message' => '请勿重复操作',
-            ]))->setStatusCode(403);
+        if ($existComment = FeedComment::where($markmap)->first()) {
+         return response()->json(static::createJsonData([
+                'status' => true,
+                'code' => 0,
+                'message' => '评论成功',
+                'data' => $existComment->id,
+            ]))->setStatusCode(200);
         }
 
         DB::transaction(function () use ($feedComment, $feed) {
