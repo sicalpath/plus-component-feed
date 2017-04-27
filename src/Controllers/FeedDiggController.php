@@ -6,6 +6,7 @@ use DB;
 use Zhiyi\Plus\Models\Digg;
 use Illuminate\Http\Request;
 use Zhiyi\Plus\Jobs\PushMessage;
+use Illuminate\Database\QueryException;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg;
@@ -88,16 +89,10 @@ class FeedDiggController extends Controller
                 'message' => '已赞过该动态',
             ]))->setStatusCode(400);
         }
+            
+        DB::beginTransaction();
 
-        if ($feed->user_id != $request->user()->id) {
-            $extras = ['action' => 'digg', 'type' => 'feed'];
-            $alert = '有人赞了你的动态，去看看吧';
-            $alias = $feed->user_id;
-
-            dispatch(new PushMessage($alert, (string) $alias, $extras));
-        }
-
-        DB::transaction(function () use ($feeddigg, $feed, $feed_id) {
+        try {
             $digg = new FeedDigg();
             $digg->user_id = $feeddigg['user_id'];
             $digg->feed_id = $feeddigg['feed_id'];
@@ -106,7 +101,7 @@ class FeedDiggController extends Controller
             Feed::byFeedId($feed_id)->increment('feed_digg_count'); //增加点赞数量
 
             $count = new FeedCount();
-            $count->count($feed->user_id, 'diggs_count', 'increment'); //更新动态作者收到的赞数量
+            $count->count($feed->user_id, 'diggs_count', $method = 'increment'); //更新动态作者收到的赞数量
 
             Digg::create(['component' => 'feed',
                         'digg_table' => 'feed_diggs',
@@ -114,12 +109,27 @@ class FeedDiggController extends Controller
                         'source_table' => 'feeds',
                         'source_id' => $feed_id,
                         'source_content' => $feed->feed_content,
-                        'source_cover' => $feed->storages->isEmpty() ? 0 : $feed->storages->toArray()[0]['id'],
+                        'source_cover' => 0,
                         'user_id' => $feeddigg['user_id'],
                         'to_user_id' => $feed->user_id,
                         ]); // 统计到点赞总表
-        });
 
+            DB::commit();
+        } catch (QueryException $e) {
+            DB::rollBack();
+
+            return response()->json(static::createJsonData([
+                'status' => false,
+                'message' => $e->formatMessage(),
+                'code' => 6010
+            ]))->setStatusCode(400);
+        }
+        $extras = ['action' => 'digg'];
+        $alert = '有人赞了你的动态，去看看吧';
+        $alias = $feed->user_id;
+
+        dispatch(new PushMessage($alert, (string) $alias, $extras));
+        
         return response()->json(static::createJsonData([
             'status' => true,
             'message' => '点赞成功',
