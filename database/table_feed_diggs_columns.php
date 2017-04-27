@@ -16,3 +16,5 @@ if (! Schema::hasColumn($component_table_name, 'feed_id')) {
         $table->integer('feed_id')->index()->unsigned()->comment('动态ID');
     });
 }
+
+$table->primary(['user_id', 'feed_id']);
