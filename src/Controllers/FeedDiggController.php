@@ -89,7 +89,7 @@ class FeedDiggController extends Controller
                 'message' => '已赞过该动态',
             ]))->setStatusCode(400);
         }
-            
+
         DB::beginTransaction();
 
         try {
@@ -121,7 +121,7 @@ class FeedDiggController extends Controller
             return response()->json(static::createJsonData([
                 'status' => false,
                 'message' => $e->formatMessage(),
-                'code' => 6010
+                'code' => 6010,
             ]))->setStatusCode(400);
         }
         $extras = ['action' => 'digg'];
@@ -129,7 +129,7 @@ class FeedDiggController extends Controller
         $alias = $feed->user_id;
 
         dispatch(new PushMessage($alert, (string) $alias, $extras));
-        
+
         return response()->json(static::createJsonData([
             'status' => true,
             'message' => '点赞成功',
