@@ -151,9 +151,9 @@ class FeedController extends Controller
         $data['user_id'] = $feed->user_id;
         // 动态内容
         $data['feed'] = [];
-        $data['feed']['id'] = $feed->id;
-        $data['feed']['title'] = $feed->feed_title;
-        $data['feed']['content'] = $feed->feed_content;
+        $data['feed']['feed_id'] = $feed->id;
+        $data['feed']['feed_title'] = $feed->feed_title ? '';
+        $data['feed']['feed_content'] = $feed->feed_content;
         $data['feed']['created_at'] = $feed->created_at->toDateTimeString();
         $data['feed']['feed_from'] = $feed->feed_from;
         $data['feed']['storages'] = $feed->storages->map(function ($storage) {
