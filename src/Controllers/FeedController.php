@@ -152,7 +152,7 @@ class FeedController extends Controller
         // 动态内容
         $data['feed'] = [];
         $data['feed']['feed_id'] = $feed->id;
-        $data['feed']['feed_title'] = $feed->feed_title ? '';
+        $data['feed']['feed_title'] = $feed->feed_title ? :'';
         $data['feed']['feed_content'] = $feed->feed_content;
         $data['feed']['created_at'] = $feed->created_at->toDateTimeString();
         $data['feed']['feed_from'] = $feed->feed_from;
