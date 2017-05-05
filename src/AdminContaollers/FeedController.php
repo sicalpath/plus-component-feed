@@ -85,7 +85,7 @@ class FeedController extends Controller
      * @author Seven Du <shiweidu@outlook.com>
      */
     public function deleteFeed(Feed $feed)
-    {   
+    {
         DB::beginTransaction();
         try {
             $comments = new FeedComment();
@@ -106,7 +106,7 @@ class FeedController extends Controller
             $count->count($feed->user_id, 'feeds_count', 'decrement'); // 更新动态作者的动态数量
             $count->count($feed->user_id, 'diggs_count', 'decrement', $feed->feed_digg_count); // 更新动态作者收到的点赞数量
 
-            $feed->delete();  
+            $feed->delete();
         } catch (QueryException $e) {
             DB::rollBack();
 
