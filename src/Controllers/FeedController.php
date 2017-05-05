@@ -418,6 +418,9 @@ class FeedController extends Controller
 
                 Digg::where(['component' => 'feed', 'digg_table' => 'feed_diggs', 'source_id' => $feed->id])->delete(); // 删除点赞总表记录
 
+                $atme = new FeedAtme();
+                $atme->where('feed_id', $feed->id)->delete(); // 删除@记录
+
                 $collection = new FeedCollection();
                 $collection->where('feed_id', $feed->id)->delete(); // 删除相关收藏
 

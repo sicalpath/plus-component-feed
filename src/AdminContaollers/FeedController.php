@@ -2,9 +2,15 @@
 
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\AdminContaollers;
 
+use DB;
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedAtme;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedComment;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Services\FeedCount;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Traits\PaginatorPage;
 
 class FeedController extends Controller
@@ -79,12 +85,36 @@ class FeedController extends Controller
      * @author Seven Du <shiweidu@outlook.com>
      */
     public function deleteFeed(Feed $feed)
-    {
-        if (! $feed->delete()) {
+    {   
+        DB::beginTransaction();
+        try {
+            $comments = new FeedComment();
+            $comments->where('feed_id', $feed->id)->delete(); // 删除相关评论
+
+            $digg = new FeedDigg();
+            $digg->where('feed_id', $feed->id)->delete(); // 删除相关点赞
+
+            Digg::where(['component' => 'feed', 'digg_table' => 'feed_diggs', 'source_id' => $feed->id])->delete(); // 删除点赞总表记录
+
+            $atme = new FeedAtme();
+            $atme->where('feed_id', $feed->id)->delete(); // 删除@记录
+
+            $collection = new FeedCollection();
+            $collection->where('feed_id', $feed->id)->delete(); // 删除相关收藏
+
+            $count = new FeedCount();
+            $count->count($feed->user_id, 'feeds_count', 'decrement'); // 更新动态作者的动态数量
+            $count->count($feed->user_id, 'diggs_count', 'decrement', $feed->feed_digg_count); // 更新动态作者收到的点赞数量
+
+            $feed->delete();  
+        } catch (QueryException $e) {
+            DB::rollBack();
+
             return response()->json([
-                'message' => '删除失败',
+                'message' => $e->formatMessage(),
             ])->setStatusCode(500);
         }
+        DB::commit();
 
         return response(null, 204);
     }
