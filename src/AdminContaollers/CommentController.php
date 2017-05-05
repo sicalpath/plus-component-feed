@@ -2,9 +2,12 @@
 
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\AdminContaollers;
 
+use DB;
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Traits\PaginatorPage;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedComment as Comment;
 
 class CommentController extends Controller
@@ -44,11 +47,21 @@ class CommentController extends Controller
      */
     public function delete(Comment $comment)
     {
-        if (! $comment->delete()) {
-            $comment->feed()->decrement('feed_comment_count');
+        DB::beginTransaction();
+        try {
+            $feed = new Feed();
+            $feed->where('id', $comment->feed_id)->decrement('feed_comment_count'); // 统计相关动态评论数量
 
-            return response()->json()->setStatusCode(500);
+            $comment->delete()
+
+        } catch (QueryException $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => $e->formatMessage(),
+            ])->setStatusCode(500);
         }
+        DB::commit();
 
         return response(null, 204);
     }
