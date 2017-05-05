@@ -52,7 +52,7 @@ class CommentController extends Controller
             $feed = new Feed();
             $feed->where('id', $comment->feed_id)->decrement('feed_comment_count'); // 统计相关动态评论数量
 
-            $comment->delete()
+            $comment->delete();
 
         } catch (QueryException $e) {
             DB::rollBack();
