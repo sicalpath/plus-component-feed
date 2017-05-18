@@ -107,4 +107,13 @@ class Feed extends Model
     {
         return $query->where('audit_status', 1);
     }
+
+    /**
+     * 动态拥有多条收藏记录.
+     * @return [type] [description]
+     */
+    public function collection()
+    {
+        return $this->hasMany(FeedCollection::class, 'feed_id');
+    }
 }
