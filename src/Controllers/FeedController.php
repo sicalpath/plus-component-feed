@@ -102,14 +102,16 @@ class FeedController extends Controller
         $feed->feed_title = $request->input('feed_title', '');
         $feed->feed_mark = $request->input('feed_mark', ($user->id.Carbon::now()->timestamp) * 1000); //默认uid+毫秒时间戳
 
-        DB::transaction(function () use ($feed, $storages, $request) { // 创建动态时的数据连贯操作
+        DB::transaction(function () use ($feed, $storages, $request, $user) { // 创建动态时的数据连贯操作
             $feed->save();
             $feed->storages()->sync($storages);
+
+            $user->storages()->sync($storages, false); // 更新作者的个人相册
 
             $request->isatuser == 1 && $this->analysisAtme($feed->feed_content, $feed->user_id, $feed->id);
 
             $count = new FeedCount();
-            $count->count($request->user()->id, 'feeds_count', 'increment'); //更新动态作者的动态数量
+            $count->count($user->id, 'feeds_count', 'increment'); //更新动态作者的动态数量
         });
 
         return response()->json([
