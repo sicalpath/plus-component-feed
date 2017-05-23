@@ -1,5 +1,5 @@
 <?php
 
-Route::any('/example', function() {
-	return 'feeds/v2';
+Route::any('/example', function () {
+    return 'feeds/v2';
 });

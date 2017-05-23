@@ -18,6 +18,6 @@ Route::namespace('Zhiyi\\Component\\ZhiyiPlus\\PlusComponentFeed\\AdminContaolle
     ->group(component_base_path('/routes/admin.php'));
 
 Route::namespace('Zhiyi\\Component\\ZhiyiPlus\\PlusComponentFeed\\V2\\Controllers')
-	->prefix('/api/v2')
-	->middleware('api')
-	->group(component_base_path('/routes/api_v2.php'));
+    ->prefix('/api/v2')
+    ->middleware('api')
+    ->group(component_base_path('/routes/api_v2.php'));
