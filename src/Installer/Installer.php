@@ -3,7 +3,9 @@
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Installer;
 
 use Closure;
+use Carbon\Carbon;
 use Zhiyi\Plus\Models\Comment;
+use Zhiyi\Plus\Models\Permission;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Zhiyi\Component\Installer\PlusInstallPlugin\AbstractInstaller;
@@ -103,6 +105,39 @@ class Installer extends AbstractInstaller
             include component_base_path('/database/table_feed_views_columns.php');
         }
 
+        $time = Carbon::now();
+
+        Permission::insert([
+            [
+                'name' => 'feed-post',
+                'display_name' => '发送分享',
+                'description' => '用户发送分享权限',
+                'created_at' => $time,
+                'updated_at' => $time,
+            ],
+            [
+                'name' => 'feed-comment',
+                'display_name' => '评论分享',
+                'description' => '用户评论分享权限',
+                'created_at' => $time,
+                'updated_at' => $time,
+            ],
+            [
+                'name' => 'feed-digg',
+                'display_name' => '点赞分享',
+                'description' => '用户点赞分享权限',
+                'created_at' => $time,
+                'updated_at' => $time,
+            ],
+            [
+                'name' => 'feed-collection',
+                'display_name' => '收藏分享',
+                'description' => '用户收藏分享权限',
+                'created_at' => $time,
+                'updated_at' => $time,
+            ],
+        ]);
+
         $next();
     }
 
@@ -133,6 +168,7 @@ class Installer extends AbstractInstaller
     public function uninstall(Closure $next)
     {
         Comment::where('component', 'feed')->delete();
+        Permission::whereIn('name', ['feed-post', 'feed-comment', 'feed-digg', 'feed-collection'])->delete();
         Schema::dropIfExists('feeds');
         Schema::dropIfExists('feed_atmes');
         Schema::dropIfExists('feed_diggs');

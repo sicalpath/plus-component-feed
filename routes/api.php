@@ -22,7 +22,8 @@ Route::group([
     ],
 ], function () {
     // 发送分享
-    Route::post('/feeds', 'FeedController@store');
+    Route::post('/feeds', 'FeedController@store')
+        ->middleware('role-permissions:feed-post,你没有发布分享的权限');
     // 删除分享
     Route::delete('/feeds/{feed_id}', 'FeedController@delFeed')->where(['feed_id' => '[0-9]+']);
     // 增加分享浏览量
@@ -33,7 +34,8 @@ Route::group([
     Route::get('/feeds/collections', 'FeedController@getUserCollection');
     // 添加评论
     Route::post('/feeds/{feed_id}/comment', 'FeedCommentController@addComment')
-    ->middleware(FeedMiddleware\VerifyCommentContent::class); // 验证评论内容
+        ->middleware('role-permissions:feed-comment,你没有评论分享的权限')
+        ->middleware(FeedMiddleware\VerifyCommentContent::class); // 验证评论内容
     // 获取评论
     Route::get('/feeds/comments', 'FeedCommentController@getComment');
     // 删除分享
@@ -45,11 +47,13 @@ Route::group([
     // 我收到的点赞
     Route::get('/feeds/diggmes', 'FeedDiggController@mydiggs');
     // 点赞
-    Route::post('/feeds/{feed_id}/digg', 'FeedDiggController@diggFeed');
+    Route::post('/feeds/{feed_id}/digg', 'FeedDiggController@diggFeed')
+        ->middleware('role-permissions:feed-digg,你没有点赞分享的权限');
     // 取消点赞
     Route::delete('/feeds/{feed_id}/digg', 'FeedDiggController@cancelDiggFeed');
     // 收藏
-    Route::post('/feeds/{feed_id}/collection', 'FeedCollectionController@addFeedCollection');
+    Route::post('/feeds/{feed_id}/collection', 'FeedCollectionController@addFeedCollection')
+        ->middleware('role-permissions:feed-collection,你没有收藏分享的权限');
     // 取消收藏
     Route::delete('/feeds/{feed_id}/collection', 'FeedCollectionController@delFeedCollection');
     //获取@我的分享列表
