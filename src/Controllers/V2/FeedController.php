@@ -9,47 +9,45 @@ use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 
 class FeedController extends Controller
 {
-	/**
-	 * 获取最新动态列表. 
-	 *
-	 * @author bs<414606094@qq.com>
-	 * @param  Request $request 
-	 */
-	public function getNewFeeds(Request $request)
-	{
-		$user_id = Auth::guard('api')->user()->id ?? 0;
-		$limit = $request->input('limit') ? : 15;
+    /**
+     * 获取最新动态列表.
+     *
+     * @author bs<414606094@qq.com>
+     * @param  Request $request
+     */
+    public function getNewFeeds(Request $request)
+    {
+        $user_id = Auth::guard('api')->user()->id ?? 0;
+        $limit = $request->input('limit') ?: 15;
 
-		$feeds = Feed::where(function ($query) use ($request) {
-			if ($request->input('max_id') > 0) {
-				$query->where('id', '<', $request->input('max_id'));
-			}	
-		})
-		->orderBy('id', 'DESC')
-		->withCount(['diggs' => function ($query) use ($user_id) {
-			if ($user_id) {
-				$query->where('user_id', $user_id);
-			}
-		}])
-		->with(['storages', 'comments' => function ($query) {
-			$query->orderBy('id', 'desc')
-				->take(5)
-				->select(['id', 'user_id', 'created_at', 'comment_content', 'reply_to_user_id', 'comment_mark'])
-				->get();
-		}])
-		->take($limit)
-		->get();
+        $feeds = Feed::where(function ($query) use ($request) {
+            if ($request->input('max_id') > 0) {
+                $query->where('id', '<', $request->input('max_id'));
+            }
+        })
+        ->orderBy('id', 'DESC')
+        ->withCount(['diggs' => function ($query) use ($user_id) {
+            if ($user_id) {
+                $query->where('user_id', $user_id);
+            }
+        }])
+        ->with(['storages', 'comments' => function ($query) {
+            $query->orderBy('id', 'desc')
+                ->take(5)
+                ->select(['id', 'user_id', 'created_at', 'comment_content', 'reply_to_user_id', 'comment_mark'])
+                ->get();
+        }])
+        ->take($limit)
+        ->get();
 
-		return $this->formatFeedList($feeds, $user_id);
-	}
+        return $this->formatFeedList($feeds, $user_id);
+    }
 
-
-
-	protected function formatFeedList($feeds, $uid)
-	{
-		$datas = [];
-		$feeds->each(function ($feed) use (&$datas, $uid) {
-			$data = [];
+    protected function formatFeedList($feeds, $uid)
+    {
+        $datas = [];
+        $feeds->each(function ($feed) use (&$datas, $uid) {
+            $data = [];
             $data['user_id'] = $feed->user_id;
             $data['feed_mark'] = $feed->feed_mark;
             // 动态数据
@@ -71,8 +69,9 @@ class FeedController extends Controller
             $data['tool']['is_collection_feed'] = $uid ? FeedCollection::where('feed_id', $feed->id)->where('user_id', $uid)->count() : 0;
             // 最新3条评论
             $data['comments'] = $feed->comments;
-			$datas[] = $data;
-		});
-		return response()->json($datas)->setStatusCode(200);
-	}
+            $datas[] = $data;
+        });
+
+        return response()->json($datas)->setStatusCode(200);
+    }
 }
