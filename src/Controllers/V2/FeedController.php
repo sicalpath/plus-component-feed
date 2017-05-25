@@ -36,6 +36,10 @@ class FeedController extends Controller
 				->take(5)
 				->select(['id', 'user_id', 'created_at', 'comment_content', 'reply_to_user_id', 'comment_mark'])
 				->get();
+		}, 'diggs' => function ($query) use ($user_id) {
+			$query->where('user_id', $user_id)->first();
+		}, 'collection' => function ($query) use ($user_id) {
+			$query->where('user_id', $user_id)->first();
 		}])
 		->take($limit)
 		->get();
@@ -67,8 +71,8 @@ class FeedController extends Controller
             $data['tool']['feed_view_count'] = $feed->feed_view_count;
             $data['tool']['feed_digg_count'] = $feed->feed_digg_count;
             $data['tool']['feed_comment_count'] = $feed->feed_comment_count;
-            $data['tool']['is_digg_feed'] = $uid ? FeedDigg::byFeedId($feed->id)->byUserId($uid)->count() : 0;
-            $data['tool']['is_collection_feed'] = $uid ? FeedCollection::where('feed_id', $feed->id)->where('user_id', $uid)->count() : 0;
+            $data['tool']['is_digg_feed'] = $feed->diggs->isEmpty() ? 0 : 1;
+            $data['tool']['is_collection_feed'] = $feed->collection->isEmpty() ? 0 : 1;
             // 最新3条评论
             $data['comments'] = $feed->comments;
 			$datas[] = $data;
