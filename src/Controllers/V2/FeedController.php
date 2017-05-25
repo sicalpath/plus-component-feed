@@ -20,29 +20,29 @@ class FeedController extends Controller
         $user_id = Auth::guard('api')->user()->id ?? 0;
         $limit = $request->input('limit') ?: 15;
 
-		$feeds = Feed::where(function ($query) use ($request) {
-			if ($request->input('max_id') > 0) {
-				$query->where('id', '<', $request->input('max_id'));
-			}	
-		})
-		->orderBy('id', 'DESC')
-		->withCount(['diggs' => function ($query) use ($user_id) {
-			if ($user_id) {
-				$query->where('user_id', $user_id);
-			}
-		}])
-		->with(['storages', 'comments' => function ($query) {
-			$query->orderBy('id', 'desc')
-				->take(5)
-				->select(['id', 'user_id', 'created_at', 'comment_content', 'reply_to_user_id', 'comment_mark'])
-				->get();
-		}, 'diggs' => function ($query) use ($user_id) {
-			$query->where('user_id', $user_id)->first();
-		}, 'collection' => function ($query) use ($user_id) {
-			$query->where('user_id', $user_id)->first();
-		}])
-		->take($limit)
-		->get();
+        $feeds = Feed::where(function ($query) use ($request) {
+            if ($request->input('max_id') > 0) {
+                $query->where('id', '<', $request->input('max_id'));
+            }
+        })
+        ->orderBy('id', 'DESC')
+        ->withCount(['diggs' => function ($query) use ($user_id) {
+            if ($user_id) {
+                $query->where('user_id', $user_id);
+            }
+        }])
+        ->with(['storages', 'comments' => function ($query) {
+            $query->orderBy('id', 'desc')
+                ->take(5)
+                ->select(['id', 'user_id', 'created_at', 'comment_content', 'reply_to_user_id', 'comment_mark'])
+                ->get();
+        }, 'diggs' => function ($query) use ($user_id) {
+            $query->where('user_id', $user_id)->first();
+        }, 'collection' => function ($query) use ($user_id) {
+            $query->where('user_id', $user_id)->first();
+        }])
+        ->take($limit)
+        ->get();
 
         return $this->formatFeedList($feeds, $user_id);
     }
