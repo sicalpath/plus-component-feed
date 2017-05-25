@@ -26,11 +26,6 @@ class FeedController extends Controller
             }
         })
         ->orderBy('id', 'DESC')
-        ->withCount(['diggs' => function ($query) use ($user_id) {
-            if ($user_id) {
-                $query->where('user_id', $user_id);
-            }
-        }])
         ->with(['storages', 'comments' => function ($query) {
             $query->orderBy('id', 'desc')
                 ->take(5)
