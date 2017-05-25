@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedCollection;
 
 class FeedController extends Controller
 {
@@ -152,11 +153,49 @@ class FeedController extends Controller
             }, 'collection' => function ($query) use ($auth_id) {
                 $query->where('user_id', $auth_id)->first();
             }])
-        ->byAudit()
-        ->take($limit)
-        ->get();
+            ->byAudit()
+            ->take($limit)
+            ->get();
 
         return $this->formatFeedList($feeds, $auth_id);
+    }
+
+    /**
+     * 获取用户收藏列表.
+     *
+     * @author bs<414606094@qq.com>
+     * @param  Request $request [description]
+     * @param  int     $user_id [description]
+     * @return [type]           [description]
+     */
+    public function getUserCollection(Request $request)
+    {
+        $uid = $request->user()->id;
+        $limit = $request->input('limit', 15);
+        $max_id = intval($request->input('max_id'));
+
+        $feeds = Feed::orderBy('id', 'DESC')
+            ->where(function ($query) use ($max_id, $uid) {
+                $query->whereIn('id', FeedCollection::where('user_id', $uid)->pluck('feed_id'));
+                if ($max_id > 0) {
+                    $query->where('id', '<', $max_id);
+                }
+            })
+            ->byAudit()
+            ->with(['storages', 'comments' => function ($query) {
+                $query->orderBy('id', 'desc')
+                    ->take(5)
+                    ->select(['id', 'user_id', 'created_at', 'comment_content', 'reply_to_user_id', 'comment_mark'])
+                    ->get();
+            }, 'diggs' => function ($query) use ($uid) {
+                $query->where('user_id', $uid)->first();
+            }, 'collection' => function ($query) use ($uid) {
+                $query->where('user_id', $uid)->first();
+            }])
+            ->take($limit)
+            ->get();
+
+        return $this->formatFeedList($feeds, $uid);
     }
 
     protected function formatFeedList($feeds, $uid)
