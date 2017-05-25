@@ -9,16 +9,16 @@ use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 
 class FeedController extends Controller
 {
-	/**
-	 * 获取最新动态列表. 
-	 *
-	 * @author bs<414606094@qq.com>
-	 * @param  Request $request 
-	 */
-	public function getNewFeeds(Request $request)
-	{
-		$user_id = Auth::guard('api')->user()->id ?? 0;
-		$limit = $request->input('limit') ? : 15;
+    /**
+     * 获取最新动态列表.
+     *
+     * @author bs<414606094@qq.com>
+     * @param  Request $request
+     */
+    public function getNewFeeds(Request $request)
+    {
+        $user_id = Auth::guard('api')->user()->id ?? 0;
+        $limit = $request->input('limit') ?: 15;
 
 		$feeds = Feed::where(function ($query) use ($request) {
 			if ($request->input('max_id') > 0) {
@@ -44,16 +44,14 @@ class FeedController extends Controller
 		->take($limit)
 		->get();
 
-		return $this->formatFeedList($feeds, $user_id);
-	}
+        return $this->formatFeedList($feeds, $user_id);
+    }
 
-
-
-	protected function formatFeedList($feeds, $uid)
-	{
-		$datas = [];
-		$feeds->each(function ($feed) use (&$datas, $uid) {
-			$data = [];
+    protected function formatFeedList($feeds, $uid)
+    {
+        $datas = [];
+        $feeds->each(function ($feed) use (&$datas, $uid) {
+            $data = [];
             $data['user_id'] = $feed->user_id;
             $data['feed_mark'] = $feed->feed_mark;
             // 动态数据
@@ -75,8 +73,9 @@ class FeedController extends Controller
             $data['tool']['is_collection_feed'] = $feed->collection->isEmpty() ? 0 : 1;
             // 最新3条评论
             $data['comments'] = $feed->comments;
-			$datas[] = $data;
-		});
-		return response()->json($datas)->setStatusCode(200);
-	}
+            $datas[] = $data;
+        });
+
+        return response()->json($datas)->setStatusCode(200);
+    }
 }
