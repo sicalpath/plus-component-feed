@@ -214,7 +214,6 @@ class FeedController extends Controller
             // 动态数据
             $data['feed'] = [];
             $data['feed']['feed_id'] = $feed->id;
-            $data['feed']['feed_title'] = $feed->feed_title ?? '';
             $data['feed']['feed_content'] = $feed->feed_content;
             $data['feed']['created_at'] = $feed->created_at->toDateTimeString();
             $data['feed']['feed_from'] = $feed->feed_from;
@@ -280,7 +279,6 @@ class FeedController extends Controller
         $feed->feed_latitude = $request->input('latitude', '');
         $feed->feed_longtitude = $request->input('longtitude', '');
         $feed->feed_geohash = $request->input('geohash', '');
-        $feed->feed_title = $request->input('feed_title', '');
         $feed->feed_mark = $request->input('feed_mark', ($user->id.Carbon::now()->timestamp) * 1000); //默认uid+毫秒时间戳
 
         DB::beginTransaction();
@@ -389,7 +387,6 @@ class FeedController extends Controller
         // 动态内容
         $data['feed'] = [];
         $data['feed']['feed_id'] = $feed->id;
-        $data['feed']['feed_title'] = $feed->feed_title ?: '';
         $data['feed']['feed_content'] = $feed->feed_content;
         $data['feed']['created_at'] = $feed->created_at->toDateTimeString();
         $data['feed']['feed_from'] = $feed->feed_from;
