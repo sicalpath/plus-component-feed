@@ -5,11 +5,17 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Controllers\V2;
 use DB;
 use Carbon\Carbon;
 use Zhiyi\Plus\Models\User;
+use Zhiyi\Plus\Models\Digg;
 use Illuminate\Http\Request;
+use Zhiyi\Plus\Storages\Storage;
+use Zhiyi\Plus\Models\StorageTask;
 use Illuminate\Support\Facades\Auth;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedAtme;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedComment;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Services\FeedCount;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedCollection;
 
 class FeedController extends Controller
@@ -228,5 +234,179 @@ class FeedController extends Controller
         });
 
         return response()->json($datas)->setStatusCode(200);
+    }
+
+    /**
+     * 增加分享浏览量.
+     * 
+     * @author bs<414606094@qq.com>
+     * @param  Feed $feed [description]
+     */
+    public function addFeedViewCount(Feed $feed)
+    {
+        $feed->increment('feed_view_count');
+
+        return response()->json()->setStatusCode(201);
+    }
+
+    /**
+     * 发送分享.
+     * 
+     * @author bs<414606094@qq.com>
+     * @param  Request $request [description]
+     */
+    public function store(Request $request)
+    {
+        $user = $request->user();
+        if (!$request->input('storage_task_ids') && !$request->input('feed_content')) {
+            return response()->json([
+                'message' => ['动态内容不能为空'],
+            ])->setStatusCode(400);
+        }
+
+        $storages = [];
+        if ($request->input('storage_task_ids')) {
+            $storageTasks = StorageTask::whereIn('id', $request->input('storage_task_ids'))->with('storage')->get();
+            $storages = $storageTasks->map(function ($storageTask) {
+                return $storageTask->storage->id;
+            });
+        }
+
+        $feed = new Feed();
+        $feed->feed_content = $request->input('feed_content') ?? '';
+        $feed->feed_client_id = $request->getClientIp();
+        $feed->user_id = $user->id;
+        $feed->feed_from = $request->input('feed_from');
+        $feed->feed_latitude = $request->input('latitude', '');
+        $feed->feed_longtitude = $request->input('longtitude', '');
+        $feed->feed_geohash = $request->input('geohash', '');
+        $feed->feed_title = $request->input('feed_title', '');
+        $feed->feed_mark = $request->input('feed_mark', ($user->id.Carbon::now()->timestamp) * 1000); //默认uid+毫秒时间戳
+
+        DB::beginTransaction();
+
+        try {
+            $feed->save();
+            $feed->storages()->sync($storages);
+
+            $user->storages()->sync($storages, false); // 更新作者的个人相册
+
+            $request->isatuser == 1 && $this->analysisAtme($feed->feed_content, $feed->user_id, $feed->id);
+
+            $count = new FeedCount();
+            $count->count($user->id, 'feeds_count', 'increment'); //更新动态作者的动态数量
+
+            DB::commit();
+        } catch (QueryException $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => [$e->formatMessage()],
+            ])->setStatusCode(500);
+        }
+
+        return response()->json($feed->id)->setStatusCode(201);
+    }
+
+    /**
+     * 解析动态中的@用户.
+     *
+     * @author bs<414606094@qq.com>
+     * @param  [type] $content [description]
+     */
+    protected function analysisAtme(string $content, int $user_id, int $feed_id)
+    {
+        $pattern = '/\[tsplus:(\d+):(\w+)\]/is';
+        preg_match_all($pattern, $content, $matchs);
+        $uids = $matchs[1];
+        $time = Carbon::now();
+        if (is_array($uids)) {
+            $datas = array_map(function ($data) use ($user_id, $feed_id, $time) {
+                return ['at_user_id' => $data, 'user_id' => $user_id, 'feed_id' => $feed_id, 'created_at' => $time, 'updated_at' => $time];
+            }, $uids);
+
+            FeedAtme::insert($datas); // 批量插入数据需要手动维护时间
+        }
+    }
+
+    /**
+     * 删除动态
+     *
+     * @author bs<414606094@qq.com>
+     * @param  Feed $feed_id 
+     */
+    public function delete(Request $request, Feed $feed)
+    {
+        $user_id = $request->user()->id;
+
+        DB::beginTransaction();
+
+        try {
+            $comments = new FeedComment();
+            $comments->where('feed_id', $feed->id)->delete(); // 删除相关评论
+
+            $digg = new FeedDigg();
+            $digg->where('feed_id', $feed->id)->delete(); // 删除相关点赞
+
+            Digg::where(['component' => 'feed', 'digg_table' => 'feed_diggs', 'source_id' => $feed->id])->delete(); // 删除点赞总表记录
+
+            $atme = new FeedAtme();
+            $atme->where('feed_id', $feed->id)->delete(); // 删除@记录
+
+            $collection = new FeedCollection();
+            $collection->where('feed_id', $feed->id)->delete(); // 删除相关收藏
+
+            $count = new FeedCount();
+            $count->count($user_id, 'feeds_count', 'decrement'); // 更新动态作者的动态数量
+            $count->count($user_id, 'diggs_count', 'decrement', $feed->feed_digg_count); // 更新动态作者收到的点赞数量
+
+            $feed->delete();
+            DB::commit();
+        } catch (QueryException $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => [$e->formatMessage()],
+            ])->setStatusCode(500);
+        }
+
+        return response()->json()->setStatusCode(204);
+    }
+
+    public function getSingle(Feed $feed)
+    {
+        $uid = Auth::guard('api')->user()->id ?? 0;
+        // 组装数据
+        $data = [];
+        // 用户标识
+        $data['user_id'] = $feed->user_id;
+        // 动态内容
+        $data['feed'] = [];
+        $data['feed']['feed_id'] = $feed->id;
+        $data['feed']['feed_title'] = $feed->feed_title ?: '';
+        $data['feed']['feed_content'] = $feed->feed_content;
+        $data['feed']['created_at'] = $feed->created_at->toDateTimeString();
+        $data['feed']['feed_from'] = $feed->feed_from;
+        $data['feed']['storages'] = $feed->storages->map(function ($storage) {
+            return ['storage_id' => $storage->id, 'width' => $storage->image_width, 'height' => $storage->image_height];
+        });
+        // 工具栏数据
+        $data['tool'] = [];
+        $data['tool']['feed_view_count'] = $feed->feed_view_count;
+        $data['tool']['feed_digg_count'] = $feed->feed_digg_count;
+        $data['tool']['feed_comment_count'] = $feed->feed_comment_count;
+        // 暂时剔除当前登录用户判定
+        $data['tool']['is_digg_feed'] = $feed->diggs->where('user_id', $uid)->count();
+        $data['tool']['is_collection_feed'] = $feed->collection->where('user_id', $uid)->count();
+        // 动态评论,详情默认为空，自动获取评论列表接口
+        $data['comments'] = [];
+        // 动态最新8条点赞的用户id
+        $data['diggs'] = $feed->diggs->take(8)->map(function ($digg) {
+            return $digg->user_id;
+        });
+
+        $feed->increment('feed_view_count');
+
+        return response()->json($data)->setStatusCode(200);
     }
 }
