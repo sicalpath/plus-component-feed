@@ -31,4 +31,11 @@ Route::middleware('auth:api')
 
         // 获取@我的分享列表
         Route::get('/feeds/atme', 'FeedAtmeController@get');
+
+        // 收藏分享
+        Route::post('/feed/{feed}/collection', 'FeedCollectionController@add');
+
+        // 删除收藏
+        Route::delete('/feed/{feed}/collection', 'FeedCollectionController@delete');
+
     });
