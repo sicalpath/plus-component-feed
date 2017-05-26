@@ -5,7 +5,6 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Controllers\V2;
 use Illuminate\Http\Request;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
-use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedCollection;
 
 class FeedCollectionController extends Controller
 {
@@ -41,7 +40,7 @@ class FeedCollectionController extends Controller
     {
         $user_id = $request->user()->id;
 
-        if (!$feed->collection->where('user_id', $user_id)->first()) {
+        if (! $feed->collection->where('user_id', $user_id)->first()) {
             return response()->json([
                 'message' => ['未对该动态收藏'],
             ])->setStatusCode(404);

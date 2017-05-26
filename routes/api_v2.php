@@ -37,5 +37,4 @@ Route::middleware('auth:api')
 
         // 删除收藏
         Route::delete('/feed/{feed}/collection', 'FeedCollectionController@delete');
-
     });
