@@ -299,7 +299,7 @@ class FeedController extends Controller
             DB::rollBack();
 
             return response()->json([
-                'message' => [$e->formatMessage()],
+                'message' => [$e->errorInfo],
             ])->setStatusCode(500);
         }
 
@@ -364,7 +364,7 @@ class FeedController extends Controller
             DB::rollBack();
 
             return response()->json([
-                'message' => [$e->formatMessage()],
+                'message' => [$e->errorInfo],
             ])->setStatusCode(500);
         }
 
