@@ -5,8 +5,8 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Controllers\V2;
 use DB;
 use Carbon\Carbon;
 use Zhiyi\Plus\Models\Digg;
-use Illuminate\Http\Request;
 use Zhiyi\Plus\Models\User;
+use Illuminate\Http\Request;
 use Zhiyi\Plus\Storages\Storage;
 use Zhiyi\Plus\Models\StorageTask;
 use Illuminate\Support\Facades\Auth;
@@ -238,7 +238,7 @@ class FeedController extends Controller
 
     /**
      * 增加分享浏览量.
-     * 
+     *
      * @author bs<414606094@qq.com>
      * @param  Feed $feed [description]
      */
@@ -251,14 +251,14 @@ class FeedController extends Controller
 
     /**
      * 发送分享.
-     * 
+     *
      * @author bs<414606094@qq.com>
      * @param  Request $request [description]
      */
     public function store(Request $request)
     {
         $user = $request->user();
-        if (!$request->input('storage_task_ids') && !$request->input('feed_content')) {
+        if (! $request->input('storage_task_ids') && ! $request->input('feed_content')) {
             return response()->json([
                 'message' => ['动态内容不能为空'],
             ])->setStatusCode(400);
@@ -333,7 +333,7 @@ class FeedController extends Controller
      * 删除动态
      *
      * @author bs<414606094@qq.com>
-     * @param  Feed $feed_id 
+     * @param  Feed $feed_id
      */
     public function delete(Request $request, Feed $feed)
     {

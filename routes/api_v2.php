@@ -1,4 +1,5 @@
 <?php
+
 // 最新分享列表
 Route::get('/feeds', 'FeedController@getNewFeeds');
 
@@ -12,16 +13,15 @@ Route::get('/user/{user}/feeds', 'FeedController@getUserFeeds')->where(['user' =
 Route::get('/feed/{feed}', 'FeedController@getSingle');
 
 Route::middleware('auth:api')
-	->group(function () {
-		// 关注分享列表
-		Route::get('/feeds/follows', 'FeedController@getFollowFeeds');
-		// 登录用户收藏列表
-		Route::get('/feeds/collections', 'FeedController@getUserCollection');
-	    // 增加分享浏览量
-    	Route::patch('/feed/{feed}/viewcount', 'FeedController@addFeedViewCount');
-    	// 发送分享
-    	Route::post('/feed', 'FeedController@store');
-    	// 删除分享
-    	Route::delete('/feed/{feed}', 'FeedController@delete');
-
-	});
+    ->group(function () {
+        // 关注分享列表
+        Route::get('/feeds/follows', 'FeedController@getFollowFeeds');
+        // 登录用户收藏列表
+        Route::get('/feeds/collections', 'FeedController@getUserCollection');
+        // 增加分享浏览量
+        Route::patch('/feed/{feed}/viewcount', 'FeedController@addFeedViewCount');
+        // 发送分享
+        Route::post('/feed', 'FeedController@store');
+        // 删除分享
+        Route::delete('/feed/{feed}', 'FeedController@delete');
+    });
