@@ -1,5 +1,7 @@
 <?php
 
+use Zhiyi\Plus\Http\Middleware;
+
 // 最新分享列表
 Route::get('/feeds', 'FeedController@getNewFeeds');
 
@@ -30,7 +32,8 @@ Route::middleware('auth:api')
         Route::patch('/feed/{feed}/viewcount', 'FeedController@addFeedViewCount');
 
         // 发送分享
-        Route::post('/feed', 'FeedController@store');
+        Route::post('/feed', 'FeedController@store')
+            ->middleware('role-permissions:feed-post,你没有发布分享的权限');
 
         // 删除分享
         Route::delete('/feed/{feed}', 'FeedController@delete');
@@ -45,7 +48,8 @@ Route::middleware('auth:api')
         Route::delete('/feed/{feed}/collection', 'FeedCollectionController@delete');
 
         // 点赞分享
-        Route::post('/feed/{feed}/digg', 'FeedDiggController@add');
+        Route::post('/feed/{feed}/digg', 'FeedDiggController@add')
+            ->middleware('role-permissions:feed-digg,你没有点赞分享的权限');
 
         // 取消点赞
         Route::delete('/feed/{feed}/digg', 'FeedDiggController@delete');
@@ -54,7 +58,8 @@ Route::middleware('auth:api')
         Route::get('/feeds/diggs', 'FeedDiggController@getMy');
 
         // 发送评论
-        Route::post('/feed/{feed}/comment', 'FeedCommentController@add');
+        Route::post('/feed/{feed}/comment', 'FeedCommentController@add')
+            ->middleware('role-permissions:feed-comment,你没有评论分享的权限');
 
         // 删除评论
         Route::delete('/feed/comment/{comment}', 'FeedCommentController@delete');
