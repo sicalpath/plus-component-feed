@@ -10,7 +10,7 @@ Route::get('/feeds/hots', 'FeedController@getHotFeeds');
 Route::get('/user/{user}/feeds', 'FeedController@getUserFeeds')->where(['user' => '[0-9]+']);
 
 // 获取单条动态
-Route::get('/feed/{feed}', 'FeedController@getSingle');
+Route::get('/feed/{feed}', 'FeedController@getSingle')->where(['feed' => '[0-9]+']);
 
 Route::middleware('auth:api')
     ->group(function () {
@@ -37,4 +37,16 @@ Route::middleware('auth:api')
 
         // 删除收藏
         Route::delete('/feed/{feed}/collection', 'FeedCollectionController@delete');
+
+        // 点赞分享
+        Route::post('/feed/{feed}/digg', 'FeedDiggController@add');
+
+        // 取消点赞
+        Route::delete('/feed/{feed}/digg', 'FeedDiggController@delete');
+
+        // 对一条分享点赞的列表
+        Route::get('/feed/{feed}/diggs', 'FeedDiggController@getDiggs');
+
+        // 我收到的点赞
+        Route::get('/feeds/diggs', 'FeedDiggController@getMy');
     });
