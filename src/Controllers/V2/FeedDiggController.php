@@ -10,7 +10,6 @@ use Illuminate\Database\QueryException;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg;
-use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedStorage;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Services\FeedCount;
 
 class FeedDiggController extends Controller
@@ -32,11 +31,11 @@ class FeedDiggController extends Controller
                             $query->where('id', '<', $max_id);
                         }
                     })->take($limit)->orderBy('id', 'desc');
-                }
+                },
             ]);
 
         $users = [];
-        $feed->diggs->each(function($digg) use (&$users) {
+        $feed->diggs->each(function ($digg) use (&$users) {
             $users[] = [
                 'feed_digg_id' => $digg->id,
                 'user_id' => $digg->user_id,
@@ -163,8 +162,8 @@ class FeedDiggController extends Controller
         ->get()->toArray();
 
         foreach ($diggs as &$digg) {
-            $digg['storages'] = array_map(function (&$storage){
-                return [ 
+            $digg['storages'] = array_map(function (&$storage) {
+                return [
                     'feed_storage_id' => $storage['feed_storage_id'],
                 ];
             }, $digg['feed']['storages']);
