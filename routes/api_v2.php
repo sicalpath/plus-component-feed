@@ -15,6 +15,9 @@ Route::get('/feed/{feed}', 'FeedController@getSingle')->where(['feed' => '[0-9]+
 // 对一条分享点赞的列表
 Route::get('/feed/{feed}/diggs', 'FeedDiggController@getDiggs');
 
+// 获取一条分享的评论列表
+Route::get('/feed/{feed}/comments', 'FeedCommentController@getList');
+
 Route::middleware('auth:api')
     ->group(function () {
         // 关注分享列表
@@ -49,4 +52,13 @@ Route::middleware('auth:api')
 
         // 我收到的点赞
         Route::get('/feeds/diggs', 'FeedDiggController@getMy');
+
+        // 发送评论
+        Route::post('/feed/{feed}/comment', 'FeedCommentController@add');
+
+        // 删除评论
+        Route::delete('/feed/comment/{comment}', 'FeedCommentController@delete');
+
+        // 根据id或当前账户查询评论
+        Route::get('/feeds/comments', 'FeedCommentController@search');
     });
