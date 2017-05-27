@@ -24,11 +24,11 @@ class FeedCommentController extends Controller
         $limit = $request->input('limit', 15);
         $max_id = intval($request->input('max_id'));
 
-        $datas = $feed->comments()->where(function($query) use ($max_id) {
-                if ($max_id > 0) {
-                    $query->where('id', '<', $max_id);
-                }
-            })
+        $datas = $feed->comments()->where(function ($query) use ($max_id) {
+            if ($max_id > 0) {
+                $query->where('id', '<', $max_id);
+            }
+        })
             ->select(['id', 'created_at', 'comment_content', 'user_id', 'to_user_id', 'reply_to_user_id', 'comment_mark'])
             ->orderBy('id', 'desc')
             ->take($limit)
@@ -47,7 +47,7 @@ class FeedCommentController extends Controller
     {
         $user_id = $request->user()->id;
 
-        if (!$request->has('comment_content')) {
+        if (! $request->has('comment_content')) {
             return response()->json(['comment_content' => ['评论内容不能为空']])->setStatusCode(400);
         }
 
@@ -84,7 +84,7 @@ class FeedCommentController extends Controller
      * 删除一条评论.
      *
      * @author bs<414606094@qq.com>
-     * @param  Request        $request   
+     * @param  Request        $request
      * @param  FeedComment    $comment
      */
     public function delete(Request $request, FeedComment $comment)
@@ -122,8 +122,8 @@ class FeedCommentController extends Controller
         })
         ->where(function ($query) use ($comment_ids, $user_id) {
             if (count($comment_ids) > 0) {
-               $query->whereIn('id', $comment_ids);
-            }else {
+                $query->whereIn('id', $comment_ids);
+            } else {
                 $query->where(function ($query) use ($user_id) {
                     $query->where('to_user_id', $user_id)->orwhere('reply_to_user_id', $user_id);
                 });
