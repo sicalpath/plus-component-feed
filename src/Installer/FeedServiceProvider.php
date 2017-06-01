@@ -2,21 +2,20 @@
 
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Installer;
 
-use Closure;
 use Carbon\Carbon;
 use Zhiyi\Plus\Models\Comment;
 use Zhiyi\Plus\Models\Permission;
-use Zhiyi\Plus\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
+use Zhiyi\Plus\Support\ServiceProvider;
 use Illuminate\Database\Schema\Blueprint;
-use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\base_path as component_base_path;
 use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\asset;
+use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\base_path as component_base_path;
 
 class FeedServiceProvider extends ServiceProvider
 {
     public function defaultHandle($command)
     {
-        $handle = $command->choice('Select handle', ['list', 'info','install', 'remove', 'quit'], 0);
+        $handle = $command->choice('Select handle', ['list', 'info', 'install', 'remove', 'quit'], 0);
 
         if ($handle !== 'quit') {
             return $command->call(
@@ -152,12 +151,12 @@ class FeedServiceProvider extends ServiceProvider
 
     public function boot()
     {
- 	   	$this->loadRoutesFrom(
-        	component_base_path('/src/router.php')
-    	); // 路由注入
+        $this->loadRoutesFrom(
+            component_base_path('/src/router.php')
+        ); // 路由注入
 
         $this->publishes([
-            component_base_path('assets') => $this->app->PublicPath().'/zhiyicx/plus-component-feed'
+            component_base_path('assets') => $this->app->PublicPath().'/zhiyicx/plus-component-feed',
         ]); // 静态资源
     }
 
@@ -166,6 +165,6 @@ class FeedServiceProvider extends ServiceProvider
         $this->loadManageFrom('动态分享', 'feed:admin', [
             'route' => true,
             'icon'  => asset('feed-icon.png'),
-        ]);// 后台地址
+        ]); // 后台地址
     }
 }
