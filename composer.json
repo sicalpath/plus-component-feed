@@ -1,7 +1,7 @@
 {
     "name": "zhiyicx/plus-component-feed",
     "description": "feed-component for TS+",
-    "type": "plus-component",
+    "type": "plus-library",
     "license": "Apache-2",
     "authors": [
         {
@@ -15,11 +15,11 @@
         }
     ],
     "require": {
-        "zhiyicx/plus-install-plugin": "^1.0",
+        "zhiyicx/plus-installer": "^1.0",
         "jpush/jpush": "^3.5"
     },
     "extra": {
-        "installer-class": "Zhiyi\\Component\\ZhiyiPlus\\PlusComponentFeed\\Installer\\Installer"
+        "class": "Zhiyi\\Component\\ZhiyiPlus\\PlusComponentFeed\\Installer\\FeedServiceProvider"
     },
     "autoload": {
         "psr-4": {

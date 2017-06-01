@@ -6,39 +6,48 @@ use Closure;
 use Carbon\Carbon;
 use Zhiyi\Plus\Models\Comment;
 use Zhiyi\Plus\Models\Permission;
+use Zhiyi\Plus\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
-use Zhiyi\Component\Installer\PlusInstallPlugin\AbstractInstaller;
 use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\base_path as component_base_path;
+use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\asset;
 
-class Installer extends AbstractInstaller
+class FeedServiceProvider extends ServiceProvider
 {
-    /**
-     * Get the application info.
-     *
-     * @return void|\Zhiyi\Component\Installer\PlusInstallPlugin\ComponentInfoInterface
-     * @author Seven Du <shiweidu@outlook.com>
-     */
-    public function getComponentInfo()
+    public function defaultHandle($command)
     {
-        return app(Info::class);
+        $handle = $command->choice('Select handle', ['list', 'info','install', 'remove', 'quit'], 0);
+
+        if ($handle !== 'quit') {
+            return $command->call(
+                $command->getName(),
+                array_merge($command->argument(), ['handle' => $handle])
+            );
+        }
     }
 
-    /**
-     * register routers.
-     * @return [type] [description]
-     */
-    public function router()
+    public function infoHandle($command)
     {
-        return dirname(__DIR__).'/router.php';
+        $command->info('ThinksnsPlus Feed Component!');
     }
 
-    /**
-     * component installer.
-     * @param  Closure $next [description]
-     * @return [type]        [description]
-     */
-    public function install(Closure $next)
+    public function removeHandle($command)
+    {
+        if ($command->confirm('This will delete your datas for feeds, continue?')) {
+            Comment::where('component', 'feed')->delete();
+            Permission::whereIn('name', ['feed-post', 'feed-comment', 'feed-digg', 'feed-collection'])->delete();
+            Schema::dropIfExists('feeds');
+            Schema::dropIfExists('feed_atmes');
+            Schema::dropIfExists('feed_diggs');
+            Schema::dropIfExists('feed_comments');
+            Schema::dropIfExists('feed_storages');
+            Schema::dropIfExists('feed_collections');
+
+            $command->info('The Feed Component has been removed');
+        }
+    }
+
+    public function installHandle($command)
     {
         if (! Schema::hasTable('feed_atmes')) {
             Schema::create('feed_atmes', function (Blueprint $table) {
@@ -138,52 +147,25 @@ class Installer extends AbstractInstaller
             ],
         ]);
 
-        $next();
+        $command->info('Install Successfully');
     }
 
-    /**
-     * Do run update the compoent.
-     *
-     * @param Closure $next
-     *
-     * @author Seven Du <shiweidu@outlook.com>
-     * @homepage http://medz.cn
-     */
-    public function update(Closure $next)
+    public function boot()
     {
-        include component_base_path('/database/table_feeds_columns.php');
-        include component_base_path('/database/table_feed_comments_columns.php');
-        include component_base_path('/database/table_feed_diggs_columns.php');
-        include component_base_path('/database/table_feed_comments_columns.php');
-        include component_base_path('/database/table_feed_storages_columns.php');
-        include component_base_path('/database/table_feed_collections_columns.php');
-        $next();
+ 	   	$this->loadRoutesFrom(
+        	component_base_path('/src/router.php')
+    	); // 路由注入
+
+        $this->publishes([
+            component_base_path('assets') => $this->app->PublicPath().'/zhiyicx/plus-component-feed'
+        ]); // 静态资源
     }
 
-    /**
-     * uninstall component.
-     * @param  Closure $next [description]
-     * @return [type]        [description]
-     */
-    public function uninstall(Closure $next)
+    public function register()
     {
-        Comment::where('component', 'feed')->delete();
-        Permission::whereIn('name', ['feed-post', 'feed-comment', 'feed-digg', 'feed-collection'])->delete();
-        Schema::dropIfExists('feeds');
-        Schema::dropIfExists('feed_atmes');
-        Schema::dropIfExists('feed_diggs');
-        Schema::dropIfExists('feed_comments');
-        Schema::dropIfExists('feed_storages');
-        Schema::dropIfExists('feed_collections');
-        $next();
-    }
-
-    /**
-     * setting static files.
-     * @return [type] [description]
-     */
-    public function resource()
-    {
-        return component_base_path('/assets');
+        $this->loadManageFrom('动态分享', 'feed:admin', [
+            'route' => true,
+            'icon'  => asset('feed-icon.png'),
+        ]);// 后台地址
     }
 }
