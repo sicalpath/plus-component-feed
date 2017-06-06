@@ -5,8 +5,8 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Installer;
 use Carbon\Carbon;
 use Zhiyi\Plus\Models\Comment;
 use Zhiyi\Plus\Models\Permission;
-use Zhiyi\Plus\Support\PackageHandler;
 use Illuminate\Support\Facades\Schema;
+use Zhiyi\Plus\Support\PackageHandler;
 use Illuminate\Database\Schema\Blueprint;
 use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\base_path as component_base_path;
 

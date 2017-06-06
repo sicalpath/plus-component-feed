@@ -5,7 +5,6 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Installer;
 use Zhiyi\Plus\Support\PackageHandler;
 use Illuminate\Support\ServiceProvider;
 use Zhiyi\Plus\Support\ManageRepository;
-use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Installer\FeedPackageHandler;
 use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\asset;
 use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\base_path as component_base_path;
 
