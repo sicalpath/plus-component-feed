@@ -1,7 +1,6 @@
 {
     "name": "zhiyicx/plus-component-feed",
     "description": "feed-component for TS+",
-    "type": "plus-library",
     "license": "Apache-2",
     "authors": [
         {
@@ -15,11 +14,14 @@
         }
     ],
     "require": {
-        "zhiyicx/plus-installer": "^1.0",
         "jpush/jpush": "^3.5"
     },
     "extra": {
-        "class": "Zhiyi\\Component\\ZhiyiPlus\\PlusComponentFeed\\Installer\\FeedServiceProvider"
+        "laravel": {
+            "providers": [
+                "Zhiyi\\Component\\ZhiyiPlus\\PlusComponentFeed\\Installer\\FeedServiceProvider"
+            ]
+        }
     },
     "autoload": {
         "psr-4": {
