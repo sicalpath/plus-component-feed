@@ -37,7 +37,7 @@ class FeedServiceProvider extends ServiceProvider
     {
         $this->app->make(ManageRepository::class)->loadManageFrom('动态分享', 'feed:admin', [
             'route' => true,
-            'icon' => asset('zhiyicx/plus-component-feed/feed-icon.png')
+            'icon' => asset('zhiyicx/plus-component-feed/feed-icon.png'),
         ]);
     }
 
