@@ -4,6 +4,7 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed;
 
 use Zhiyi\Plus\Support\PackageHandler;
 use Illuminate\Support\ServiceProvider;
+use Zhiyi\Plus\Support\ManageRepository;
 
 class FeedServiceProvider extends ServiceProvider
 {
@@ -23,6 +24,20 @@ class FeedServiceProvider extends ServiceProvider
 
         $this->publishes([
             dirname(__DIR__).'/assets' => $this->app->PublicPath().'/zhiyicx/plus-component-feed',
+        ]);
+    }
+
+    /**
+     * register provided to provider.
+     *
+     * @return void
+     * @author Seven Du <shiweidu@outlook.com>
+     */
+    public function register()
+    {
+        $this->app->make(ManageRepository::class)->loadManageFrom('动态分享', 'feed:admin', [
+            'route' => true,
+            'icon' => asset('zhiyicx/plus-component-feed/feed-icon.png')
         ]);
     }
 
