@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
-use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\view;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedComment;
 
 class HomeController extends Controller
@@ -18,13 +17,9 @@ class HomeController extends Controller
      * @return mixed
      * @author Seven Du <shiweidu@outlook.com>
      */
-    public function show(Request $request)
+    public function show()
     {
-        if (! $request->user()) {
-            return redirect(route('admin'), 302);
-        }
-
-        return view('admin', [
+        return view('feed:view::admin', [
             'base_url' => route('feed:admin'),
             'csrf_token' => csrf_token(),
         ]);
