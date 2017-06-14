@@ -13,22 +13,17 @@
             "homepage": "http://medz.cn"
         }
     ],
-    "require": {
-        "jpush/jpush": "^3.5"
+    "autoload": {
+        "psr-4": {
+            "Zhiyi\\Component\\ZhiyiPlus\\PlusComponentFeed\\": "src/"
+        }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Zhiyi\\Component\\ZhiyiPlus\\PlusComponentFeed\\Installer\\FeedServiceProvider"
+                "Zhiyi\\Component\\ZhiyiPlus\\PlusComponentFeed\\FeedServiceProvider"
             ]
         }
     },
-    "autoload": {
-        "psr-4": {
-            "Zhiyi\\Component\\ZhiyiPlus\\PlusComponentFeed\\": "src/"
-        },
-        "files": [
-            "src/helpers.php" 
-        ]
-    }
+    "version": "2.0.2"
 }
