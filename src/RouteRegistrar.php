@@ -63,7 +63,7 @@ class RouteRegistrar
         $this->router->group([
             'middleware' => ['api'],
             'prefix' => '/api/v2',
-            'namespace' => 'Zhiyi\\Component\\ZhiyiPlus\\PlusComponentFeed\\API2'
+            'namespace' => 'Zhiyi\\Component\\ZhiyiPlus\\PlusComponentFeed\\API2',
         ], dirname(__DIR__).'/routes/api2.php');
     }
 
@@ -78,7 +78,7 @@ class RouteRegistrar
         $this->router->group([
             'middleware' => ['api'],
             'prefix' => '/api/v1',
-            'namespace' => 'Zhiyi\\Component\\ZhiyiPlus\\PlusComponentFeed\\Controllers'
+            'namespace' => 'Zhiyi\\Component\\ZhiyiPlus\\PlusComponentFeed\\Controllers',
         ], dirname(__DIR__).'/routes/api1.php');
     }
 }

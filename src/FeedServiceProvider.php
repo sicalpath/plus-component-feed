@@ -3,7 +3,6 @@
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed;
 
 use Illuminate\Support\ServiceProvider;
-use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\RouteRegistrar;
 
 class FeedServiceProvider extends ServiceProvider
 {
