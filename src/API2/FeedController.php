@@ -20,7 +20,6 @@ class FeedController extends Controller
 
     protected function fillFeedStorages(Request $request, $feed)
     {
-        
         $demo = StorageTaskModel::with(['storage'])->whereIn('id', collect($request->input('storage_task'))->mapWithKeys(function ($item, $key) {
             return [$key => $item['id']];
         })->filter()->values())->get();
