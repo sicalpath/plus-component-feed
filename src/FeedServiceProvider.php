@@ -24,7 +24,7 @@ class FeedServiceProvider extends ServiceProvider
 
         $this->publishes([
             dirname(__DIR__).'/assets' => $this->app->PublicPath().'/zhiyicx/plus-component-feed',
-        ]);
+        ], 'public');
     }
 
     /**

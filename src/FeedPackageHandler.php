@@ -29,6 +29,13 @@ class FeedPackageHandler extends PackageHandler
 
     public function installHandle($command)
     {
+        // publish public assets
+        $command->call('vendor:publish', [
+            '--provider' => FeedServiceProvider::class,
+            '--tag' => 'public',
+            '--force' => true,
+        ]);
+
         if (! Schema::hasTable('feed_atmes')) {
             Schema::create('feed_atmes', function (Blueprint $table) {
                 $table->engine = 'InnoDB';
