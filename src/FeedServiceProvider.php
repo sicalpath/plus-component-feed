@@ -15,6 +15,13 @@ class FeedServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->routeMap();
+
+        // Load views.
+        $this->loadViewsFrom(dirname(__DIR__).'/views/', 'feed:view');
+
+        $this->publishes([
+            dirname(__DIR__).'/assets' => $this->app->PublicPath().'/zhiyicx/plus-component-feed',
+        ]);
     }
 
     /**
