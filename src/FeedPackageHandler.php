@@ -1,6 +1,6 @@
 <?php
 
-namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Installer;
+namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed;
 
 use Carbon\Carbon;
 use Zhiyi\Plus\Models\Comment;
@@ -8,7 +8,6 @@ use Zhiyi\Plus\Models\Permission;
 use Illuminate\Support\Facades\Schema;
 use Zhiyi\Plus\Support\PackageHandler;
 use Illuminate\Database\Schema\Blueprint;
-use function Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\base_path as component_base_path;
 
 class FeedPackageHandler extends PackageHandler
 {
@@ -36,7 +35,7 @@ class FeedPackageHandler extends PackageHandler
                 $table->increments('id')->comment('主键');
                 $table->timestamps();
             });
-            include component_base_path('/database/table_feed_atmes_columns.php');
+            include dirname(__DIR__).'/database/table_feed_atmes_columns.php';
         }
 
         if (! Schema::hasTable('feeds')) {
@@ -46,7 +45,7 @@ class FeedPackageHandler extends PackageHandler
                 $table->timestamps();
                 $table->softDeletes();
             });
-            include component_base_path('/database/table_feeds_columns.php');
+            include dirname(__DIR__).'/database/table_feeds_columns.php';
         }
 
         if (! Schema::hasTable('feed_diggs')) {
@@ -55,7 +54,7 @@ class FeedPackageHandler extends PackageHandler
                 $table->increments('id')->comment('primary key');
                 $table->timestamps();
             });
-            include component_base_path('/database/table_feed_diggs_columns.php');
+            include dirname(__DIR__).'/database/table_feed_diggs_columns.php';
         }
 
         if (! Schema::hasTable('feed_comments')) {
@@ -65,7 +64,7 @@ class FeedPackageHandler extends PackageHandler
                 $table->timestamps();
                 $table->softDeletes();
             });
-            include component_base_path('/database/table_feed_comments_columns.php');
+            include dirname(__DIR__).'/database/table_feed_comments_columns.php';
         }
 
         if (! Schema::hasTable('feed_storages')) {
@@ -74,7 +73,7 @@ class FeedPackageHandler extends PackageHandler
                 $table->increments('id')->comment('primary key');
                 $table->timestamps();
             });
-            include component_base_path('/database/table_feed_storages_columns.php');
+            include dirname(__DIR__).'/database/table_feed_storages_columns.php';
         }
 
         if (! Schema::hasTable('feed_collections')) {
@@ -83,7 +82,7 @@ class FeedPackageHandler extends PackageHandler
                 $table->increments('id')->comment('primary key');
                 $table->timestamps();
             });
-            include component_base_path('/database/table_feed_collections_columns.php');
+            include dirname(__DIR__).'/database/table_feed_collections_columns.php';
         }
 
         if (! Schema::hasTable('feed_views')) {
@@ -92,7 +91,7 @@ class FeedPackageHandler extends PackageHandler
                 $table->increments('id')->comment('primary key');
                 $table->timestamps();
             });
-            include component_base_path('/database/table_feed_views_columns.php');
+            include dirname(__DIR__).'/database/table_feed_views_columns.php';
         }
 
         $time = Carbon::now();
