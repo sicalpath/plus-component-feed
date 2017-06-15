@@ -1,6 +1,11 @@
 # plus-component-feed
 
-feed-component for TS+
+ThinkSNS+ 动态应用
+
+## v2 文档
+
+[docs](docs/api2);
+
 
 # 消息对照表
 [消息对照表](/documents/messages.md)
