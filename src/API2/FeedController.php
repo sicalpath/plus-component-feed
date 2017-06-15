@@ -44,7 +44,7 @@ class FeedController extends Controller
             throw $e;
         }
 
-        return response()->json(['message' => ['发布成功']])->setStatusCode(201);
+        return response()->json(['message' => ['发布成功', 'id' => $feed->id]])->setStatusCode(201);
     }
 
     protected function storeFeedStoragePay(array $pays, FeedModel $feed)
