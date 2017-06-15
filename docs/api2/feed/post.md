@@ -28,7 +28,7 @@ POST /feeds
     "feed_mark": "<mark>",
     "storage_task": [
         {
-            "id": "<id:1>""
+            "id": "<id:1>"
         },
         {
             "id": "<id:2>",
