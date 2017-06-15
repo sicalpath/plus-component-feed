@@ -57,7 +57,7 @@ class FeedController extends Controller
         }
     }
 
-    protected function storeFeedPay (Request $request, FeedModel $feed)
+    protected function storeFeedPay(Request $request, FeedModel $feed)
     {
         $amount = $request->input('amount');
 
@@ -91,7 +91,7 @@ class FeedController extends Controller
      * 查询储存任务对应的储存IDs.
      * <pre>
      *    [3 => 12]; // key task_id, value storage_id
-     * </pre>
+     * </pre>.
      *
      * @param \Illuminate\Http\Request $request
      * @return array
