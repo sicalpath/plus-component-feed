@@ -35,9 +35,9 @@ class StoreFeedPost extends FormRequest
             'storage_task' => ['required_without:feed_content', 'array'],
             'storage_task.*.id' => ['required_with:storage_task', 'distinct', 'exists:storage_tasks,id'],
             'storage_task.*.amount' => ['nullable', 'integer'],
-            'latitude' => 'required_with:longtitude,geohash',
-            'longtitude' => 'required_with:latitude,geohash',
-            'geohash' => 'required_with:latitude,longtitude',
+            'feed_latitude' => 'required_with:feed_longtitude,feed_geohash',
+            'feed_longtitude' => 'required_with:feed_latitude,feed_geohash',
+            'feed_geohash' => 'required_with:feed_latitude,feed_longtitude',
             'amount' => 'nullable|integer',
         ];
     }
@@ -61,9 +61,9 @@ class StoreFeedPost extends FormRequest
             'storage_task.*.id.distinct' => '请求的ID包含重复的值',
             'storage_task.*.id.exists' => '储存任务不存在',
             'storage_task.*.amount.integer' => '附件收费参数错误',
-            'latitude.required_with' => '位置标记不完整',
-            'longtitude.required_with' => '位置标记不完整',
-            'geohash.required_with' => '位置标记不完整',
+            'feed_latitude.required_with' => '位置标记不完整',
+            'feed_longtitude.required_with' => '位置标记不完整',
+            'feed_geohash.required_with' => '位置标记不完整',
             'amount.integer' => '动态收费参数错误',
         ];
     }
