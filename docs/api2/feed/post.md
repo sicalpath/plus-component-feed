@@ -22,23 +22,23 @@ POST /feeds
 ### Example
 ```json5
 {
-    "feed_title": "<title>",
-    "feed_content": "<content>",
-    "feed_from": "<from>",
-    "feed_mark": "<mark>",
+    "feed_title": "标题",
+    "feed_content": "内容",
+    "feed_from": "5",
+    "feed_mark": "xxxxx1",
     "storage_task": [
         {
-            "id": "<id:1>"
+            "id": 1
         },
         {
-            "id": "<id:2>",
-            "amount": "<amount>"
+            "id": 1
+            "amount": 100
         }
     ],
-    "feed_latitude": "<latitude>",
-    "feed_longtitude": "<longtitude>",
-    "feed_geohash": "<geohash>",
-    "amount": "<amount>"
+    "feed_latitude": "12.32132123",
+    "feed_longtitude": "32.33332123",
+    "feed_geohash": "GdUDHyfghjd==",
+    "amount": 450
 }
 ```
 
