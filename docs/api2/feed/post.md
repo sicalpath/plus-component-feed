@@ -20,7 +20,7 @@ POST /feeds
 
 
 ### Example
-```json
+```json5
 {
     "feed_title": "<title>",
     "feed_content": "<content>",
@@ -47,7 +47,7 @@ POST /feeds
 ```
 Status: 201 Created
 ```
-```json
+```json5
 {
     "message": [
         "发布成功"
