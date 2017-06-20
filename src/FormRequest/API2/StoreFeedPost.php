@@ -28,18 +28,17 @@ class StoreFeedPost extends FormRequest
     public function rules(): array
     {
         return [
-            'feed_title' => 'nullable',
-            'feed_content' => ['required_without:storage_task'],
+            'feed_content' => ['required_without:files'],
             'feed_from' => 'required|numeric|in:1,2,3,4,5',
             'feed_mark' => 'required|unique:feeds,feed_mark',
-            'storage_task' => ['required_without:feed_content', 'array'],
-            'storage_task.*.id' => ['required_with:storage_task', 'distinct', 'exists:storage_tasks,id'],
-            'storage_task.*.amount' => ['required_with:storage_task.*.type', 'integer'],
-            'storage_task.*.type' => ['required_with:storage_task.*.amount', 'string', 'in:read,download'],
             'feed_latitude' => 'required_with:feed_longtitude,feed_geohash',
             'feed_longtitude' => 'required_with:feed_latitude,feed_geohash',
             'feed_geohash' => 'required_with:feed_latitude,feed_longtitude',
             'amount' => 'nullable|integer',
+            'files' => ['required_without:feed_content', 'array'],
+            'files.*.id' => ['required_with:files', 'distinct', 'exists:file_withs,id'],
+            'files.*.amount' => ['required_with:files.*.type', 'integer'],
+            'files.*.type' => ['required_with:files.*.amount', 'string', 'in:read,download'],
         ];
     }
 
@@ -57,15 +56,19 @@ class StoreFeedPost extends FormRequest
             'feed_from.in' => '设备标识不在允许范围',
             'feed_mark.required' => '请求非法',
             'feed_mark.unique' => '请求的内容已存在',
-            'storage_task.required_without' => '没有发送任何内容',
-            'storage_task.*.id.required_with' => '储存任务ID必须存在',
-            'storage_task.*.id.distinct' => '请求的ID包含重复的值',
-            'storage_task.*.id.exists' => '储存任务不存在',
-            'storage_task.*.amount.integer' => '附件收费参数错误',
+            'files.*.amount.integer' => '文件请求参数不合法',
             'feed_latitude.required_with' => '位置标记不完整',
             'feed_longtitude.required_with' => '位置标记不完整',
             'feed_geohash.required_with' => '位置标记不完整',
             'amount.integer' => '动态收费参数错误',
+            'files.required_without' => '没有发生任何内容',
+            'files.*.id.required_without' => '发送的文件不存在',
+            'files.*.id.distinct' => '发送的文件中存在重复内容',
+            'files.*.id.exists' => '文件不存在',
+            'files.*.type.required_with' => '文件请求参数不完整',
+            'files.*.type.string' => '文件请求参数类型错误',
+            'files.*.type.in' => '文件请求类型错误',
+            'files.*.amount.required_with' => '文件请求参数类型错误',
         ];
     }
 
