@@ -4,7 +4,8 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\API2;
 
 use Illuminate\Http\Request;
 use Zhiyi\Plus\Http\Controllers\Controller;
-use Zhiyi\Plus\Models\PayPublish as PayPublishModel;
+use Zhiyi\Plus\Models\PaidNode as PaidNodeModel;
+use Zhiyi\Plus\Models\FileWith as FileWithModel;
 use Zhiyi\Plus\Models\StorageTask as StorageTaskModel;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed as FeedModel;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Services\FeedCount as FeedCountService;
@@ -24,67 +25,101 @@ class FeedController extends Controller
         $user = $request->user();
         $feed = $this->fillFeedBaseData($request, new FeedModel());
         
-        dd($request->input('files'));
-        // $fileWiths = [];
-        // $payNodes = [];
-
-        // foreach ($request->input('files') as $item) {
-        //     $this->makePayNode($payNodes, $item);
-        //     $this->makeFileWith($fileWiths, $item);
-        // }
+        $paidNodes = $this->makePayNode($request);
+        $fileWiths = $this->makeFileWith($request);
 
         try {
-            // $feed->saveOrFail();
-            $feed->getConnection()->transaction(function ($demo) {
-                dd($demo);
+            $feed->saveOrFail();
+            $feed->getConnection()->transaction(function () use ($request, $feed, $paidNodes, $fileWiths, $user) {
+                $this->saveFeedPaidNode($request, $feed);
+                $this->saveFeedFilePaidNode($paidNodes, $feed);
+                $this->saveFeedFileWith($fileWiths, $feed);
+                app(FeedCountService::class)->count($user->id, 'feeds_count', 'increment', 1); // 增加用户分享数量.
             });
         } catch (\Exception $e) {
-            
+            $feed->delete();
+            throw $e;
         }
 
-        // try {
-        //     $feed->getConnection()->transaction(function () use ($feed, $request, $payPublishs, $storages, $user) {
-        //         $this->storeFeedPay($request, $feed); // 分享付费发布
-        //         $this->storeFeedStoragePay($payPublishs, $feed); // 分享附件付费
-        //         $feed->storages()->sync(array_values($storages)); // 分享附加附件关联
-        //         StorageTaskModel::whereIn('id', array_keys($storages))->delete(); // 删除任务.
-        //         $user->storages()->attach(array_values($storages)); // 附加用户附件关系.
-        //         app(FeedCountService::class)->count($user->id, 'feeds_count', 'increment', 1); // 增加用户分享数量.
-        //     });
-        // } catch (\Exception $e) {
-        //     $feed->delete();
-
-        //     throw $e;
-        // }
-
-        // return response()->json(['message' => ['发布成功', 'id' => $feed->id]])->setStatusCode(201);
+        return response()->json(['message' => ['发布成功'], 'id' => $feed->id])->setStatusCode(201);
     }
 
-    // protected function storeFeedStoragePay(array $pays, FeedModel $feed)
-    // {
-    //     foreach ($pays as $storage => $pay) {
-    //         $pay->index = sprintf('storage:%s', $storage);
-    //         $pay->subject = '购买动态附件';
-    //         $pay->body = sprintf('购买动态《%s》的图片:%s', str_limit($feed->feed_title ?: $feed->feed_content, 100, '...'), $storage);
-    //         $pay->save();
-    //     }
-    // }
+    /**
+     * 创建文件使用模型.
+     *
+     * @param StoreFeedPostRequest $request
+     * @return mixed
+     * @author Seven Du <shiweidu@outlook.com>
+     */
+    protected function makeFileWith(StoreFeedPostRequest $request)
+    {
+        return FileWithModel::whereIn(
+            'id',
+            collect($request->input('files'))->filter(function (array $item) {
+                return isset($item['id']);
+            })->map(function (array $item) {
+                return $item['id'];
+            })->values()
+        )->where('channel', null)
+        ->where('raw', null)
+        ->where('user_id', $request->user()->id)
+        ->get();
+    }
 
-    // protected function storeFeedPay(Request $request, FeedModel $feed)
-    // {
-    //     $amount = $request->input('amount');
+    /**
+     * 创建付费节点模型.
+     *
+     * @param StoreFeedPostRequest $request
+     * @return mixed
+     * @author Seven Du <shiweidu@outlook.com>
+     */
+    protected function makePayNode(StoreFeedPostRequest $request)
+    {
+        return collect($request->input('files'))->filter(function (array $item) {
+            return isset($item['amount']);
+        })->map(function (array $item) {
+            $paidNode = new PaidNodeModel();
+            $paidNode->index = 'file:'.$item['id'];
+            $paidNode->amount = $item['amount'];
+            $paidNode->extra = $item['type'];
 
-    //     if ($amount === null) {
-    //         return;
-    //     }
+            return $paidNode;
+        });
+    }
 
-    //     $pay = new PayPublishModel();
-    //     $pay->amount = $amount;
-    //     $pay->index = sprintf('feed:%d', $feed->id);
-    //     $pay->subject = sprintf('购买动态《%s》', str_limit($feed->feed_title ?: $feed->feed_content, 100, '...'));
-    //     $pay->body = $pay->subject;
-    //     $pay->save();
-    // }
+    protected function saveFeedFileWith($fileWiths, FeedModel $feed)
+    {
+        foreach ($fileWiths as $fileWith) {
+            $fileWith->channel = 'feed';
+            $fileWith->raw = $feed->id;
+            $fileWith->save();
+        }
+    }
+
+    protected function saveFeedFilePaidNode($nodes, FeedModel $feed)
+    {
+        foreach ($nodes as $node) {
+            $node->subject = '购买动态附件';
+            $node->body = sprintf('购买动态《%s》的图片', str_limit($feed->feed_content, 100, '...'));
+            $node->save();
+        }
+    }
+
+    protected function saveFeedPaidNode(Request $request, FeedModel $feed)
+    {
+        $amount = $request->input('amount');
+
+        if ($amount === null) {
+            return;
+        }
+
+        $pay = new PayPublishModel();
+        $pay->amount = $amount;
+        $pay->index = sprintf('feed:%d', $feed->id);
+        $pay->subject = sprintf('购买动态《%s》', str_limit($feed->feed_title ?: $feed->feed_content, 100, '...'));
+        $pay->body = $pay->subject;
+        $pay->save();
+    }
 
     protected function makePayPublishs(Request $request, array $storages): array
     {
