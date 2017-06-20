@@ -23,59 +23,72 @@ class FeedController extends Controller
     {
         $user = $request->user();
         $feed = $this->fillFeedBaseData($request, new FeedModel());
-        $storages = $this->queryFeedStorages($request);
-        $payPublishs = $this->makePayPublishs($request, $storages);
+        
+        dd($request->input('files'));
+        // $fileWiths = [];
+        // $payNodes = [];
 
-        $feed->user_id = $user->id;
-        $feed->save();
+        // foreach ($request->input('files') as $item) {
+        //     $this->makePayNode($payNodes, $item);
+        //     $this->makeFileWith($fileWiths, $item);
+        // }
 
         try {
-            $feed->getConnection()->transaction(function () use ($feed, $request, $payPublishs, $storages, $user) {
-                $this->storeFeedPay($request, $feed); // 分享付费发布
-                $this->storeFeedStoragePay($payPublishs, $feed); // 分享附件付费
-                $feed->storages()->sync(array_values($storages)); // 分享附加附件关联
-                StorageTaskModel::whereIn('id', array_keys($storages))->delete(); // 删除任务.
-                $user->storages()->attach(array_values($storages)); // 附加用户附件关系.
-                app(FeedCountService::class)->count($user->id, 'feeds_count', 'increment', 1); // 增加用户分享数量.
+            // $feed->saveOrFail();
+            $feed->getConnection()->transaction(function ($demo) {
+                dd($demo);
             });
         } catch (\Exception $e) {
-            $feed->delete();
-
-            throw $e;
+            
         }
 
-        return response()->json(['message' => ['发布成功', 'id' => $feed->id]])->setStatusCode(201);
+        // try {
+        //     $feed->getConnection()->transaction(function () use ($feed, $request, $payPublishs, $storages, $user) {
+        //         $this->storeFeedPay($request, $feed); // 分享付费发布
+        //         $this->storeFeedStoragePay($payPublishs, $feed); // 分享附件付费
+        //         $feed->storages()->sync(array_values($storages)); // 分享附加附件关联
+        //         StorageTaskModel::whereIn('id', array_keys($storages))->delete(); // 删除任务.
+        //         $user->storages()->attach(array_values($storages)); // 附加用户附件关系.
+        //         app(FeedCountService::class)->count($user->id, 'feeds_count', 'increment', 1); // 增加用户分享数量.
+        //     });
+        // } catch (\Exception $e) {
+        //     $feed->delete();
+
+        //     throw $e;
+        // }
+
+        // return response()->json(['message' => ['发布成功', 'id' => $feed->id]])->setStatusCode(201);
     }
 
-    protected function storeFeedStoragePay(array $pays, FeedModel $feed)
-    {
-        foreach ($pays as $storage => $pay) {
-            $pay->index = sprintf('storage:%s', $storage);
-            $pay->subject = '购买动态附件';
-            $pay->body = sprintf('购买动态《%s》的图片:%s', str_limit($feed->feed_title ?: $feed->feed_content, 100, '...'), $storage);
-            $pay->save();
-        }
-    }
+    // protected function storeFeedStoragePay(array $pays, FeedModel $feed)
+    // {
+    //     foreach ($pays as $storage => $pay) {
+    //         $pay->index = sprintf('storage:%s', $storage);
+    //         $pay->subject = '购买动态附件';
+    //         $pay->body = sprintf('购买动态《%s》的图片:%s', str_limit($feed->feed_title ?: $feed->feed_content, 100, '...'), $storage);
+    //         $pay->save();
+    //     }
+    // }
 
-    protected function storeFeedPay(Request $request, FeedModel $feed)
-    {
-        $amount = $request->input('amount');
+    // protected function storeFeedPay(Request $request, FeedModel $feed)
+    // {
+    //     $amount = $request->input('amount');
 
-        if ($amount === null) {
-            return;
-        }
+    //     if ($amount === null) {
+    //         return;
+    //     }
 
-        $pay = new PayPublishModel();
-        $pay->amount = $amount;
-        $pay->index = sprintf('feed:%d', $feed->id);
-        $pay->subject = sprintf('购买动态《%s》', str_limit($feed->feed_title ?: $feed->feed_content, 100, '...'));
-        $pay->body = $pay->subject;
-        $pay->save();
-    }
+    //     $pay = new PayPublishModel();
+    //     $pay->amount = $amount;
+    //     $pay->index = sprintf('feed:%d', $feed->id);
+    //     $pay->subject = sprintf('购买动态《%s》', str_limit($feed->feed_title ?: $feed->feed_content, 100, '...'));
+    //     $pay->body = $pay->subject;
+    //     $pay->save();
+    // }
 
     protected function makePayPublishs(Request $request, array $storages): array
     {
-        return collect($request->input('storage_task'))->filter(function ($item) {
+        return collect($request->input('files'))->filter(function ($item) {
             return isset($item['amount']);
         })->mapWithKeys(function ($item) use ($storages) {
             return [$storages[$item['id']] => $item['amount']];
@@ -97,22 +110,22 @@ class FeedController extends Controller
      * @return array
      * @author Seven Du <shiweidu@outlook.com>
      */
-    protected function queryFeedStorages(Request $request): array
-    {
-        $tasks = collect($request->input('storage_task'))->mapWithKeys(function ($item, $key) {
-            return [$key => $item['id']];
-        })->filter()->values();
+    // protected function queryFeedStorages(Request $request): array
+    // {
+    //     $tasks = collect($request->input('storage_task'))->mapWithKeys(function ($item, $key) {
+    //         return [$key => $item['id']];
+    //     })->filter()->values();
 
-        if (empty($tasks)) {
-            return [];
-        }
+    //     if (empty($tasks)) {
+    //         return [];
+    //     }
 
-        return StorageTaskModel::with(['storage' => function ($query) {
-            $query->select(['id', 'hash']);
-        }])->whereIn('id', $tasks)->select(['id', 'hash'])->get()->mapWithKeys(function ($task) {
-            return [$task->id => $task->storage->id];
-        })->filter()->all();
-    }
+    //     return StorageTaskModel::with(['storage' => function ($query) {
+    //         $query->select(['id', 'hash']);
+    //     }])->whereIn('id', $tasks)->select(['id', 'hash'])->get()->mapWithKeys(function ($task) {
+    //         return [$task->id => $task->storage->id];
+    //     })->filter()->all();
+    // }
 
     /**
      * 填充分享初始数据.
@@ -130,6 +143,7 @@ class FeedController extends Controller
 
         $feed->feed_client_id = $request->ip();
         $feed->audit_status = 1;
+        $feed->user_id = $request->user()->id;
 
         return $feed;
     }
