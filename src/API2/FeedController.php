@@ -4,8 +4,8 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\API2;
 
 use Illuminate\Http\Request;
 use Zhiyi\Plus\Http\Controllers\Controller;
-use Zhiyi\Plus\Models\PaidNode as PaidNodeModel;
 use Zhiyi\Plus\Models\FileWith as FileWithModel;
+use Zhiyi\Plus\Models\PaidNode as PaidNodeModel;
 use Zhiyi\Plus\Models\StorageTask as StorageTaskModel;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed as FeedModel;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Services\FeedCount as FeedCountService;
@@ -24,7 +24,7 @@ class FeedController extends Controller
     {
         $user = $request->user();
         $feed = $this->fillFeedBaseData($request, new FeedModel());
-        
+
         $paidNodes = $this->makePayNode($request);
         $fileWiths = $this->makeFileWith($request);
 
