@@ -15,7 +15,8 @@ class FeedController extends Controller
     public function show(Request $request, FeedModel $feed)
     {
         dd(
-            $feed
+            $feed,
+            $request
         );
     }
 
