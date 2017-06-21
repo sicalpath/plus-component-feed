@@ -136,7 +136,7 @@ class FeedController extends Controller
             return;
         }
 
-        $pay = new PayPublishModel();
+        $pay = new PaidNodeModel();
         $pay->amount = $amount;
         $pay->index = sprintf('feed:%d', $feed->id);
         $pay->subject = sprintf('购买动态《%s》', str_limit($feed->feed_title ?: $feed->feed_content, 100, '...'));
