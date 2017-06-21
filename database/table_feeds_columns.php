@@ -11,15 +11,9 @@ if (! Schema::hasColumn($component_table_name, 'user_id')) {
     });
 }
 
-if (! Schema::hasColumn($component_table_name, 'feed_title')) {
-    Schema::table($component_table_name, function (Blueprint $table) {
-        $table->string('feed_title', 32)->nullable()->default('')->index()->comment('动态标题');
-    });
-}
-
 if (! Schema::hasColumn($component_table_name, 'feed_content')) {
     Schema::table($component_table_name, function (Blueprint $table) {
-        $table->text('feed_content')->comment('动态内容');
+        $table->text('feed_content')->nullable()->comment('动态内容');
     });
 }
 
@@ -31,19 +25,19 @@ if (! Schema::hasColumn($component_table_name, 'feed_from')) {
 
 if (! Schema::hasColumn($component_table_name, 'feed_digg_count')) {
     Schema::table($component_table_name, function (Blueprint $table) {
-        $table->integer('feed_digg_count')->default(0)->unsigned()->comment('动态点赞数');
+        $table->integer('feed_digg_count')->nullable()->default(0)->unsigned()->comment('动态点赞数');
     });
 }
 
 if (! Schema::hasColumn($component_table_name, 'feed_view_count')) {
     Schema::table($component_table_name, function (Blueprint $table) {
-        $table->integer('feed_view_count')->default(0)->unsigned()->comment('动态阅读数');
+        $table->integer('feed_view_count')->nullable()->default(0)->unsigned()->comment('动态阅读数');
     });
 }
 
 if (! Schema::hasColumn($component_table_name, 'feed_comment_count')) {
     Schema::table($component_table_name, function (Blueprint $table) {
-        $table->integer('feed_comment_count')->default(0)->unsigned()->comment('动态评论数');
+        $table->integer('feed_comment_count')->nullable()->default(0)->unsigned()->comment('动态评论数');
     });
 }
 
