@@ -7,16 +7,26 @@ use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Plus\Models\FileWith as FileWithModel;
 use Zhiyi\Plus\Models\PaidNode as PaidNodeModel;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed as FeedModel;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Repository\Feed as FeedRepository;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Services\FeedCount as FeedCountService;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\FormRequest\API2\StoreFeedPost as StoreFeedPostRequest;
 
 class FeedController extends Controller
 {
-    public function show(Request $request, FeedModel $feed)
+    public function show(Request $request, FeedRepository $repository, int $feed)
     {
-        dd(
-            $feed,
-            $request
+        $user = $request->user('api');
+        $feed = $repository->find($feed);
+
+        // 启用获取事物，避免多次 sql 查询造成查询连接过多.
+        $feed->getConnection()->transaction(function () use ($feed, $repository, $user) {
+            $repository->images();
+            $repository->hasDigg($user->id ?? 0);
+            $repository->infoDiggUsers();
+        });
+
+       dd(
+            $feed->images[0]->file
         );
     }
 
