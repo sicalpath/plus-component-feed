@@ -72,7 +72,7 @@ class Feed
             'images.paidNode',
             'images.paidNode.pays' => function ($query) use ($userId) {
                 $query->where('user_id', $userId);
-            }
+            },
         ]);
 
         $this->forget(sprintf('feed:%s:images', $this->model->id));
@@ -88,6 +88,7 @@ class Feed
     public function infoDiggUsers()
     {
         $minutes = $this->dateTime->copy()->addDays(1);
+
         return $this->model->diggs = $this->cache->remember(sprintf('feed:%s:info-diggs', $this->model->id), $minutes, function () {
             if (! $this->model->relationLoaded('diggs')) {
                 $this->model->load(['diggs' => function ($query) {
@@ -95,7 +96,7 @@ class Feed
                         ->orderBy('id', 'desc');
                 }]);
             }
-            
+
             return $this->model->diggs;
         });
     }
@@ -104,7 +105,7 @@ class Feed
      * Has User digg.
      *
      * @param int $userId
-     * @return boolean
+     * @return bool
      * @author Seven Du <shiweidu@outlook.com>
      */
     public function hasDigg(int $userId): bool

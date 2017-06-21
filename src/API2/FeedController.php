@@ -26,7 +26,7 @@ class FeedController extends Controller
             $repository->infoDiggUsers();
         });
 
-       dd(
+        dd(
             $feed
         );
     }
