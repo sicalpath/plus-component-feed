@@ -15,7 +15,7 @@ POST /feeds
 | feed_longtitude | string | 纬度，当经纬度， GeoHash 任意一个存在，则本字段必须存在 |
 | feed_geohash | string | GeoHash，当经纬度， GeoHash 任意一个存在，则本字段必须存在 |
 | amount | inteter | 应用收费，不存在表示不收费，存在表示手费。|
-| files | array | 结构：`{ id: <id>, amount: <amount>, type: <read|download> }`，amount 为可选，id 必须存在，amount 为收费金额，单位分, type 为收费方式 |
+| files | array | 结构：`{ id: <id>, amount: <amount>, type: <read\|download> }`，amount 为可选，id 必须存在，amount 为收费金额，单位分, type 为收费方式 |
 
 
 ### Example
