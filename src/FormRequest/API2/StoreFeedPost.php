@@ -2,6 +2,7 @@
 
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\FormRequest\API2;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Auth\Access\AuthorizationException;
 
@@ -36,7 +37,14 @@ class StoreFeedPost extends FormRequest
             'feed_geohash' => 'required_with:feed_latitude,feed_longtitude',
             'amount' => 'nullable|integer',
             'files' => ['required_without:feed_content', 'array'],
-            'files.*.id' => ['required_with:files', 'distinct', 'exists:file_withs,id'],
+            'files.*.id' => [
+                'required_with:files',
+                'distinct',
+                Rule::exists('file_withs', 'id')->where(function ($query) {
+                    $query->where('channel', null);
+                    $query->where('raw', null);
+                }),
+            ],
             'files.*.amount' => ['required_with:files.*.type', 'integer'],
             'files.*.type' => ['required_with:files.*.amount', 'string', 'in:read,download'],
         ];
@@ -64,7 +72,7 @@ class StoreFeedPost extends FormRequest
             'files.required_without' => '没有发生任何内容',
             'files.*.id.required_without' => '发送的文件不存在',
             'files.*.id.distinct' => '发送的文件中存在重复内容',
-            'files.*.id.exists' => '文件不存在',
+            'files.*.id.exists' => '文件不存在或已经被使用',
             'files.*.type.required_with' => '文件请求参数不完整',
             'files.*.type.string' => '文件请求参数类型错误',
             'files.*.type.in' => '文件请求类型错误',
