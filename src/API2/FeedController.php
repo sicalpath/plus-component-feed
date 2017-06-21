@@ -42,7 +42,7 @@ class FeedController extends Controller
         $user = $request->user();
         $feed = $this->fillFeedBaseData($request, new FeedModel());
 
-        $paidNodes = $this->makePayNode($request);
+        $paidNodes = $this->makePaidNode($request);
         $fileWiths = $this->makeFileWith($request);
 
         try {
@@ -90,13 +90,14 @@ class FeedController extends Controller
      * @return mixed
      * @author Seven Du <shiweidu@outlook.com>
      */
-    protected function makePayNode(StoreFeedPostRequest $request)
+    protected function makePaidNode(StoreFeedPostRequest $request)
     {
         return collect($request->input('images'))->filter(function (array $item) {
             return isset($item['amount']);
         })->map(function (array $item) {
             $paidNode = new PaidNodeModel();
-            $paidNode->index = 'file:'.$item['id'];
+            $paidNode->channel = 'file';
+            $paidNode->raw = $item['id'];
             $paidNode->amount = $item['amount'];
             $paidNode->extra = $item['type'];
 
@@ -150,16 +151,17 @@ class FeedController extends Controller
     {
         $amount = $request->input('amount');
 
-        if ($amount === null) {
+        if (! $amount) {
             return;
         }
 
-        $pay = new PaidNodeModel();
-        $pay->amount = $amount;
-        $pay->index = sprintf('feed:%d', $feed->id);
-        $pay->subject = sprintf('购买动态《%s》', str_limit($feed->feed_content, 100, '...'));
-        $pay->body = $pay->subject;
-        $pay->save();
+        $paidNode = new PaidNodeModel();
+        $paidNode->amount = $amount;
+        $paidNode->channel = 'feed';
+        $paidNode->raw = $feed->id;
+        $paidNode->subject = sprintf('购买动态《%s》', str_limit($feed->feed_content, 100, '...'));
+        $paidNode->body = $paidNode->subject;
+        $paidNode->save();
     }
 
     /**
