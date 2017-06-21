@@ -12,6 +12,13 @@ use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\FormRequest\API2\StoreFeedPost a
 
 class FeedController extends Controller
 {
+    public function show(Request $request, FeedModel $feed)
+    {
+        dd(
+            $feed
+        );
+    }
+
     /**
      * 储存分享.
      *
@@ -54,7 +61,7 @@ class FeedController extends Controller
     {
         return FileWithModel::whereIn(
             'id',
-            collect($request->input('files'))->filter(function (array $item) {
+            collect($request->input('images'))->filter(function (array $item) {
                 return isset($item['id']);
             })->map(function (array $item) {
                 return $item['id'];
@@ -74,7 +81,7 @@ class FeedController extends Controller
      */
     protected function makePayNode(StoreFeedPostRequest $request)
     {
-        return collect($request->input('files'))->filter(function (array $item) {
+        return collect($request->input('images'))->filter(function (array $item) {
             return isset($item['amount']);
         })->map(function (array $item) {
             $paidNode = new PaidNodeModel();
@@ -97,7 +104,7 @@ class FeedController extends Controller
     protected function saveFeedFileWith($fileWiths, FeedModel $feed)
     {
         foreach ($fileWiths as $fileWith) {
-            $fileWith->channel = 'feed';
+            $fileWith->channel = 'feed:image';
             $fileWith->raw = $feed->id;
             $fileWith->save();
         }
