@@ -139,7 +139,7 @@ class FeedController extends Controller
         $pay = new PaidNodeModel();
         $pay->amount = $amount;
         $pay->index = sprintf('feed:%d', $feed->id);
-        $pay->subject = sprintf('购买动态《%s》', str_limit($feed->feed_title ?: $feed->feed_content, 100, '...'));
+        $pay->subject = sprintf('购买动态《%s》', str_limit($feed->feed_content, 100, '...'));
         $pay->body = $pay->subject;
         $pay->save();
     }
@@ -154,7 +154,7 @@ class FeedController extends Controller
      */
     protected function fillFeedBaseData(Request $request, FeedModel $feed): FeedModel
     {
-        foreach ($request->only(['feed_title', 'feed_content', 'feed_from', 'feed_mark', 'feed_latitude', 'feed_longtitude', 'feed_geohash']) as $key => $value) {
+        foreach ($request->only(['feed_content', 'feed_from', 'feed_mark', 'feed_latitude', 'feed_longtitude', 'feed_geohash']) as $key => $value) {
             $feed->$key = $value;
         }
 

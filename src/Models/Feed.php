@@ -12,7 +12,6 @@ class Feed extends Model
     protected $table = 'feeds';
 
     protected $fillable = [
-        'feed_title',
         'feed_content',
         'feed_from',
         'feed_latitude',
