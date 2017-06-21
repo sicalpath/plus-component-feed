@@ -3,6 +3,7 @@
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models;
 
 use Zhiyi\Plus\Models\User;
+use Zhiyi\Plus\Models\FileWith;
 use Zhiyi\Plus\Models\Storage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -25,6 +26,18 @@ class Feed extends Model
     protected $hidden = [
         'feed_client_id',
     ];
+
+    /**
+     * Get feed images.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @author Seven Du <shiweidu@outlook.com>
+     */
+    public function images()
+    {
+        return $this->hasMany(FileWith::class, 'raw', 'id')
+            ->where('channel', 'feed:image');
+    }
 
     /**
      * 单条动态属于一个用户.
