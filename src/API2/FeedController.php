@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Plus\Models\FileWith as FileWithModel;
 use Zhiyi\Plus\Models\PaidNode as PaidNodeModel;
-use Zhiyi\Plus\Models\StorageTask as StorageTaskModel;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed as FeedModel;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Services\FeedCount as FeedCountService;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\FormRequest\API2\StoreFeedPost as StoreFeedPostRequest;
@@ -87,6 +86,14 @@ class FeedController extends Controller
         });
     }
 
+    /**
+     * 保存分享图片使用.
+     *
+     * @param array $fileWiths
+     * @param \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed $feed
+     * @return void
+     * @author Seven Du <shiweidu@outlook.com>
+     */
     protected function saveFeedFileWith($fileWiths, FeedModel $feed)
     {
         foreach ($fileWiths as $fileWith) {
@@ -96,6 +103,14 @@ class FeedController extends Controller
         }
     }
 
+    /**
+     * 保存分享文件付费节点.
+     *
+     * @param array $nodes
+     * @param \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed $feed
+     * @return void
+     * @author Seven Du <shiweidu@outlook.com>
+     */
     protected function saveFeedFilePaidNode($nodes, FeedModel $feed)
     {
         foreach ($nodes as $node) {
@@ -105,6 +120,14 @@ class FeedController extends Controller
         }
     }
 
+    /**
+     * 保存分享付费节点.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed $feed
+     * @return void
+     * @author Seven Du <shiweidu@outlook.com>
+     */
     protected function saveFeedPaidNode(Request $request, FeedModel $feed)
     {
         $amount = $request->input('amount');
@@ -120,47 +143,6 @@ class FeedController extends Controller
         $pay->body = $pay->subject;
         $pay->save();
     }
-
-    protected function makePayPublishs(Request $request, array $storages): array
-    {
-        return collect($request->input('files'))->filter(function ($item) {
-            return isset($item['amount']);
-        })->mapWithKeys(function ($item) use ($storages) {
-            return [$storages[$item['id']] => $item['amount']];
-        })->map(function ($amount) {
-            $pay = new PayPublishModel();
-            $pay->amount = $amount;
-
-            return $pay;
-        })->all();
-    }
-
-    /**
-     * 查询储存任务对应的储存IDs.
-     * <pre>
-     *    [3 => 12]; // key task_id, value storage_id
-     * </pre>.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return array
-     * @author Seven Du <shiweidu@outlook.com>
-     */
-    // protected function queryFeedStorages(Request $request): array
-    // {
-    //     $tasks = collect($request->input('storage_task'))->mapWithKeys(function ($item, $key) {
-    //         return [$key => $item['id']];
-    //     })->filter()->values();
-
-    //     if (empty($tasks)) {
-    //         return [];
-    //     }
-
-    //     return StorageTaskModel::with(['storage' => function ($query) {
-    //         $query->select(['id', 'hash']);
-    //     }])->whereIn('id', $tasks)->select(['id', 'hash'])->get()->mapWithKeys(function ($task) {
-    //         return [$task->id => $task->storage->id];
-    //     })->filter()->all();
-    // }
 
     /**
      * 填充分享初始数据.
