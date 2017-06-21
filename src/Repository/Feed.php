@@ -59,6 +59,26 @@ class Feed
         });
     }
 
+    public function loadImagesPaidNodes(int $userId)
+    {
+        $cacheKey = sprintf('feed:%s:images.paid:%s', $this->model->id, $userId);
+
+        if ($this->cache->has($cacheKey)) {
+            return $this->images();
+        }
+
+        $this->model->load([
+            'images',
+            'images.paidNode',
+            'images.paidNode.pays' => function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            }
+        ]);
+
+        $this->forget(sprintf('feed:%s:images', $this->model->id));
+        $this->images();
+    }
+
     /**
      * 获取详情页面点赞用户列表.
      *
