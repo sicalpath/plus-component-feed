@@ -22,11 +22,12 @@ class FeedController extends Controller
         $feed->getConnection()->transaction(function () use ($feed, $repository, $user) {
             $repository->images();
             $repository->hasDigg($user->id ?? 0);
+            $repository->loadImagesPaidNodes($user->id ?? 0);
             $repository->infoDiggUsers();
         });
 
        dd(
-            $feed->images[0]->file
+            $feed
         );
     }
 
