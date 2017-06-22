@@ -11,6 +11,13 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Feed extends Model
 {
+    use Concerns\HasFeedCollect;
+
+    /**
+     * The model table name.
+     *
+     * @var string
+     */
     protected $table = 'feeds';
 
     protected $fillable = [
@@ -40,6 +47,12 @@ class Feed extends Model
             ->where('channel', 'feed:image');
     }
 
+    /**
+     * 动态付费节点.
+     *
+     * @return 
+     * @author Seven Du <shiweidu@outlook.com>
+     */
     public function paidNode()
     {
         return $this->hasOne(PaidNode::class, 'raw', 'id')
