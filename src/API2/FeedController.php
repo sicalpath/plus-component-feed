@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Plus\Models\FileWith as FileWithModel;
 use Zhiyi\Plus\Models\PaidNode as PaidNodeModel;
+use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed as FeedModel;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Repository\Feed as FeedRepository;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Services\FeedCount as FeedCountService;
@@ -13,6 +14,74 @@ use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\FormRequest\API2\StoreFeedPost a
 
 class FeedController extends Controller
 {
+    /**
+     * 分享列表.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \Illuminate\Contracts\Foundation\Application $app
+     * @return mixed
+     * @author Seven Du <shiweidu@outlook.com>
+     */
+    public function index(Request $request, ApplicationContract $app)
+    {
+        $type = $request->query('type', 'new');
+
+        if (! in_array($type, ['new', 'hot', 'follow'])) {
+            $type = 'new';
+        }
+
+        return $app->call([$this, $type]);
+    }
+
+    /**
+     * Get new feeds.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed $feedModel
+     * @param \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Repository\Feed $repository
+     * @return mixed
+     * @author Seven Du <shiweidu@outlook.com>
+     */
+    public function new(Request $request, FeedModel $feedModel, FeedRepository $repository)
+    {
+        $limit = $request->query('limit', 20);
+        $after = $request->query('after');
+
+        $feeds = $feedModel->where(function ($query) use ($after) {
+            if (! $after) {
+                return;
+            }
+
+            $query->where('id', '<', $after);
+        })->limit($limit)
+        ->orderBy('id', 'desc')
+        ->get();
+
+        $user = $request->user('api')->id ?? 0;
+
+        return $feedModel->getConnection()->transaction(function () use ($feeds, $repository, $user) {
+            return $feeds->map(function (FeedModel $feed) use ($repository, $user) {
+                $feed->has_collect = $feed->collected($user);
+                $repository->setModel($feed);
+                $repository->images();
+                $repository->hasDigg($user);
+                $repository->infoDiggUsers();
+
+                return $repository->format($user);
+            });
+        });
+    }
+
+    public function hot()
+    {
+        // todo.
+    }
+
+    public function follow()
+    {
+        // todo.
+    }
+
     /**
      * 获取动态详情.
      *
@@ -24,16 +93,17 @@ class FeedController extends Controller
      */
     public function show(Request $request, FeedRepository $repository, int $feed)
     {
-        $user = $request->user('api');
+        $user = $request->user('api')->id ?? 0;
         $feed = $repository->find($feed);
 
         // 启用获取事物，避免多次 sql 查询造成查询连接过多.
         return $feed->getConnection()->transaction(function () use ($feed, $repository, $user) {
+            $feed->has_collect = $feed->collected($user);
             $repository->images();
-            $repository->hasDigg($user->id ?? 0);
+            $repository->hasDigg($user);
             $repository->infoDiggUsers();
 
-            return $repository->format($user->id ?? 0);
+            return $repository->format($user);
         });
     }
 
