@@ -7,7 +7,6 @@ use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Plus\Models\FileWith as FileWithModel;
 use Zhiyi\Plus\Models\PaidNode as PaidNodeModel;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed as FeedModel;
-use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg as FeedDiggModel;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Repository\Feed as FeedRepository;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Services\FeedCount as FeedCountService;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\FormRequest\API2\StoreFeedPost as StoreFeedPostRequest;

@@ -4,7 +4,6 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Repository;
 
 use Carbon\Carbon;
 use Zhiyi\Plus\Models\FileWith as FileWithModel;
-use Zhiyi\Plus\Models\PaidNode as PaidNodeModel;
 use Illuminate\Contracts\Cache\Repository as CacheContract;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed as FeedModel;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg as FeedDiggModel;
@@ -63,7 +62,7 @@ class Feed
         $this->model->setRelation('images', $this->cache->remember(sprintf('feed:%s:images', $this->model->id), $this->dateTime->copy()->addDays(7), function () {
             $this->model->load([
                 'images',
-                'images.paidNode'
+                'images.paidNode',
             ]);
 
             return $this->model->images;
