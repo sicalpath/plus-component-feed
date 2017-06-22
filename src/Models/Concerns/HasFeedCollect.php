@@ -50,6 +50,7 @@ trait HasFeedCollect
     {
         $this->forgetCollet($this->id, $user);
         Cache::forget($cacheKey);
+
         return $this->collections()->attach($user);
     }
 
@@ -63,6 +64,7 @@ trait HasFeedCollect
     public function uncollect(int $user)
     {
         $this->forgetCollet($this->id, $user);
+
         return $this->collections()->detach($user);
     }
 

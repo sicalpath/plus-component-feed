@@ -50,7 +50,7 @@ class Feed extends Model
     /**
      * 动态付费节点.
      *
-     * @return 
+     * @return
      * @author Seven Du <shiweidu@outlook.com>
      */
     public function paidNode()
