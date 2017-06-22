@@ -37,12 +37,14 @@ Status: 201 OK
     "images": [ // 图片
         {
             "file": 4, // 文件 file_with 标识 不收费图片只存在 file 这一个字段。
+            "size": null, // 图像尺寸，非图片为 null，图片没有尺寸也为 null，
             "amount": 100, // 收费多少
             "type": "download", // 收费方式
             "paid": false // 当前用户是否购买
         },
         {
-            "file": 5
+            "file": 5,
+            "size": '1930x1930' // 当图片有尺寸的时候采用 width x height 格式返回。
         }
     ],
     "diggs": [ // 点赞用户列表，里面都是用户ID.

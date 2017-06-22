@@ -124,7 +124,10 @@ class Feed
     public function format(int $user = 0): FeedModel
     {
         $this->model->setRelation('images', $this->model->images->map(function (FileWithModel $item) use ($user) {
-            $image = ['file' => $item->id];
+            $image = [
+                'file' => $item->id,
+                'size' => $item->size,
+            ];
             if ($item->paidNode !== null) {
                 $image['amount'] = $item->paidNode->amount;
                 $image['type'] = $item->paidNode->extra;
