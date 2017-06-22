@@ -59,12 +59,12 @@ class Feed
         });
     }
 
-    public function loadImagesPaidNodes(int $userId)
+    public function imagesPaidNodes(int $userId)
     {
         $cacheKey = sprintf('feed:%s:images.paid:%s', $this->model->id, $userId);
 
         if ($this->cache->has($cacheKey)) {
-            return $this->images();
+            return $this->model->images = $this->cache->get($cacheKey);
         }
 
         $this->model->load([
@@ -74,9 +74,9 @@ class Feed
                 $query->where('user_id', $userId);
             },
         ]);
+        $this->cache->forever($cacheKey, $this->model->images);
 
-        $this->forget(sprintf('feed:%s:images', $this->model->id));
-        $this->images();
+        return $this->model->images;
     }
 
     /**
