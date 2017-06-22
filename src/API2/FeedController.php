@@ -47,7 +47,8 @@ class FeedController extends Controller
         $limit = $request->query('limit', 20);
         $after = $request->query('after');
 
-        $feeds = $feedModel->where(function ($query) use ($after) {
+        $feeds = $feedModel->with('paidNode')
+        ->where(function ($query) use ($after) {
             if (! $after) {
                 return;
             }
@@ -61,13 +62,18 @@ class FeedController extends Controller
 
         return $feedModel->getConnection()->transaction(function () use ($feeds, $repository, $user) {
             return $feeds->map(function (FeedModel $feed) use ($repository, $user) {
-                $feed->has_collect = $feed->collected($user);
                 $repository->setModel($feed);
                 $repository->images();
                 $repository->hasDigg($user);
                 $repository->infoDiggUsers();
+                $feed->has_collect = $feed->collected($user);
+                $repository->format($user);
 
-                return $repository->format($user);
+                if ($feed->paid === false) {
+                    $feed->feed_content = str_limit($feed->feed_content, 100, '');
+                }
+
+                return $feed;
             });
         });
     }
@@ -95,6 +101,14 @@ class FeedController extends Controller
     {
         $user = $request->user('api')->id ?? 0;
         $feed = $repository->find($feed);
+
+        if ($feed->paidNode !== null && $feed->paidNode->paid($user) === false) {
+            return response()->json([
+                'message' => ['请购买动态'],
+                'paid_node' => $feed->paidNode->id,
+                'amount' => $feed->paidNode->amount,
+            ])->setStatusCode(403);
+        }
 
         // 启用获取事物，避免多次 sql 查询造成查询连接过多.
         return $feed->getConnection()->transaction(function () use ($feed, $repository, $user) {
