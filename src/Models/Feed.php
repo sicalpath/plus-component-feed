@@ -5,6 +5,7 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models;
 use Zhiyi\Plus\Models\User;
 use Zhiyi\Plus\Models\Storage;
 use Zhiyi\Plus\Models\FileWith;
+use Zhiyi\Plus\Models\PaidNode;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -37,6 +38,12 @@ class Feed extends Model
     {
         return $this->hasMany(FileWith::class, 'raw', 'id')
             ->where('channel', 'feed:image');
+    }
+
+    public function paidNode()
+    {
+        return $this->hasOne(PaidNode::class, 'raw', 'id')
+            ->where('channel', 'feed');
     }
 
     /**
