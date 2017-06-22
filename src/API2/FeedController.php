@@ -14,39 +14,28 @@ use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\FormRequest\API2\StoreFeedPost a
 
 class FeedController extends Controller
 {
+    /**
+     * 获取动态详情.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Repository\Feed $repository
+     * @param int $feed
+     * @return mixed
+     * @author Seven Du <shiweidu@outlook.com>
+     */
     public function show(Request $request, FeedRepository $repository, int $feed)
     {
         $user = $request->user('api');
         $feed = $repository->find($feed);
 
         // 启用获取事物，避免多次 sql 查询造成查询连接过多.
-        $feed->getConnection()->transaction(function () use ($feed, $repository, $user) {
-            $feed->has_digg = $repository->hasDigg($user->id ?? 0);
-            $repository->imagesPaidNodes($user->id ?? 0);
+        return $feed->getConnection()->transaction(function () use ($feed, $repository, $user) {
+            $repository->images();
+            $repository->hasDigg($user->id ?? 0);
             $repository->infoDiggUsers();
+
+            return $repository->format($user->id ?? 0);
         });
-
-        return  $this->formatFeed($feed);
-    }
-
-    protected function formatFeed(FeedModel $feed)
-    {
-        $feed->images = $feed->images->map(function (FileWithModel $item) {
-            $image = ['file' => $item->id];
-            if ($item->paidNode !== null) {
-                $image['amount'] = $item->paidNode->amount;
-                $image['type'] = $item->paidNode->extra;
-                $image['paid'] = $item->paidNode->pays->isNotEmpty();
-            }
-
-            return $image;
-        });
-
-        $feed->diggs = $feed->diggs->map(function (FeedDiggModel $item) {
-            return $item['user_id'];
-        });
-
-        return $feed;
     }
 
     /**

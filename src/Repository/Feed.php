@@ -3,8 +3,11 @@
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Repository;
 
 use Carbon\Carbon;
+use Zhiyi\Plus\Models\FileWith as FileWithModel;
+use Zhiyi\Plus\Models\PaidNode as PaidNodeModel;
 use Illuminate\Contracts\Cache\Repository as CacheContract;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed as FeedModel;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg as FeedDiggModel;
 
 class Feed
 {
@@ -42,7 +45,10 @@ class Feed
     public function find($id, $columns = ['*'])
     {
         return $this->model = $this->cache->remember(sprintf('feed:%s', $id), $this->dateTime->copy()->addDays(7), function () use ($id, $columns) {
-            return $this->model->findOrFail($id, $columns);
+            $this->model = $this->model->findOrFail($id, $columns);
+            $this->model->load(['paidNode']);
+
+            return $this->model;
         });
     }
 
@@ -54,27 +60,14 @@ class Feed
      */
     public function images()
     {
-        return $this->model->images = $this->cache->remember(sprintf('feed:%s:images', $this->model->id), $this->dateTime->copy()->addDays(7), function () {
+        $this->model->setRelation('images', $this->cache->remember(sprintf('feed:%s:images', $this->model->id), $this->dateTime->copy()->addDays(7), function () {
+            $this->model->load([
+                'images',
+                'images.paidNode'
+            ]);
+
             return $this->model->images;
-        });
-    }
-
-    public function imagesPaidNodes(int $userId)
-    {
-        $cacheKey = sprintf('feed:%s:images.paid:%s', $this->model->id, $userId);
-
-        if ($this->cache->has($cacheKey)) {
-            return $this->model->images = $this->cache->get($cacheKey);
-        }
-
-        $this->model->load([
-            'images',
-            'images.paidNode',
-            'images.paidNode.pays' => function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            },
-        ]);
-        $this->cache->forever($cacheKey, $this->model->images);
+        }));
 
         return $this->model->images;
     }
@@ -88,8 +81,7 @@ class Feed
     public function infoDiggUsers()
     {
         $minutes = $this->dateTime->copy()->addDays(1);
-
-        return $this->model->diggs = $this->cache->remember(sprintf('feed:%s:info-diggs', $this->model->id), $minutes, function () {
+        $this->model->setRelation('diggs', $this->cache->remember(sprintf('feed:%s:info-diggs', $this->model->id), $minutes, function () {
             if (! $this->model->relationLoaded('diggs')) {
                 $this->model->load(['diggs' => function ($query) {
                     $query->limit(8)
@@ -98,27 +90,63 @@ class Feed
             }
 
             return $this->model->diggs;
-        });
+        }));
+
+        return $this->model->diggs;
     }
 
     /**
      * Has User digg.
      *
-     * @param int $userId
+     * @param int $user
      * @return bool
      * @author Seven Du <shiweidu@outlook.com>
      */
-    public function hasDigg(int $userId): bool
+    public function hasDigg(int $user): bool
     {
-        $cacheKey = sprintf('feed:%s:has-digg:%s', $this->model->id, $userId);
+        $cacheKey = sprintf('feed:%s:has-digg:%s', $this->model->id, $user);
         if ($this->cache->has($cacheKey)) {
-            return $this->cache->get($cacheKey);
+            return $this->model->has_digg = $this->cache->get($cacheKey);
         }
 
-        $value = $this->model->diggs()->where('user_id', $userId)->count() >= 1;
-        $this->cache->forever($cacheKey, $value);
+        $this->model->has_digg = $this->model->diggs()->where('user_id', $user)->count() >= 1;
+        $this->cache->forever($cacheKey, $this->model->has_digg);
 
-        return $value;
+        return $this->model->has_digg;
+    }
+
+    /**
+     * Format feed data.
+     *
+     * @param int $user
+     * @return Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed
+     * @author Seven Du <shiweidu@outlook.com>
+     */
+    public function format(int $user = 0): FeedModel
+    {
+        $this->model->setRelation('images', $this->model->images->map(function (FileWithModel $item) use ($user) {
+            $image = ['file' => $item->id];
+            if ($item->paidNode !== null) {
+                $image['amount'] = $item->paidNode->amount;
+                $image['type'] = $item->paidNode->extra;
+                $image['paid'] = $item->paidNode->paid($user);
+            }
+
+            return $image;
+        }));
+
+        $this->model->setRelation('diggs', $this->model->diggs->map(function (FeedDiggModel $item) {
+            return $item['user_id'];
+        }));
+
+        if ($this->model->paidNode !== null) {
+            $this->model->amount = $this->model->paidNode->amount;
+            $this->model->paid = $this->model->paidNode->paid($user);
+        }
+
+        unset($this->model->paidNode);
+
+        return $this->model;
     }
 
     /**
