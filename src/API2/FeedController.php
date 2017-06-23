@@ -154,6 +154,16 @@ class FeedController extends Controller
         });
     }
 
+    /**
+     * Get user follow user feeds.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \Illuminate\Contracts\Routing\ResponseFactory $response
+     * @param \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed $model
+     * @param \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Repository\Feed $repository
+     * @return mixed
+     * @author Seven Du <shiweidu@outlook.com>
+     */
     public function follow(Request $request, ResponseContract $response, FeedModel $model, FeedRepository $repository)
     {
         if (is_null($user = $request->user('api'))) {
