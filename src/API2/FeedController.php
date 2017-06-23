@@ -117,6 +117,7 @@ class FeedController extends Controller
 
         $feeds = $model->with([
             'feed',
+            'feed.paidNode',
             'feed.comments' => function ($query) {
                 $query->limit(3);
             },
@@ -153,9 +154,44 @@ class FeedController extends Controller
         });
     }
 
-    public function follow()
+    public function follow(Request $request, ResponseContract $response, FeedModel $model, FeedRepository $repository)
     {
-        // todo.
+        if (is_null($user = $request->user('api'))) {
+            abort(401);
+        }
+
+        $limit = $request->query('limit', 20);
+        $after = $request->query('after');
+        $feeds = $model->select('feeds.*')->with([
+            'paidNode',
+            'comments' => function ($query) {
+                $query->limit(3);
+            }
+        ])->leftJoin('user_follow', function ($join) use ($user) {
+            $join->where('user_follow.user_id', $user->id);
+        })->where(function ($query) use ($user) {
+            $query->whereColumn('feeds.user_id', '=', 'user_follow.target')
+                ->orWhere('feeds.user_id', $user->id);
+        })->when((bool) $after, function ($query) use ($after) {
+            return $query->where('feeds.id', '<', $after);
+        })->orderBy('feeds.id', 'desc')->limit($limit)->get();
+
+        return $model->getConnection()->transaction(function () use ($repository, $user, $feeds) {
+            return $feeds->map(function (FeedModel $feed) use ($repository, $user) {
+                $repository->setModel($feed);
+                $repository->images();
+                $repository->hasDigg($user->id);
+                $repository->infoDiggUsers();
+                $feed->has_collect = $feed->collected($user->id);
+                $repository->format($user->id);
+
+                if ($feed->paid === false) {
+                    $feed->feed_content = str_limit($feed->feed_content, 100, '');
+                }
+
+                return $feed;
+            });
+        });
     }
 
     /**
