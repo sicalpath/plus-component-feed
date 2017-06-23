@@ -2,6 +2,7 @@
 
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\API2;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Plus\Models\FileWith as FileWithModel;
@@ -9,6 +10,7 @@ use Zhiyi\Plus\Models\PaidNode as PaidNodeModel;
 use Illuminate\Contracts\Routing\ResponseFactory as ResponseContract;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed as FeedModel;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg as FeedDiggModel;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Repository\Feed as FeedRepository;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Services\FeedCount as FeedCountService;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\FormRequest\API2\StoreFeedPost as StoreFeedPostRequest;
@@ -97,9 +99,58 @@ class FeedController extends Controller
         });
     }
 
-    public function hot()
+    /**
+     * Get hot feeds.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg $model
+     * @param \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Repository\Feed $repository
+     * @param \Carbon\Carbon $dateTime
+     * @return mixed
+     * @author Seven Du <shiweidu@outlook.com>
+     */
+    public function hot(Request $request, FeedDiggModel $model, FeedRepository $repository, Carbon $dateTime)
     {
-        // todo.
+        $limit = $request->query('limit', 20);
+        $after = $request->query('after');
+        $user = $request->user('api')->id ?? 0;
+
+        $feeds = $model->with([
+            'feed',
+            'feed.comments' => function ($query) {
+                $query->limit(3);
+            },
+        ])->select('feed_id', $model->getConnection()->raw('COUNT(id) as count'))
+            ->where('created_at', '>', $dateTime->subMonth())
+            ->when((bool) $after, function ($query) use ($after) {
+                return $query->where('feed_id', '<', $after);
+            })->groupBy('feed_id')
+            ->orderBy('feed_id', 'desc')
+            ->limit($limit)
+            ->get();
+
+        return $model->getConnection()->transaction(function () use ($feeds, $repository, $user) {
+            return $feeds->map(function ($item) use ($repository, $user) {
+                $feed = $item->feed;
+
+                if (! $feed) {
+                    return null;
+                }
+
+                $repository->setModel($feed);
+                $repository->images();
+                $repository->hasDigg($user);
+                $repository->infoDiggUsers();
+                $feed->has_collect = $feed->collected($user);
+                $repository->format($user);
+
+                if ($feed->paid === false) {
+                    $feed->feed_content = str_limit($feed->feed_content, 100, '');
+                }
+
+                return $feed;
+            });
+        });
     }
 
     public function follow()
