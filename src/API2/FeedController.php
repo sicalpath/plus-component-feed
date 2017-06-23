@@ -78,6 +78,7 @@ class FeedController extends Controller
         ->get();
 
         $user = $request->user('api')->id ?? 0;
+
         return $feedModel->getConnection()->transaction(function () use ($feeds, $repository, $user) {
             return $feeds->map(function (FeedModel $feed) use ($repository, $user) {
                 $repository->setModel($feed);
