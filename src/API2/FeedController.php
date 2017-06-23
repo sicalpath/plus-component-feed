@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Plus\Models\FileWith as FileWithModel;
 use Zhiyi\Plus\Models\PaidNode as PaidNodeModel;
+use Illuminate\Contracts\Routing\ResponseFactory as ResponseContract;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed as FeedModel;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Repository\Feed as FeedRepository;
@@ -22,7 +23,7 @@ class FeedController extends Controller
      * @return mixed
      * @author Seven Du <shiweidu@outlook.com>
      */
-    public function index(Request $request, ApplicationContract $app)
+    public function index(Request $request, ApplicationContract $app, ResponseContract $response)
     {
         $type = $request->query('type', 'new');
 
@@ -30,7 +31,21 @@ class FeedController extends Controller
             $type = 'new';
         }
 
-        return $app->call([$this, $type]);
+        return $response->json([
+            'ad' => $app->call([$this, 'getAd']),
+            'pinned' => $app->call([$this, 'getPinnedFeeds']),
+            'feeds' => $app->call([$this, $type]),
+        ])->setStatusCode(200);
+    }
+
+    public function getAd()
+    {
+        // todo.
+    }
+
+    public function getPinnedFeeds()
+    {
+        // todo.
     }
 
     /**
@@ -47,8 +62,12 @@ class FeedController extends Controller
         $limit = $request->query('limit', 20);
         $after = $request->query('after');
 
-        $feeds = $feedModel->with('paidNode')
-        ->where(function ($query) use ($after) {
+        $feeds = $feedModel->with([
+            'paidNode',
+            'comments' => function ($query) {
+                $query->limit(3);
+            },
+        ])->where(function ($query) use ($after) {
             if (! $after) {
                 return;
             }
@@ -59,7 +78,6 @@ class FeedController extends Controller
         ->get();
 
         $user = $request->user('api')->id ?? 0;
-
         return $feedModel->getConnection()->transaction(function () use ($feeds, $repository, $user) {
             return $feeds->map(function (FeedModel $feed) use ($repository, $user) {
                 $repository->setModel($feed);
@@ -117,7 +135,7 @@ class FeedController extends Controller
             $repository->hasDigg($user);
             $repository->infoDiggUsers();
 
-            return $repository->format($user);
+            return response()->json($repository->format($user))->setStatusCode(200);
         });
     }
 
