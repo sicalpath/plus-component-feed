@@ -166,7 +166,7 @@ class FeedController extends Controller
             'paidNode',
             'comments' => function ($query) {
                 $query->limit(3);
-            }
+            },
         ])->leftJoin('user_follow', function ($join) use ($user) {
             $join->where('user_follow.user_id', $user->id);
         })->where(function ($query) use ($user) {
