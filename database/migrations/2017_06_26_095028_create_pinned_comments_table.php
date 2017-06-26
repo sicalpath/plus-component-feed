@@ -17,6 +17,7 @@ class CreatePinnedCommentsTable extends Migration
             $table->increments('id');
             $table->integer('comment_id')->unsigned()->comment('评论ID');
             $table->integer('day')->comment('固定期限，单位 天');
+            $table->timestamp('expire_at')->nullabel()->comment('到期时间，固定后设置该时间');
             $table->timestamps();
         });
     }
