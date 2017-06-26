@@ -38,6 +38,11 @@ Status: 201 OK
         "node": 9, // 付费节点
         "amount": 20 // 付费金额
     },
+    "comment_paid_node": { // 评论收费信息.
+        "paid": true,
+        "node": 11,
+        "amount": 50
+    },
     "images": [ // 图片
         {
             "file": 4, // 文件 file_with 标识 不收费图片只存在 file 这一个字段。
