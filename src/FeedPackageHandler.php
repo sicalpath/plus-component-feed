@@ -39,35 +39,7 @@ class FeedPackageHandler extends PackageHandler
         // Run the database migrations
         $command->call('migrate');
 
-        if (! Schema::hasTable('feed_storages')) {
-            Schema::create('feed_storages', function (Blueprint $table) {
-                $table->engine = 'InnoDB';
-                $table->increments('id')->comment('primary key');
-                $table->timestamps();
-            });
-            include dirname(__DIR__).'/database/table_feed_storages_columns.php';
-        }
-
-        if (! Schema::hasTable('feed_collections')) {
-            Schema::create('feed_collections', function (Blueprint $table) {
-                $table->engine = 'InnoDB';
-                $table->increments('id')->comment('primary key');
-                $table->timestamps();
-            });
-            include dirname(__DIR__).'/database/table_feed_collections_columns.php';
-        }
-
-        if (! Schema::hasTable('feed_views')) {
-            Schema::create('feed_views', function (Blueprint $table) {
-                $table->engine = 'InnoDB';
-                $table->increments('id')->comment('primary key');
-                $table->timestamps();
-            });
-            include dirname(__DIR__).'/database/table_feed_views_columns.php';
-        }
-
         $time = Carbon::now();
-
         Permission::insert([
             [
                 'name' => 'feed-post',
