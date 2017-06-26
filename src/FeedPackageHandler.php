@@ -4,6 +4,7 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed;
 
 use Carbon\Carbon;
 use Zhiyi\Plus\Models\Comment;
+use Illuminate\Console\Command;
 use Zhiyi\Plus\Models\Permission;
 use Illuminate\Support\Facades\Schema;
 use Zhiyi\Plus\Support\PackageHandler;
@@ -16,7 +17,6 @@ class FeedPackageHandler extends PackageHandler
         if ($command->confirm('This will delete your datas for feeds, continue?')) {
             Comment::where('component', 'feed')->delete();
             Permission::whereIn('name', ['feed-post', 'feed-comment', 'feed-digg', 'feed-collection'])->delete();
-            Schema::dropIfExists('feeds');
             Schema::dropIfExists('feed_atmes');
             Schema::dropIfExists('feed_diggs');
             Schema::dropIfExists('feed_comments');
@@ -36,6 +36,9 @@ class FeedPackageHandler extends PackageHandler
             '--force' => true,
         ]);
 
+        // Run the database migrations
+        $command->call('migrate');
+
         if (! Schema::hasTable('feed_atmes')) {
             Schema::create('feed_atmes', function (Blueprint $table) {
                 $table->engine = 'InnoDB';
@@ -43,16 +46,6 @@ class FeedPackageHandler extends PackageHandler
                 $table->timestamps();
             });
             include dirname(__DIR__).'/database/table_feed_atmes_columns.php';
-        }
-
-        if (! Schema::hasTable('feeds')) {
-            Schema::create('feeds', function (Blueprint $table) {
-                $table->engine = 'InnoDB';
-                $table->increments('id')->comment('primary key');
-                $table->timestamps();
-                $table->softDeletes();
-            });
-            include dirname(__DIR__).'/database/table_feeds_columns.php';
         }
 
         if (! Schema::hasTable('feed_diggs')) {
@@ -135,5 +128,27 @@ class FeedPackageHandler extends PackageHandler
         ]);
 
         $command->info('Install Successfully');
+    }
+
+    /**
+     * Create a migration file.
+     *
+     * @param \Illuminate\Console\Command $command
+     * @return mixed
+     * @author Seven Du <shiweidu@outlook.com>
+     */
+    public function createMigrationHandle(Command $command)
+    {
+        $path = str_replace(app('path.base'), '', dirname(__DIR__).'/database/migrations');
+        $table = $command->ask('Enter the table name');
+        $name = sprintf('create_%s_table', $table);
+        $create = $command->confirm('Is it creating a new migration');
+
+        return $command->call('make:migration', [
+            'name' => $name,
+            '--path' => $path,
+            '--table' => $table,
+            '--create' => $create,
+        ]);
     }
 }
