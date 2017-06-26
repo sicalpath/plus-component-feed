@@ -21,8 +21,8 @@ class FeedPayController extends Controller
      * @author Seven Du <shiweidu@outlook.com>
      */
     public function commentPaid(Request $request,
-                                ResponseContract $response, 
-                                PaidNodeModel $paidNode, 
+                                ResponseContract $response,
+                                PaidNodeModel $paidNode,
                                 FeedModel $feed)
     {
         $feed->load('commentPaidNode');
@@ -33,7 +33,7 @@ class FeedPayController extends Controller
             return $response->json(['message' => ['你没有权限设置']])->setStatusCode(403);
         } elseif ($feed->commentPaidNode !== null) {
             return $response->json(['message' => ['已设置了评论，不可重复设置']])->setStatusCode(422);
-        } elseif (!$amount) {
+        } elseif (! $amount) {
             return $response->json(['amount' => ['评论收费金额不允许为空']])->setStatusCode(422);
         }
 
