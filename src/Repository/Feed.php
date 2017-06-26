@@ -132,7 +132,7 @@ class Feed
                 $image['amount'] = $item->paidNode->amount;
                 $image['type'] = $item->paidNode->extra;
                 $image['paid'] = $item->paidNode->paid($user);
-                $image['node'] = $item->paidNode->id;
+                $image['paid_node'] = $item->paidNode->id;
             }
 
             return $image;
@@ -145,7 +145,7 @@ class Feed
         if ($this->model->paidNode !== null) {
             $this->model->amount = $this->model->paidNode->amount;
             $this->model->paid = $this->model->paidNode->paid($user);
-            $this->model->node = $this->model->paidNode->id;
+            $this->model->paid_node = $this->model->paidNode->id;
         }
 
         unset($this->model->paidNode);
