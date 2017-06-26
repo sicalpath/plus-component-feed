@@ -22,6 +22,11 @@ class FeedServiceProvider extends ServiceProvider
         // Load views.
         $this->loadViewsFrom(dirname(__DIR__).'/views/', 'feed:view');
 
+        // Register migration files.
+        $this->loadMigrationsFrom([
+            dirname(__DIR__).'/database/migrations',
+        ]);
+
         $this->publishes([
             dirname(__DIR__).'/assets' => $this->app->PublicPath().'/zhiyicx/plus-component-feed',
         ], 'public');
