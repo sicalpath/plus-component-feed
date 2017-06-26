@@ -66,6 +66,7 @@ class FeedController extends Controller
 
         $feeds = $feedModel->with([
             'paidNode',
+            'commentPaidNode',
             'comments' => function ($query) {
                 $query->limit(3);
             },
@@ -118,6 +119,7 @@ class FeedController extends Controller
         $feeds = $model->with([
             'feed',
             'feed.paidNode',
+            'feed.commentPaidNode',
             'feed.comments' => function ($query) {
                 $query->limit(3);
             },
@@ -174,6 +176,7 @@ class FeedController extends Controller
         $after = $request->query('after');
         $feeds = $model->select('feeds.*')->with([
             'paidNode',
+            'commentPaidNode',
             'comments' => function ($query) {
                 $query->limit(3);
             },

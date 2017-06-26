@@ -45,7 +45,7 @@ class Feed
     {
         return $this->model = $this->cache->remember(sprintf('feed:%s', $id), $this->dateTime->copy()->addDays(7), function () use ($id, $columns) {
             $this->model = $this->model->findOrFail($id, $columns);
-            $this->model->load(['paidNode']);
+            $this->model->load(['paidNode', 'commentPaidNode']);
 
             return $this->model;
         });
@@ -142,6 +142,7 @@ class Feed
             return $item['user_id'];
         }));
 
+        // 动态收费
         if ($this->model->paidNode !== null) {
             $paidNode = [
                 'paid' => $this->model->paidNode->paid($user),
@@ -150,6 +151,17 @@ class Feed
             ];
             unset($this->model->paidNode);
             $this->model->paid_node = $paidNode;
+        }
+
+        // 评论收费
+        if ($this->model->commentPaidNode !== null) {
+            $paidNode = [
+                'paid' => $this->model->commentPaidNode->paid($user),
+                'node' => $this->model->commentPaidNode->id,
+                'amount' => $this->model->commentPaidNode->amount,
+            ];
+            unset($this->model->commentPaidNode);
+            $this->model->comment_paid_node = $paidNode;
         }
 
         return $this->model;
