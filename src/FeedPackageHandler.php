@@ -2,13 +2,11 @@
 
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed;
 
-use Carbon\Carbon;
 use Zhiyi\Plus\Models\Comment;
 use Illuminate\Console\Command;
 use Zhiyi\Plus\Models\Permission;
 use Illuminate\Support\Facades\Schema;
 use Zhiyi\Plus\Support\PackageHandler;
-use Illuminate\Database\Schema\Blueprint;
 
 class FeedPackageHandler extends PackageHandler
 {
