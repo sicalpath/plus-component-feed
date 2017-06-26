@@ -12,6 +12,7 @@
 
 import path from 'path';
 import webpack from 'webpack';
+import WebpackLaravelMixManifest from 'webpack-laravel-mix-manifest';
 
 /*
 |--------------------------------------------------------
@@ -171,6 +172,7 @@ plugins: [
       NODE_ENV: JSON.stringify(NODE_ENV)
     }
   }),
+  new WebpackLaravelMixManifest(),
   ...(isProd ? [
     // Prod env.
     new webpack.optimize.UglifyJsPlugin({
