@@ -39,16 +39,6 @@ class FeedPackageHandler extends PackageHandler
         // Run the database migrations
         $command->call('migrate');
 
-        if (! Schema::hasTable('feed_comments')) {
-            Schema::create('feed_comments', function (Blueprint $table) {
-                $table->engine = 'InnoDB';
-                $table->increments('id')->comment('primary key');
-                $table->timestamps();
-                $table->softDeletes();
-            });
-            include dirname(__DIR__).'/database/table_feed_comments_columns.php';
-        }
-
         if (! Schema::hasTable('feed_storages')) {
             Schema::create('feed_storages', function (Blueprint $table) {
                 $table->engine = 'InnoDB';
