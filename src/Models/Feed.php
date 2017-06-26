@@ -50,13 +50,25 @@ class Feed extends Model
     /**
      * 动态付费节点.
      *
-     * @return
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      * @author Seven Du <shiweidu@outlook.com>
      */
     public function paidNode()
     {
         return $this->hasOne(PaidNode::class, 'raw', 'id')
             ->where('channel', 'feed');
+    }
+
+    /**
+     * 动态评论付费节点.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @author Seven Du <shiweidu@outlook.com>
+     */
+    public function commentPaidNode()
+    {
+        return $this->hasOne(PaidNode::class, 'raw', 'id')
+            ->where('channel', 'feed:comment');
     }
 
     /**
