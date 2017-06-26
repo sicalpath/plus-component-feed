@@ -143,12 +143,14 @@ class Feed
         }));
 
         if ($this->model->paidNode !== null) {
-            $this->model->amount = $this->model->paidNode->amount;
-            $this->model->paid = $this->model->paidNode->paid($user);
-            $this->model->paid_node = $this->model->paidNode->id;
+            $paidNode = [
+                'paid' => $this->model->paidNode->paid($user),
+                'node' => $this->model->paidNode->id,
+                'amount' => $this->model->paidNode->amount,
+            ];
+            unset($this->model->paidNode);
+            $this->model->paid_node = $paidNode;
         }
-
-        unset($this->model->paidNode);
 
         return $this->model;
     }
