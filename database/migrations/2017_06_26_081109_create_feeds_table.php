@@ -27,6 +27,7 @@ class CreateFeedsTable extends Migration
             $table->string('feed_client_id')->nullable()->default('::1')->comment('发布IP');
             $table->tinyInteger('audit_status')->nullable()->default(1)->comment('审核状态 0-未审核 1-已审核 2-未通过');
             $table->bigInteger('feed_mark')->comment('唯一标记');
+            $table->tinyInteger('pinned')->unsigned()->nullable()->default(0)->comment('固定（置顶）动态，0-否，1-是');
 
             $table->timestamps();
             $table->softDeletes();
