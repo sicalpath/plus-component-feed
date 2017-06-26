@@ -14,7 +14,7 @@
         }
     ],
     "autoload": {
-        "classmap": ["database/migrations"],
+        "classmap": ["database/"],
         "psr-4": {
             "Zhiyi\\Component\\ZhiyiPlus\\PlusComponentFeed\\": "src/"
         }

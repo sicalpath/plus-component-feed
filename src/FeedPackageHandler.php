@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 use Zhiyi\Plus\Models\Permission;
 use Illuminate\Support\Facades\Schema;
 use Zhiyi\Plus\Support\PackageHandler;
+use Illuminate\Database\Schema\Blueprint;
 
 class FeedPackageHandler extends PackageHandler
 {
@@ -26,6 +27,13 @@ class FeedPackageHandler extends PackageHandler
         }
     }
 
+    /**
+     * Install handler.
+     *
+     * @param \Illuminate\Console\Command $command
+     * @return mixed
+     * @author Seven Du <shiweidu@outlook.com>
+     */
     public function installHandle($command)
     {
         // publish public assets
@@ -38,39 +46,10 @@ class FeedPackageHandler extends PackageHandler
         // Run the database migrations
         $command->call('migrate');
 
-        $time = Carbon::now();
-        Permission::insert([
-            [
-                'name' => 'feed-post',
-                'display_name' => '发送分享',
-                'description' => '用户发送分享权限',
-                'created_at' => $time,
-                'updated_at' => $time,
-            ],
-            [
-                'name' => 'feed-comment',
-                'display_name' => '评论分享',
-                'description' => '用户评论分享权限',
-                'created_at' => $time,
-                'updated_at' => $time,
-            ],
-            [
-                'name' => 'feed-digg',
-                'display_name' => '点赞分享',
-                'description' => '用户点赞分享权限',
-                'created_at' => $time,
-                'updated_at' => $time,
-            ],
-            [
-                'name' => 'feed-collection',
-                'display_name' => '收藏分享',
-                'description' => '用户收藏分享权限',
-                'created_at' => $time,
-                'updated_at' => $time,
-            ],
+        // Run the database seeds.
+        $command->call('db:seed', [
+            '--class' => \FeedDatabaseAllSeeder::class,
         ]);
-
-        $command->info('Install Successfully');
     }
 
     /**
