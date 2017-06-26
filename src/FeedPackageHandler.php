@@ -8,7 +8,6 @@ use Illuminate\Console\Command;
 use Zhiyi\Plus\Models\Permission;
 use Illuminate\Support\Facades\Schema;
 use Zhiyi\Plus\Support\PackageHandler;
-use Illuminate\Database\Schema\Blueprint;
 
 class FeedPackageHandler extends PackageHandler
 {
