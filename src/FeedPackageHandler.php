@@ -39,24 +39,6 @@ class FeedPackageHandler extends PackageHandler
         // Run the database migrations
         $command->call('migrate');
 
-        if (! Schema::hasTable('feed_atmes')) {
-            Schema::create('feed_atmes', function (Blueprint $table) {
-                $table->engine = 'InnoDB';
-                $table->increments('id')->comment('主键');
-                $table->timestamps();
-            });
-            include dirname(__DIR__).'/database/table_feed_atmes_columns.php';
-        }
-
-        if (! Schema::hasTable('feed_diggs')) {
-            Schema::create('feed_diggs', function (Blueprint $table) {
-                $table->engine = 'InnoDB';
-                $table->increments('id')->comment('primary key');
-                $table->timestamps();
-            });
-            include dirname(__DIR__).'/database/table_feed_diggs_columns.php';
-        }
-
         if (! Schema::hasTable('feed_comments')) {
             Schema::create('feed_comments', function (Blueprint $table) {
                 $table->engine = 'InnoDB';
