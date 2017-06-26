@@ -33,9 +33,11 @@ Status: 201 OK
     "feed_mark": 12,
     "has_digg": true, // 是否点赞
     "has_collect": false, // 用户是否收藏当前动态
-    "amount": 20, // 是否收费，收费多少，不存在则表示不收费
-    "paid": true, // 当前用户收费已付费，如果不收费，本字段也不存在
-    "paid_node": 10, // 付费节点
+    "paid_node": {
+        "paid": true, // 当前用户是否已经付费
+        "node": 9, // 付费节点
+        "amount": 20 // 付费金额
+    },
     "images": [ // 图片
         {
             "file": 4, // 文件 file_with 标识 不收费图片只存在 file 这一个字段。
