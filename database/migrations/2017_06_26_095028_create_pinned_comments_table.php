@@ -15,7 +15,7 @@ class CreatePinnedCommentsTable extends Migration
     {
         Schema::create('pinned_comments', function (Blueprint $table) {
             $table->increments('id');
-             $table->integer('comment_id')->unsigned()->comment('评论ID');
+            $table->integer('comment_id')->unsigned()->comment('评论ID');
             $table->integer('day')->comment('固定期限，单位 天');
             $table->timestamps();
         });
