@@ -2,6 +2,7 @@
 
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed;
 
+use Zhiyi\Plus\Models\Comment;
 use Zhiyi\Plus\Support\PackageHandler;
 use Illuminate\Support\ServiceProvider;
 use Zhiyi\Plus\Support\ManageRepository;
@@ -18,6 +19,7 @@ class FeedServiceProvider extends ServiceProvider
     {
         $this->routeMap();
         $this->publishHandler();
+        $this->registerObserves();
 
         // Load views.
         $this->loadViewsFrom(dirname(__DIR__).'/views/', 'feed:view');
@@ -44,6 +46,17 @@ class FeedServiceProvider extends ServiceProvider
             'route' => true,
             'icon' => asset('zhiyicx/plus-component-feed/feed-icon.png'),
         ]);
+    }
+
+    /**
+     * Register model events.
+     *
+     * @return void
+     * @author Seven Du <shiweidu@outlook.com>
+     */
+    protected function registerObserves()
+    {
+        Comment::observe(Observers\CommentObserver::class);
     }
 
     /**
