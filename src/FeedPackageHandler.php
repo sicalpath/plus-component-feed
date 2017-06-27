@@ -5,26 +5,12 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed;
 use Zhiyi\Plus\Models\Comment;
 use Illuminate\Console\Command;
 use Zhiyi\Plus\Models\Permission;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Zhiyi\Plus\Support\PackageHandler;
 
 class FeedPackageHandler extends PackageHandler
 {
-    public function removeHandle($command)
-    {
-        if ($command->confirm('This will delete your datas for feeds, continue?')) {
-            Comment::where('component', 'feed')->delete();
-            Permission::whereIn('name', ['feed-post', 'feed-comment', 'feed-digg', 'feed-collection'])->delete();
-            Schema::dropIfExists('feed_atmes');
-            Schema::dropIfExists('feed_diggs');
-            Schema::dropIfExists('feed_comments');
-            Schema::dropIfExists('feed_storages');
-            Schema::dropIfExists('feed_collections');
-
-            $command->info('The Feed Component has been removed');
-        }
-    }
-
     /**
      * Install handler.
      *
