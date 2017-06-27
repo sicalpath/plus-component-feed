@@ -12,13 +12,13 @@ use Zhiyi\Plus\Support\PackageHandler;
 class FeedPackageHandler extends PackageHandler
 {
     /**
-     * Install handler.
+     * Resolve handler.
      *
      * @param \Illuminate\Console\Command $command
      * @return mixed
      * @author Seven Du <shiweidu@outlook.com>
      */
-    public function installHandle($command)
+    public function resolveHandle($command)
     {
         // publish public assets
         $command->call('vendor:publish', [
@@ -30,10 +30,12 @@ class FeedPackageHandler extends PackageHandler
         // Run the database migrations
         $command->call('migrate');
 
-        // Run the database seeds.
-        $command->call('db:seed', [
-            '--class' => \FeedDatabaseAllSeeder::class,
-        ]);
+        if ($command->confirm('Run seeder')) {
+            // Run the database seeds.
+            $command->call('db:seed', [
+                '--class' => \FeedDatabaseAllSeeder::class,
+            ]);
+        }
     }
 
     /**
