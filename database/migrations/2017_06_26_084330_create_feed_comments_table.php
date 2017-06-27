@@ -23,7 +23,6 @@ class CreateFeedCommentsTable extends Migration
             $table->bigInteger('comment_mark')->comment('唯一标记');
             $table->tinyInteger('pinned')->unsigned()->nullable()->default(0)->comment('固定（置顶）动态，0-否，1-是');
             $table->timestamps();
-            $table->softDeletes();
 
             $table->index('user_id');
             $table->index('to_user_id');
