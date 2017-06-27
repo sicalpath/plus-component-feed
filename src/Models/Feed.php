@@ -3,7 +3,6 @@
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models;
 
 use Zhiyi\Plus\Models\User;
-use Zhiyi\Plus\Models\Storage;
 use Zhiyi\Plus\Models\FileWith;
 use Zhiyi\Plus\Models\PaidNode;
 use Illuminate\Database\Eloquent\Model;
@@ -95,25 +94,7 @@ class Feed extends Model
      */
     public function comments()
     {
-        return $this->hasMany(FeedComment::class, 'feed_id');
-    }
-
-    /**
-     * 一条动态可能会@多个用户.
-     * @return [type] [description]
-     */
-    public function atmes()
-    {
-        return $this->hasMany(FeedAtme::class, 'feed_id');
-    }
-
-    /**
-     * 定义动态和附件关联.
-     * @return [type] [description]
-     */
-    public function storages()
-    {
-        return $this->belongsToMany(Storage::class, 'feed_storages', 'feed_id', 'feed_storage_id', 'id')->withTimestamps();
+        return $this->hasMany(FeedComment::class, 'feed_id', 'id');
     }
 
     /**
