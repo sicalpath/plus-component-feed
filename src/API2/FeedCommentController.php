@@ -28,7 +28,7 @@ class FeedCommentController extends Controller
     public function __construct(ApplicationContract $app)
     {
         $this->app = $app;
-        $this->middleware('auth:api')->except(['index']);
+        $this->middleware('auth:api')->except(['index', 'show']);
     }
 
     /**
@@ -78,9 +78,20 @@ class FeedCommentController extends Controller
             ->get()->all();
     }
 
-    public function show()
+    /**
+     *  Get feed comment.
+     *
+     * @param \Illuminate\Contracts\Routing\ResponseFactory $response
+     * @param int $feed
+     * @param \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedComment $comment
+     * @return mixed
+     * @author Seven Du <shiweidu@outlook.com>
+     */
+    public function show(ResponseContract $response, int $feed, FeedCommentModel $comment)
     {
-        // TODO.
+        unset($feed);
+
+        return $response->json($comment)->setStatusCode(200);
     }
 
     /**
