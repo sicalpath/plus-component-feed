@@ -17,7 +17,7 @@ class CreatePinnedFeedsTable extends Migration
             $table->increments('id')->comment('固定申请');
             $table->integer('feed_id')->unsigned()->comment('动态ID');
             $table->integer('day')->comment('固定期限，单位 天');
-            $table->timestamp('expire_at')->nullabel()->comment('到期时间，固定后设置该时间');
+            $table->timestamp('expire_at')->nullable()->comment('到期时间，固定后设置该时间');
             $table->timestamps();
         });
     }
