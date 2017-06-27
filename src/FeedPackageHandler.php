@@ -2,11 +2,8 @@
 
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed;
 
-use Zhiyi\Plus\Models\Comment;
 use Illuminate\Console\Command;
-use Zhiyi\Plus\Models\Permission;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Zhiyi\Plus\Support\PackageHandler;
 
 class FeedPackageHandler extends PackageHandler
