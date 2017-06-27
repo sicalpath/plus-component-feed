@@ -2,9 +2,7 @@
 
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models;
 
-use DB;
 use Zhiyi\Plus\Models\User;
-use Zhiyi\Plus\Models\Comment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 

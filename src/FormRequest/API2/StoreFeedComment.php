@@ -2,7 +2,6 @@
 
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\FormRequest\API2;
 
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreFeedComment extends FormRequest
