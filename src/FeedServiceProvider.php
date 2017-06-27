@@ -56,7 +56,7 @@ class FeedServiceProvider extends ServiceProvider
      */
     protected function registerObserves()
     {
-        Comment::observe(Observers\CommentObserver::class);
+        Comment::observe(Observers\PlusCommentObserver::class);
     }
 
     /**

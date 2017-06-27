@@ -5,7 +5,7 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Observers;
 use Zhiyi\Plus\Models\Comment;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedComment;
 
-class CommentObserver
+class PlusCommentObserver
 {
     /**
      * Global Comment deleted.
