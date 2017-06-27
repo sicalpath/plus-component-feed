@@ -33,6 +33,31 @@ Status: 201 Created
 
 ## 获取评论
 
+```
+GET /feeds/:feed/comments/:comment
+```
+
+#### Response
+
+```
+Status: 200 OK
+```
+
+```json5
+{
+    "id": 1, // 评论ID
+    "user_id": 1, // 评论用户
+    "to_user_id": 1, // 客户端无需知道用处，反正客户端用不到（一般是动态发布者ID）
+    "reply_to_user_id": 0, // 回复的用户
+    "feed_id": 1, // 动态ID
+    "comment_content": "我是第一条评论", // 评论内容
+    "comment_mark": 1, // 评论标记
+    "pinned": 0, // 是否是被固定（置顶）的评论
+    "created_at": "2017-06-27 07:56:26", // 评论事件
+    "updated_at": "2017-06-27 07:56:26" // 更新时间
+}
+```
+
 ## 评论列表
 
 ```
