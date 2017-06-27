@@ -108,22 +108,11 @@ class FeedCommentController extends Controller
         $comment->comment_content = $comment_content;
         $comment->comment_mark = $comment_mark;
         $comment->pinned = 0;
+        $feed->comments()->save($comment);
 
-        // 共用评论标记
-        $globalComment = new CommentModel();
-        $globalComment->user_id = $comment->user_id;
-        $globalComment->target_user = $comment->to_user_id;
-        $globalComment->reply_user = $comment->reply_to_user_id;
-        $globalComment->channel = 'feed';
-
-        // 保存本地评论
-        if (! $feed->comments()->save($comment) || ! $comment->id) {
+        if (! $comment->id) {
             return $response->json(['message' => ['评论失败']])->setStatusCode(500);
         }
-
-        // 保存公用标记
-        $globalComment->target = $comment->id;
-        $globalComment->saveOrFail();
 
         return $response->json([
             'message' => '评论成功',
