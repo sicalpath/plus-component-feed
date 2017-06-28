@@ -396,4 +396,33 @@ class FeedController extends Controller
 
         return $feed;
     }
+
+    /**
+     * Delete comment.
+     *
+     * @param Request $request
+     * @param ResponseContract $response
+     * @param FeedRepository $repository
+     * @param FeedModel $feed
+     * @return mixed
+     * @author Seven Du <shiweidu@outlook.com>
+     */
+    public function destroy(Request $request,
+                            ResponseContract $response,
+                            FeedRepository $repository,
+                            FeedModel $feed)
+    {
+        $user = $request->user();
+
+        if ($user->id !== $feed->user_id) {
+            return $response->json(['message' => '你没有权限删除动态'])->setStatusCode(403);
+        }
+
+        $feed->getConnection()->transaction(function () use ($feed) {
+            $feed->delete();
+        });
+        $repository->forget(sprintf('feed:%s', $feed->id));
+
+        return $response->json(null, 204);
+    }
 }
