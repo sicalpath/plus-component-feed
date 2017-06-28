@@ -3,6 +3,7 @@
 - [发布评论](#发布评论)
 - [获取评论](#获取评论)
 - [评论列表](#评论列表)
+- [删除评论](#删除评论)
 
 ## 发布评论
 
@@ -86,3 +87,15 @@ Status: 200 OK
 ```
 
 > `pinned` 列表和 `comments` 列表一致，表述置顶列表数据.
+
+## 删除评论
+
+```
+DELETE /feeds/:feed/comments/:comment
+```
+
+#### Response
+
+```
+Status: 204 No Content
+```
