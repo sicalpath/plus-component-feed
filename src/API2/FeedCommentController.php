@@ -143,8 +143,16 @@ class FeedCommentController extends Controller
      * @return mixed
      * @author Seven Du <shiweidu@outlook.com>
      */
-    public function destroy(ResponseContract $response, FeedRepository $repository, FeedModel $feed, FeedCommentModel $comment)
+    public function destroy(Request $request,
+                            ResponseContract $response,
+                            FeedRepository $repository,
+                            FeedModel $feed,
+                            FeedCommentModel $comment)
     {
+        if ($request->user()->id !== $comment->user_id) {
+            return $response->json(['message' => ['你没有权限删除该评论']])->setStatusCode(403);
+        }
+
         $feed->getConnection()->transaction(function () use ($feed, $comment) {
             $comment->delete();
             $feed->decrement('feed_comment_count', 1);
