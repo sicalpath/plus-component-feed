@@ -3,6 +3,7 @@
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\API2;
 
 use Illuminate\Http\Request;
+use Zhiyi\Plus\Models\User as UserModel;
 use Illuminate\Database\Eloquent\Builder;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Illuminate\Contracts\Routing\ResponseFactory as ResponseContract;
@@ -159,6 +160,6 @@ class FeedCommentController extends Controller
         });
         $repository->forget(sprintf('feed:%s', $feed->id));
 
-        return $response->json(null, 204)
+        return $response->json(null, 204);
     }
 }
