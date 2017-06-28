@@ -345,6 +345,7 @@ class FeedController extends Controller
         foreach ($nodes as $node) {
             $node->subject = '购买动态附件';
             $node->body = sprintf('购买动态《%s》的图片', str_limit($feed->feed_content, 100, '...'));
+            $node->user_id = $feed->user_id;
             $node->save();
         }
     }
@@ -371,6 +372,7 @@ class FeedController extends Controller
         $paidNode->raw = $feed->id;
         $paidNode->subject = sprintf('购买动态《%s》', str_limit($feed->feed_content, 100, '...'));
         $paidNode->body = $paidNode->subject;
+        $paidNode->user_id = $feed->user_id;
         $paidNode->save();
     }
 
