@@ -6,6 +6,7 @@ use Zhiyi\Plus\Models\Comment;
 use Zhiyi\Plus\Support\PackageHandler;
 use Illuminate\Support\ServiceProvider;
 use Zhiyi\Plus\Support\ManageRepository;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedComment;
 
 class FeedServiceProvider extends ServiceProvider
@@ -59,6 +60,7 @@ class FeedServiceProvider extends ServiceProvider
     {
         Comment::observe(Observers\PlusCommentObserver::class);
         FeedComment::observe(Observers\CommentObserver::class);
+        Feed::observe(Observers\FeedObserver::class);
     }
 
     /**
