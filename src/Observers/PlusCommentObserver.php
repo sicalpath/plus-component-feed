@@ -45,7 +45,7 @@ class PlusCommentObserver
      */
     protected function validateOr(Comment $comment, callable $call)
     {
-        if (! $comment->channel === 'feed' || ! ($comment = FeedComment::find($comment->target))) {
+        if ($comment->channel !== 'feed' || ! ($comment = FeedComment::find($comment->target))) {
             return null;
         }
 
