@@ -63,6 +63,10 @@ class FeedDiggController extends Controller
         $user = $request->user();
         $cacheKey = sprintf('feed:%s', $feed->id);
 
+        if ($feed->diggs()->where('user_id', $user->id)->first()) {
+            return $response->json(['message' => ['已经赞过了']])->setStatusCode(422);
+        }
+
         // digg
         $digg->user_id = $user;
 
