@@ -13,6 +13,6 @@ Route::middleware('auth:api')->prefix('/feeds')->group(function () {
 
 // 获取评论
 Route::get('/feeds/{feed}/comments', 'FeedCommentController@index');
-Route::post('/feeds/{feed}/comments', 'FeedCommentController@store');
+Route::post('/feeds/{feed}/comments', 'FeedCommentController@store')->middleware('auth:api');
 Route::get('/feeds/{feed}/comments/{comment}', 'FeedCommentController@show');
-Route::delete('/feeds/{feed}/comments/{comment}', 'FeedCommentController@destroy');
+Route::delete('/feeds/{feed}/comments/{comment}', 'FeedCommentController@destroy')->middleware('auth:api');
