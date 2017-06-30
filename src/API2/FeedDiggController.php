@@ -37,7 +37,10 @@ class FeedDiggController extends Controller
 
 
         return $response->json($diggs->map(function (FeedDiggModel $digg) {
-            return $digg->user_id;
+            return [
+                'id' => $digg->id,
+                'user_id' => $digg->user_id,
+            ];
         }))->setStatusCode(200);
     }
 
