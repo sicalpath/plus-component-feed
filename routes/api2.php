@@ -12,7 +12,7 @@ Route::prefix('/feeds')->group(function () {
     Route::get('/{feed}/comments', 'FeedCommentController@index');
     Route::get('/{feed}/comments/{comment}', 'FeedCommentController@show');
 
-    /**
+    /*
      * 需要授权的路由
      */
     Route::middleware('auth:api')->group(function () {
@@ -25,6 +25,5 @@ Route::prefix('/feeds')->group(function () {
         // 评论
         Route::post('/{feed}/comments', 'FeedCommentController@store');
         Route::delete('/{feed}/comments/{comment}', 'FeedCommentController@destroy');
-
     });
 });
