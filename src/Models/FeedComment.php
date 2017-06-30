@@ -22,6 +22,18 @@ class FeedComment extends Model
     ];
 
     /**
+     * Has feed comment pinned.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @author Seven Du <shiweidu@outlook.com>
+     */
+    public function pinned()
+    {
+        return $this->hasOne(FeedPinned::class, 'target', 'id')
+            ->where('channel', 'comment');
+    }
+
+    /**
      * 单条评论属于一个评论发起用户.
      * @return [type] [description]
      */
