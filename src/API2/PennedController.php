@@ -31,6 +31,51 @@ class PennedController extends Controller
     }
 
     /**
+     * 申请评论置顶.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \Illuminate\Contracts\Routing\ResponseFactory $response
+     * @param \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed $feed
+     * @param \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedComment $comment
+     * @return mixed
+     * @author Seven Du <shiweidu@outlook.com>
+     */
+    public function commentPinned(Request $request, ResponseContract $response, FeedModel $feed, FeedCommentModel $comment)
+    {
+        $user = $request->user();
+        if ($comment->user_id !== $user->id) {
+            return $response->json(['message' => ['你没有权限申请']])->setStatusCode(403);
+        } elseif ($comment->pinned()->where('user_id', $user->id)->first()) {
+            return $response->json(['message' => ['已经申请过']])->setStatusCode(422);
+        }
+
+        $pinned = new FeedPinnedModel();
+        $pinned->user_id = $user->id;
+        $pinned->channel = 'comment';
+        $pinned->target = $comment->id;
+        $pinned->target_user = $feed->user_id;
+
+        return $this->app->call([$this, 'validateBase'], [
+            'pinned' => $pinned,
+            'call' => function (WalletChargeModel $charge, FeedPinnedModel $pinned) use ($user, $comment) {
+                $charge->user_id = $user->id;
+                $charge->channel = 'user';
+                $charge->account = $user->id;
+                $charge->action = 0;
+                $charge->amount = $pinned->amount;
+                $charge->subject = '申请动态评论置顶';
+                $charge->body = $comment->comment_content;
+                $charge->status = 1;
+
+                return $this->app->call([$this, 'save'], [
+                    'charge' => $charge,
+                    'pinned' => $pinned,
+                ]);
+            }
+        ]);
+    }
+
+    /**
      * 申请动态置顶.
      *
      * @param \Illuminate\Http\Request $request
