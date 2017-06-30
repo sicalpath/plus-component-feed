@@ -32,5 +32,9 @@ Route::prefix('/feeds')->group(function () {
         // 点赞（喜欢）
         Route::post('/{feed}/diggs', 'FeedDiggController@store');
         Route::delete('/{feed}/undigg', 'FeedDiggController@destroy');
+
+        // 收藏
+        Route::post('/{feed}/collections', 'FeedCollectionController@store');
+        Route::delete('/{feed}/uncollection', 'FeedCollectionController@destroy');
     });
 });
