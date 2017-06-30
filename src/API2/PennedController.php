@@ -9,12 +9,11 @@ use Illuminate\Contracts\Routing\ResponseFactory as ResponseContract;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed as FeedModel;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedPinned as FeedPinnedModel;
-use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedComment as FeedCommentModel;
 
 class PennedController extends Controller
 {
     /**
-     * App
+     * App.
      *
      * @var \Illuminate\Contracts\Foundation\Application
      */
@@ -71,7 +70,7 @@ class PennedController extends Controller
                     'charge' => $charge,
                     'pinned' => $pinned,
                 ]);
-            }
+            },
         ]);
     }
 
@@ -119,8 +118,8 @@ class PennedController extends Controller
             'day' => [
                 'required',
                 'integer',
-                'min:1'
-            ]
+                'min:1',
+            ],
         ];
         $messages = [
             'amount.required' => '请输入申请金额',
