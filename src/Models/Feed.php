@@ -37,6 +37,18 @@ class Feed extends Model
     ];
 
     /**
+     * Has feed pinned.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @author Seven Du <shiweidu@outlook.com>
+     */
+    public function pinned()
+    {
+        return $this->hasOne(FeedPinned::class, 'target', 'id')
+            ->where('channel', 'feed');
+    }
+
+    /**
      * Get feed images.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
