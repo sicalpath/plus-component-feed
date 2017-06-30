@@ -7,10 +7,12 @@ use Zhiyi\Plus\Models\FileWith;
 use Zhiyi\Plus\Models\PaidNode;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Feed extends Model
 {
-    use Concerns\HasFeedCollect;
+    use SoftDeletes,
+        Concerns\HasFeedCollect;
 
     /**
      * The model table name.

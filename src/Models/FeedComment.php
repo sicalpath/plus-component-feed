@@ -5,9 +5,12 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models;
 use Zhiyi\Plus\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FeedComment extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'feed_comments';
 
     protected $fillable = [
