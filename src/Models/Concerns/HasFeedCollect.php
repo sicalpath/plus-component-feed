@@ -49,7 +49,6 @@ trait HasFeedCollect
     public function collect(int $user)
     {
         $this->forgetCollet($this->id, $user);
-        Cache::forget($cacheKey);
 
         return $this->collections()->attach($user);
     }
