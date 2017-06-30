@@ -2,17 +2,29 @@
 
 use Illuminate\Support\Facades\Route;
 
-// 动态
-Route::get('/feeds', 'FeedController@index');
-Route::get('/feeds/{feed}', 'FeedController@show');
-Route::middleware('auth:api')->prefix('/feeds')->group(function () {
-    Route::post('/', 'FeedController@store');
-    Route::delete('/{feed}', 'FeedController@destroy');
-    Route::patch('/{feed}/comment-paid', 'FeedPayController@commentPaid');
-});
+Route::prefix('/feeds')->group(function () {
 
-// 获取评论
-Route::get('/feeds/{feed}/comments', 'FeedCommentController@index');
-Route::post('/feeds/{feed}/comments', 'FeedCommentController@store')->middleware('auth:api');
-Route::get('/feeds/{feed}/comments/{comment}', 'FeedCommentController@show');
-Route::delete('/feeds/{feed}/comments/{comment}', 'FeedCommentController@destroy')->middleware('auth:api');
+    // 动态
+    Route::get('/', 'FeedController@index');
+    Route::get('/{feed}', 'FeedController@show');
+
+    // 评论
+    Route::get('/{feed}/comments', 'FeedCommentController@index');
+    Route::get('/{feed}/comments/{comment}', 'FeedCommentController@show');
+
+    /**
+     * 需要授权的路由
+     */
+    Route::middleware('auth:api')->group(function () {
+
+        // 动态
+        Route::post('/', 'FeedController@store');
+        Route::delete('/{feed}', 'FeedController@destroy');
+        Route::patch('/{feed}/comment-paid', 'FeedPayController@commentPaid');
+
+        // 评论
+        Route::post('/{feed}/comments', 'FeedCommentController@store');
+        Route::delete('/{feed}/comments/{comment}', 'FeedCommentController@destroy');
+
+    });
+});
