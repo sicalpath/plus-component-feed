@@ -31,8 +31,21 @@ class FeedCollectionController extends Controller
         return $response->json(['message' => ['收藏成功']])->setStatusCode(201);
     }
 
-    public function destroy()
+    /**
+     * 取消收藏.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \Illuminate\Contracts\Routing\ResponseFactory $response
+     * @param \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed $feed
+     * @return mixed
+     * @author Seven Du <shiweidu@outlook.com>
+     */
+    public function destroy(Request $request, ResponseContract $response, FeedModel $feed)
     {
-        // doto.
+        $feed->uncollect(
+            $request->user()->id
+        );
+
+        return $response->json(null, 204);
     }
 }

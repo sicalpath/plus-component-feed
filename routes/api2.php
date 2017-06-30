@@ -35,6 +35,6 @@ Route::prefix('/feeds')->group(function () {
 
         // 收藏
         Route::post('/{feed}/collections', 'FeedCollectionController@store');
-        Route::delete('/{feed}/uncollection', 'FeedCollectionController@destroy');
+        Route::delete('/{feed}/uncollect', 'FeedCollectionController@destroy');
     });
 });
