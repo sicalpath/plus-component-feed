@@ -12,6 +12,9 @@ Route::prefix('/feeds')->group(function () {
     Route::get('/{feed}/comments', 'FeedCommentController@index');
     Route::get('/{feed}/comments/{comment}', 'FeedCommentController@show');
 
+    // 点赞（喜欢）
+    Route::get('/{feed}/diggs', 'FeedDiggController@index');
+
     /*
      * 需要授权的路由
      */
@@ -25,5 +28,9 @@ Route::prefix('/feeds')->group(function () {
         // 评论
         Route::post('/{feed}/comments', 'FeedCommentController@store');
         Route::delete('/{feed}/comments/{comment}', 'FeedCommentController@destroy');
+
+        // 点赞（喜欢）
+        Route::post('/{feed}/diggs', 'FeedDiggController@store');
+        Route::delete('/{feed}/diggs/{digg}', 'FeedDiggController@destroy');
     });
 });
