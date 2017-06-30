@@ -128,7 +128,7 @@ class FeedCommentController extends Controller
         $repository->forget(sprintf('feed:%s', $feed->id));
 
         return $response->json([
-            'message' => '评论成功',
+            'message' => ['评论成功'],
             'id' => $comment->id,
         ])->setStatusCode(201);
     }
