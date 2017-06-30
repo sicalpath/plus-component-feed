@@ -7,3 +7,4 @@
 - [评论](feed/comment.md)
 - [赞/喜欢](digg.md)
 - [收藏](collect.md)
+- [置顶](pinned.md)
