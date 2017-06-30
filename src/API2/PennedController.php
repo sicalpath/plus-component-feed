@@ -71,7 +71,7 @@ class PennedController extends Controller
                     'charge' => $charge,
                     'pinned' => $pinned,
                 ]);
-            }
+            },
         ]);
     }
 
