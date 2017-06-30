@@ -67,7 +67,7 @@ class FeedDiggController extends Controller
         }
 
         // digg
-        $digg->user_id = $user;
+        $digg->user_id = $user->id;
 
         $feed->getConnection()->transaction(function () use ($feed, $user, $digg, $count) {
             $feed->increment('feed_digg_count', 1);
@@ -105,8 +105,8 @@ class FeedDiggController extends Controller
 
         $feed->getConnection()->transaction(function () use ($feed, $user, $count) {
             $feed->decrement('feed_digg_count', 1);
-            $feed->diggs()->where('user_id', $user_id)->delete();
-            $count->count($user_id, 'diggs_count', 'decrement');
+            $feed->diggs()->where('user_id', $user->id)->delete();
+            $count->count($user->id, 'diggs_count', 'decrement');
         });
         $repository->forget($cacheKey);
 
