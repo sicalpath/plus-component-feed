@@ -24,6 +24,7 @@ class CreateFeedCommentsTable extends Migration
             $table->tinyInteger('pinned')->unsigned()->nullable()->default(0)->comment('固定（置顶）动态，0-否，1-是');
             $table->integer('pinned_amount')->unsigned()->nullable()->default(0)->comment('固定金额，这些用于需求排序');
             $table->timestamps();
+            $table->softDeletes();
 
             $table->index('user_id');
             $table->index('to_user_id');
