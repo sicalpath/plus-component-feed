@@ -36,5 +36,9 @@ Route::prefix('/feeds')->group(function () {
         // 收藏
         Route::post('/{feed}/collections', 'FeedCollectionController@store');
         Route::delete('/{feed}/uncollect', 'FeedCollectionController@destroy');
+
+        // 置顶申请
+        Route::post('/{feed}/pinned', 'PennedController@feedPinned');
+        Route::post('/{feed}/comments/{comment}/pinned', 'PennedController@commentPinned');
     });
 });
