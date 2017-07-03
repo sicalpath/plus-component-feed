@@ -44,7 +44,7 @@ class FeedServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->make(ManageRepository::class)->loadManageFrom('动态分享', 'feed:admin', [
+        $this->app->make(ManageRepository::class)->loadManageFrom('动态管理', 'feed:admin', [
             'route' => true,
             'icon' => asset('zhiyicx/plus-component-feed/feed-icon.png'),
         ]);
