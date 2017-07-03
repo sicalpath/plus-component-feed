@@ -7,9 +7,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types'
 import { matchPath, withRouter } from 'react-router';
+import { Route } from 'react-router-dom';
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
 import Tabs, { Tab } from 'material-ui/Tabs';
+import Home from './components/Home';
+import Feed from './components/Feed';
 
 const AppStyleSheet = createStyleSheet('AppStyleSheet', theme => ({
   root: {}
@@ -104,6 +107,10 @@ class App extends Component
             <Tab label="评论管理" />
           </Tabs>
         </AppBar>
+
+        <Route exact path="/" component={Home} />
+        <Route path="/feeds" component={Feed} />
+
       </div>
     );
   }

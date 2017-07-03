@@ -19,6 +19,16 @@ class FeedController extends Controller
 {
     use PaginatorPage;
 
+    public function index(Request $request, Feed $model)
+    {
+        $limit = (int) $request->query('limit', 20);
+
+        $feeds = $model->with(['images', 'user'])
+            ->get();
+
+        return $feeds;
+    }
+
     /**
      * 显示所有feeds.
      *
