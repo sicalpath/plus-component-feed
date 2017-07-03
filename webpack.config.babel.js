@@ -56,7 +56,7 @@ const isRepositorie = !!parseInt(process.env.PLUS_DEV_FEED || 0);
 |
 */
 
-const src = path.join(__dirname, 'resource');
+const src = path.join(__dirname, 'admin');
 
 /*
 |---------------------------------------------------------
