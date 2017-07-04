@@ -25,7 +25,7 @@ class FeedController extends Controller
                 'user',
                 'paidNode',
                 'images',
-                'images.paidNode'
+                'images.paidNode',
             ])
             ->limit($limit)
             ->orderBy('id', 'desc')
