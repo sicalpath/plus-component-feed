@@ -13,6 +13,7 @@ import Snackbar from 'material-ui/Snackbar';
 import Avatar from 'material-ui/Avatar';
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
+import CircularProgress from 'material-ui/Progress/CircularProgress';
 
 import FavoriteIcon from 'material-ui-icons/Favorite';
 import Forum from 'material-ui-icons/Forum';
@@ -22,6 +23,7 @@ import CloseIcon from 'material-ui-icons/Close';
 import request, { createRequestURI } from '../utils/request';
 
 const FeedStyleSheet = createStyleSheet('FeedStyleSheet', theme => {
+  console.log(theme);
   return {
     root: {
       padding: theme.spacing.unit * 2,
@@ -118,8 +120,14 @@ class Feed extends Component
         <Dialog open={!! del.feed}>
           <DialogContent>确定要删除吗？</DialogContent>
           <DialogActions>
-            <Button onTouchTap={() => this.handlePushClose()}>取消</Button>
-            <Button color="primary" onTouchTap={() => this.handleDelete()}>删除</Button>
+            { del.ing
+              ? <Button disabled>取消</Button>
+              : <Button onTouchTap={() => this.handlePushClose()}>取消</Button>
+            }
+            { del.ing
+              ? <Button disabled><CircularProgress size={14} /></Button>
+              : <Button color="primary" onTouchTap={() => this.handleDelete()}>删除</Button>
+            }
           </DialogActions>
         </Dialog>
 
@@ -161,11 +169,14 @@ class Feed extends Component
 
   handleDelete() {
     const { del: { feed } } = this.state;
+    this.setState({
+      ...this.state,
+      del: { feed, ing: true }
+    });
     request.delete(
       createRequestURI(`feeds/${feed}`),
       { validateStatus: status => status === 204 }
     ).then(() => {
-      // console.log(3);
       this.handlePushClose();
       this.handlePullFeed(feed);
       this.handleSnackbar({
