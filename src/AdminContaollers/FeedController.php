@@ -21,7 +21,12 @@ class FeedController extends Controller
     {
         $limit = (int) $request->query('limit', 20);
 
-        $feeds = $model->with(['images', 'user'])
+        $feeds = $model->with([
+                'user',
+                'paidNode',
+                'images',
+                'images.paidNode'
+            ])
             ->limit($limit)
             ->orderBy('id', 'desc')
             ->get();
