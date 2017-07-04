@@ -8,12 +8,15 @@ import PropTypes from 'prop-types'
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Card, { CardHeader, CardContent, CardMedia, CardActions } from 'material-ui/Card';
+import Typography from 'material-ui/Typography';
 import Dialog, { DialogContent, DialogActions } from 'material-ui/Dialog';
 import Snackbar from 'material-ui/Snackbar';
 import Avatar from 'material-ui/Avatar';
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
 import CircularProgress from 'material-ui/Progress/CircularProgress';
+import Drawer from 'material-ui/Drawer';
+import Chip from 'material-ui/Chip';
 
 import FavoriteIcon from 'material-ui-icons/Favorite';
 import Forum from 'material-ui-icons/Forum';
@@ -31,6 +34,29 @@ const FeedStyleSheet = createStyleSheet('FeedStyleSheet', theme => {
     flexGrow: {
       flex: '1 1 auto'
     },
+    drawer: {
+      width: 500,
+      width: '60vw',
+      overflowY: 'auto'
+    },
+    drawerImage: {
+      width: '100%'
+    },
+    drawerImageTitle: {
+      width: '100%',
+      position: "absolute",
+      bottom: 0,
+      background: 'rgba(255, 255, 255, .4)',
+      color: '#fff'
+    },
+    drawerRow: {
+      display: 'flex',
+      justifyContent: 'flex-start',
+      flexWrap: 'wrap',
+    },
+    chip: {
+      margin: theme.spacing.unit,
+    }
   };
 });
 
@@ -51,12 +77,13 @@ class Feed extends Component
       message: '',
       vertical: 'bottom',
       horizontal: 'right',
-    }
+    },
+    drawer: null,
   };
 
   render() {
     const { classes } = this.props;
-    const { feeds = [], del, snackbar } = this.state;
+    const { feeds = [], del, snackbar, drawer } = this.state;
 
     return (
       <div>
@@ -66,7 +93,7 @@ class Feed extends Component
             id,
             created_at,
             feed_content: content,
-            images: [],
+            images = [],
             user: { name, id: user_id } = {},
             feed_digg_count: digg_count = 0,
             feed_comment_count: comment_count = 0,
@@ -82,13 +109,12 @@ class Feed extends Component
                   subheader={created_at}
                 />
 
-                <CardContent>
+                <CardContent onTouchTap={() => this.handleRequestDrawer(id)}>
+                  <Typography>
+                    #{id}
+                  </Typography>
                   {content}
                 </CardContent>
-
-                <CardMedia>
-                
-                </CardMedia>
 
                 <CardActions>
 
@@ -148,8 +174,111 @@ class Feed extends Component
           ]}
         />
 
+        <Drawer
+          open={!! drawer}
+          anchor="right"
+          onRequestClose={() => this.handleDrawerClose()}
+        >
+          {this.makeDrawerContent(drawer)}
+        </Drawer>
+
       </div>
     );
+  }
+
+  handleRequestDrawer(feed) {
+    this.setState({
+      ...this.state,
+      drawer: feed,
+    });
+  }
+
+  handleDrawerClose() {
+    this.setState({
+      ...this.state,
+      drawer: null,
+    });
+  }
+
+  makeDrawerContent(feed_id = null) {
+    console.log(feed_id);
+    if (! feed_id) {
+      return null;
+    }
+
+    let feed = null;
+    for (let index in this.state.feeds) {
+      const item = this.state.feeds[index];
+      if (parseInt(item.id) === parseInt(feed_id)) {
+        feed = item;
+        break;
+      }
+    }
+
+    if (! feed) {
+      return null;
+    }
+
+    const { classes } = this.props;
+    const {
+      user: {
+        name,
+        id: user_id
+      },
+      created_at,
+      feed_content: content,
+      images = [],
+      paid_node,
+      feed_digg_count: digg_count,
+      feed_comment_count: comment_count,
+    } = feed;
+
+    return (<Card elevation={0} className={classes.drawer}>
+      
+      <CardHeader
+        avatar={<Avatar>{name[0]}</Avatar>}
+        title={`${name} (${user_id})`}
+        subheader={created_at}
+      />
+
+      <CardContent>{content}</CardContent>
+
+      { images.map(({
+        id,
+        paid_node
+      }) => (<CardMedia key={id}>
+        <img
+          src={createRequestURI(`files/${id}`)}
+          className={classes.drawerImage}
+        />
+        { paid_node && (<CardHeader
+          title={
+            paid_node.extra === 'read' ? '查看' : '下载' +
+            '收费：' +
+            (paid_node.amount * window.FEED.walletRatio / 100)
+          }
+          className={classes.drawerImageTitle}
+        />)}
+      </CardMedia>)) }
+
+      <CardContent className={classes.drawerRow}>
+        <Chip className={classes.chip} avatar={<Avatar><FavoriteIcon /></Avatar>} label={digg_count} />
+        <Chip className={classes.chip} avatar={<Avatar><Forum /></Avatar>} label={comment_count} />
+      </CardContent>
+
+    </Card>);
+
+  }
+
+  makeImages(images = []) {
+    switch (images.length) {
+      case 1:
+        const file = images.pop();
+        return (<img src={createRequestURI(`files/${file.id}`)} />);
+
+      default:
+        return null;
+    }
   }
 
   handlePushDelete(feed) {
