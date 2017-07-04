@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Illuminate\Contracts\Cache\Repository as CacheContract;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
-use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Traits\PaginatorPage;
 
 class FeedController extends Controller
 {
