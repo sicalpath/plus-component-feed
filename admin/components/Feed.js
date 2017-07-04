@@ -9,6 +9,7 @@ import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Card, { CardHeader, CardContent, CardMedia, CardActions } from 'material-ui/Card';
 import Dialog, { DialogContent, DialogActions } from 'material-ui/Dialog';
+import Snackbar from 'material-ui/Snackbar';
 import Avatar from 'material-ui/Avatar';
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
@@ -16,6 +17,7 @@ import IconButton from 'material-ui/IconButton';
 import FavoriteIcon from 'material-ui-icons/Favorite';
 import Forum from 'material-ui-icons/Forum';
 import Delete from 'material-ui-icons/Delete';
+import CloseIcon from 'material-ui-icons/Close';
 
 import request, { createRequestURI } from '../utils/request';
 
@@ -42,11 +44,17 @@ class Feed extends Component
       feed: null,
       ing: false,
     },
+    snackbar: {
+      open: false,
+      message: '',
+      vertical: 'bottom',
+      horizontal: 'right',
+    }
   };
 
   render() {
     const { classes } = this.props;
-    const { feeds = [], del } = this.state;
+    const { feeds = [], del, snackbar } = this.state;
 
     return (
       <div>
@@ -107,13 +115,30 @@ class Feed extends Component
 
         </Grid>
 
-        <Dialog open={del.feed}>
+        <Dialog open={!! del.feed}>
           <DialogContent>确定要删除吗？</DialogContent>
           <DialogActions>
             <Button onTouchTap={() => this.handlePushClose()}>取消</Button>
-            <Button color="primary">删除</Button>
+            <Button color="primary" onTouchTap={() => this.handleDelete()}>删除</Button>
           </DialogActions>
         </Dialog>
+
+        <Snackbar
+          anchorOrigin={{ vertical: snackbar.vertical, horizontal: snackbar.horizontal }}
+          open={!! snackbar.open}
+          message={snackbar.message}
+          autoHideDuration={3e3}
+          onRequestClose={() => this.handleSnackbarClose()}
+          action={[
+            <IconButton
+              key="snackbar.close"
+              color="inherit"
+              onTouchTap={() => this.handleSnackbarClose()}
+            >
+              <CloseIcon />
+            </IconButton>
+          ]}
+        />
 
       </div>
     );
@@ -132,6 +157,52 @@ class Feed extends Component
       ...this.state,
       del: { feed: null, ing: false }
     });
+  }
+
+  handleDelete() {
+    const { del: { feed } } = this.state;
+    request.delete(
+      createRequestURI(`feeds/${feed}`),
+      { validateStatus: status => status === 204 }
+    ).then(() => {
+      // console.log(3);
+      this.handlePushClose();
+      this.handlePullFeed(feed);
+      this.handleSnackbar({
+        message: '删除成功!',
+        open: true,
+      });
+    }).catch(({ response: { data: { message: [ message = '删除失败，请检查网络！' ] = [] } = {} } = {} } = {}) => {
+      this.handlePushClose();
+      this.handleSnackbar({
+        message,
+        open: true,
+      });
+    });
+  }
+
+  handlePullFeed(feed) {
+    const state = this.state;
+    let feeds = [];
+    
+    state.feeds.forEach(item => {
+      if (parseInt(item.id) !== parseInt(feed)) {
+        feeds.push(item);
+      }
+    });
+
+    this.setState({ ...state, feeds });
+  }
+
+  handleSnackbar(snackbar = {}) {
+    this.setState({
+      ...this.state,
+      snackbar: { ...this.state.snackbar, ...snackbar }
+    });
+  }
+
+  handleSnackbarClose() {
+    this.handleSnackbar({ open: false, });
   }
 
   componentDidMount() {
