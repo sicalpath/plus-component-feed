@@ -4,6 +4,7 @@ namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\AdminContaollers;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Zhiyi\Plus\Repository\WalletRatio;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedComment;
@@ -16,11 +17,12 @@ class HomeController extends Controller
      * @return mixed
      * @author Seven Du <shiweidu@outlook.com>
      */
-    public function show()
+    public function show(WalletRatio $walletRatioRepository)
     {
         return view('feed:view::admin', [
             'base_url' => route('feed:admin'),
             'csrf_token' => csrf_token(),
+            'wallet_ratio' => $walletRatioRepository->get(),
         ]);
     }
 

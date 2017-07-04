@@ -13,6 +13,7 @@
         window.FEED = {!! json_encode([
             'baseURL' => $base_url,
             'csrfToken' => $csrf_token,
+            'walletRatio' => $wallet_ratio,
         ]) !!};
     </script>
     <style type="text/css">
