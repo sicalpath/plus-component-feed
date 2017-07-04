@@ -10,8 +10,6 @@ use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Traits\PaginatorPage;
 
 class FeedController extends Controller
 {
-    use PaginatorPage;
-
     /**
      * Get feeds.
      *
@@ -25,6 +23,8 @@ class FeedController extends Controller
         $limit = (int) $request->query('limit', 20);
 
         $feeds = $model->with(['images', 'user'])
+            ->limit($limit)
+            ->orderBy('id', 'desc')
             ->get();
 
         return response()->json($feeds)->setStatusCode(200);
