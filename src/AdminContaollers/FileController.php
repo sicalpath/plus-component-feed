@@ -3,6 +3,7 @@
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\AdminContaollers;
 
 use Illuminate\Http\Request;
+use Zhiyi\Plus\Http\Controllers\Controller;
 use Zhiyi\Plus\Cdn\UrlManager as CdnUrlManager;
 use Zhiyi\Plus\Models\FileWith as FileWithModel;
 use Illuminate\Contracts\Routing\ResponseFactory as ResponseContract;
@@ -29,7 +30,7 @@ class FileController extends Controller
         ]);
 
         return $response->redirectTo(
-            $cdn->make($fileWith->file, $extra),
+            $cdn->make($file->file, $extra),
             302
         );
     }

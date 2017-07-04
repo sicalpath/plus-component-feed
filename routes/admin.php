@@ -11,4 +11,4 @@ Route::get('/comments', 'CommentController@show');
 Route::delete('/comments/{comment}', 'CommentController@delete');
 
 // File
-Route::get('/file/{file}', 'FileController@show');
+Route::get('/files/{file}', 'FileController@show');
