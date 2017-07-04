@@ -2,19 +2,11 @@
 
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\AdminContaollers;
 
-use DB;
-use Zhiyi\Plus\Models\Digg;
 use Illuminate\Http\Request;
-use Illuminate\Database\QueryException;
 use Zhiyi\Plus\Http\Controllers\Controller;
 use Illuminate\Contracts\Cache\Repository as CacheContract;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
-use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedAtme;
-use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg;
-use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedComment;
-use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Services\FeedCount;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Traits\PaginatorPage;
-use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedCollection;
 
 class FeedController extends Controller
 {
