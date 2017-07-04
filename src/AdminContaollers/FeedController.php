@@ -7,6 +7,7 @@ use Zhiyi\Plus\Models\Digg;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use Zhiyi\Plus\Http\Controllers\Controller;
+use Illuminate\Contracts\Cache\Repository as CacheContract;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedAtme;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedDigg;
@@ -19,6 +20,14 @@ class FeedController extends Controller
 {
     use PaginatorPage;
 
+    /**
+     * Get feeds.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed $model
+     * @return mixed
+     * @author Seven Du <shiweidu@outlook.com>
+     */
     public function index(Request $request, Feed $model)
     {
         $limit = (int) $request->query('limit', 20);
@@ -26,36 +35,23 @@ class FeedController extends Controller
         $feeds = $model->with(['images', 'user'])
             ->get();
 
-        return $feeds;
+        return response()->json($feeds)->setStatusCode(200);
     }
 
     /**
-     * 显示所有feeds.
+     * Delete feed.
      *
-     * @param Request $request
+     * @param \Illuminate\Contracts\Cache\Repository $cache
+     * @param \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed $feed
      * @return mixed
      * @author Seven Du <shiweidu@outlook.com>
      */
-    public function showFeeds(Request $request)
+    public function destroy(CacheContract $cache, Feed $feed)
     {
-        $limit = (int) $request->query('limit', 20);
-        $showUser = (bool) $request->query('show_user', false);
+        $feed->delete();
+        $cache->forget(sprintf('feed:%s', $feed->id));
 
-        $query = app(Feed::class)->newQuery();
-
-        if ($showUser) {
-            $query->with('user');
-        }
-
-        $paginator = $query->simplePaginate($limit);
-
-        $data = [
-            'feeds' => $paginator->getCollection()->toArray(),
-            'pervPage' => $this->getPrevPage($paginator),
-            'nextPage' => $this->getNextPage($paginator),
-        ];
-
-        return response()->json($data)->setStatusCode(200);
+        return response(null, 204);
     }
 
     /**
