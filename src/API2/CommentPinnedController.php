@@ -96,12 +96,12 @@ class CommentPinnedController extends Controller
             return $response->json(['message' => ['已被置顶，请勿重复发起']], 422);
         }
 
-        $pinned->expires_at = $dateTime;
+        $pinned->expires_at = $dateTime->addDay($pinned->day);
         $comment->pinned = 1;
         $comment->pinned_amount = $pinned->amount;
 
         // 动态发起人增加收款凭据
-        $charge->user_id = $user->id,
+        $charge->user_id = $user->id;
         $charge->channel = 'user';
         $charge->account = $pinned->user_id;
         $charge->action = 1;
