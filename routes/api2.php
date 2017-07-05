@@ -51,4 +51,3 @@ Route::middleware('auth:api')->group(function () {
     // 评论置顶审核
     Route::get('/user/feed-comment-pinneds', 'CommentPinnedController@index');
 });
-
