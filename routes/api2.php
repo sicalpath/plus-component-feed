@@ -42,3 +42,13 @@ Route::prefix('/feeds')->group(function () {
         Route::post('/{feed}/comments/{comment}/pinned', 'PennedController@commentPinned');
     });
 });
+
+/*
+ * 需要授权的非 feeds 资源路由.
+ */
+Route::middleware('auth:api')->group(function () {
+
+    // 评论置顶审核
+    Route::get('/user/feed-comment-pinneds', 'CommentPinnedController@index');
+});
+
