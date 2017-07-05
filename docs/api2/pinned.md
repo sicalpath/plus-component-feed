@@ -6,7 +6,7 @@
 ## 动态置顶
 
 ```
-POST /feeds/:feed/pinned
+POST /feeds/:feed/pinneds
 ```
 
 #### Input
@@ -32,7 +32,7 @@ Status: 201 Created
 ## 评论置顶
 
 ```
-POST /feeds/:feed/comments/:comment/pinned
+POST /feeds/:feed/comments/:comment/pinneds
 ```
 
 #### Input
