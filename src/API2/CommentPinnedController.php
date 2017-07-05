@@ -61,4 +61,9 @@ class CommentPinnedController extends Controller
 
         return response()->json($pinneds, 200);
     }
+
+    public function pass()
+    {
+        // todo.
+    }
 }

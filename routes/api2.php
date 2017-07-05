@@ -37,9 +37,10 @@ Route::prefix('/feeds')->group(function () {
         Route::post('/{feed}/collections', 'FeedCollectionController@store');
         Route::delete('/{feed}/uncollect', 'FeedCollectionController@destroy');
 
-        // 置顶申请
-        Route::post('/{feed}/pinned', 'PennedController@feedPinned');
-        Route::post('/{feed}/comments/{comment}/pinned', 'PennedController@commentPinned');
+        // 固定
+        Route::post('/{feed}/pinneds', 'PennedController@feedPinned');
+        Route::post('/{feed}/comments/{comment}/pinneds', 'PinnedController@commentPinned');
+        Route::patch('/{feed}/comments/{comment}/pinneds/{pinned}', 'CommentPinnedController@pass');
     });
 });
 
@@ -48,6 +49,6 @@ Route::prefix('/feeds')->group(function () {
  */
 Route::middleware('auth:api')->group(function () {
 
-    // 评论置顶审核
+    // 评论固定审核
     Route::get('/user/feed-comment-pinneds', 'CommentPinnedController@index');
 });
