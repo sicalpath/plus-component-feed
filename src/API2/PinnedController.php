@@ -10,7 +10,7 @@ use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed as FeedModel;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedPinned as FeedPinnedModel;
 
-class PennedController extends Controller
+class PinnedController extends Controller
 {
     /**
      * App.
