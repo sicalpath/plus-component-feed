@@ -35,8 +35,7 @@ const FeedStyleSheet = createStyleSheet('FeedStyleSheet', theme => {
       flex: '1 1 auto'
     },
     drawer: {
-      width: 500,
-      width: '60vw',
+      width: 450,
       overflowY: 'auto'
     },
     drawerImage: {
