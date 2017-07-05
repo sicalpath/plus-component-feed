@@ -71,4 +71,9 @@ class CommentPinnedController extends Controller
     {
         // doto.
     }
+
+    public function delete()
+    {
+        // todo.
+    }
 }
