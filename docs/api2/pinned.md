@@ -67,7 +67,7 @@ GET /user/feed-comment-pinneds
 
 | 名称 | 类型 | 描述 |
 |:----:|:----:|----|
-| limit | Integer | 获取的条数 |
+| limit | Integer | 获取的条数, 默认 20 |
 | after | Integer | 上次请求列表倒叙最后一条 ID |
 
 #### Response

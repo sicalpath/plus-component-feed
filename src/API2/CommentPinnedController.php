@@ -24,9 +24,13 @@ class CommentPinnedController extends Controller
     public function index(Request $request, FeedPinnedModel $model)
     {
         $user = $request->user();
-        $limit = $request->query('limit');
+        $limit = $request->query('limit', 20);
+        $after = $request->query('after');
         $pinneds = $model->where('channel', 'comment')
             ->where('target_user', $user->id)
+            ->when(boolval($after), function ($query) use ($after) {
+                return $query->where('id', '<', $after);
+            })
             ->orderBy('id', 'desc')
             ->limit($limit)
             ->get();
