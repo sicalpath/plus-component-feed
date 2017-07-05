@@ -2,9 +2,14 @@
 
 namespace Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\API2;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Zhiyi\Plus\Http\Controllers\Controller;
+use Zhiyi\Plus\Models\WalletCharge as WalletChargeModel;
+use Illuminate\Contracts\Routing\ResponseFactory as ResponseContract;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed as FeedModel;
 use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedPinned as FeedPinnedModel;
+use Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedComment as FeedCommentModel;
 
 class CommentPinnedController extends Controller
 {
@@ -62,9 +67,57 @@ class CommentPinnedController extends Controller
         return response()->json($pinneds, 200);
     }
 
-    public function pass()
+    /**
+     * 固定评论.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \Illuminate\Contracts\Routing\ResponseFactory $response
+     * @param \Carbon\Carbon $dateTime
+     * @param \Zhiyi\Plus\Models\WalletCharge $charge
+     * @param \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed $feed
+     * @param \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedComment $comment
+     * @param \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedPinned $pinned
+     * @return mixed
+     * @author Seven Du <shiweidu@outlook.com>
+     */
+    public function pass(Request $request,
+                         ResponseContract $response,
+                         Carbon $dateTime,
+                         WalletChargeModel $charge,
+                         FeedModel $feed,
+                         FeedCommentModel $comment,
+                         FeedPinnedModel $pinned)
     {
-        // todo.
+        $user = $request->user();
+
+        if ($user->id !== $feed->user_id) {
+            return $response->json(['message' => ['你没有权限操作']], 403);
+        } elseif ($pinned->expires_at && $comment->pinned) {
+            return $response->json(['message' => ['已被置顶，请勿重复发起']], 422);
+        }
+
+        $pinned->expires_at = $dateTime;
+        $comment->pinned = 1;
+        $comment->pinned_amount = $pinned->amount;
+
+        // 动态发起人增加收款凭据
+        $charge->user_id = $user->id,
+        $charge->channel = 'user';
+        $charge->account = $pinned->user_id;
+        $charge->action = 1;
+        $charge->amount = $pinned->amount;
+        $charge->subject = sprintf('置顶《%s》评论', str_limit($feed->feed_content, 100, '...'));
+        $charge->body = $charge->subject;
+        $charge->status = 1;
+
+        return $feed->getConnection()->transaction(function () use ($response, $pinned, $comment, $user, $charge) {
+            $pinned->save();
+            $comment->save();
+            $user->wallet()->increment('balance', $charge->amount);
+            $user->walletCharges()->save($charge);
+
+            return $response->json(['message' => ['置顶成功']], 201);
+        });
     }
 
     public function reject()
