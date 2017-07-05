@@ -1982,9 +1982,9 @@ material-ui-icons@^1.0.0-alpha.19:
   dependencies:
     recompose "^0.23.5"
 
-material-ui@next:
-  version "1.0.0-alpha.20"
-  resolved "https://registry.yarnpkg.com/material-ui/-/material-ui-1.0.0-alpha.20.tgz#36d4d41e869b9ed0bcacc1dac78a450d2d8ad0b6"
+material-ui@v1.0.0-alpha.21:
+  version "1.0.0-alpha.21"
+  resolved "https://registry.yarnpkg.com/material-ui/-/material-ui-1.0.0-alpha.21.tgz#c8e73fc253083b79e23aee6ac48b95aaffcae444"
   dependencies:
     babel-runtime "^6.23.0"
     classnames "^2.2.5"
