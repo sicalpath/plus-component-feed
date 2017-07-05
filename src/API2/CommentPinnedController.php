@@ -66,4 +66,9 @@ class CommentPinnedController extends Controller
     {
         // todo.
     }
+
+    public function reject()
+    {
+        // doto.
+    }
 }

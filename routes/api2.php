@@ -51,4 +51,5 @@ Route::middleware('auth:api')->group(function () {
 
     // 评论固定审核
     Route::get('/user/feed-comment-pinneds', 'CommentPinnedController@index');
+    Route::delete('/user/feed-comment-pinneds/{pinned}', 'CommentPinnedController@reject');
 });
