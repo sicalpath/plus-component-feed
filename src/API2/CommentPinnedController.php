@@ -106,7 +106,7 @@ class CommentPinnedController extends Controller
         $charge->account = $pinned->user_id;
         $charge->action = 1;
         $charge->amount = $pinned->amount;
-        $charge->subject = sprintf('置顶《%s》评论', str_limit($feed->feed_content, 100, '...'));
+        $charge->subject = sprintf('置顶评论《%s》', str_limit($comment->comment_content, 100, '...'));
         $charge->body = $charge->subject;
         $charge->status = 1;
 
