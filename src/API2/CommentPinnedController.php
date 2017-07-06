@@ -96,8 +96,8 @@ class CommentPinnedController extends Controller
 
         if ($user->id !== $feed->user_id) {
             return $response->json(['message' => ['你没有权限操作']], 403);
-        } elseif ($pinned->expires_at && $comment->pinned) {
-            return $response->json(['message' => ['已被置顶，请勿重复发起']], 422);
+        } elseif ($pinned->expires_at || $comment->pinned) {
+            return $response->json(['message' => ['已操作，请勿重复发起']], 422);
         }
 
         $pinned->expires_at = $dateTime->addDay($pinned->day);
@@ -129,8 +129,39 @@ class CommentPinnedController extends Controller
         // doto.
     }
 
-    public function delete()
+    /**
+     * 取消置顶.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \Illuminate\Contracts\Routing\ResponseFactory $response
+     * @param \Carbon\Carbon $dateTime
+     * @param \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\Feed $feed
+     * @param \Zhiyi\Component\ZhiyiPlus\PlusComponentFeed\Models\FeedComment $comment
+     * @return mixed
+     * @author Seven Du <shiweidu@outlook.com>
+     */
+    public function delete(Request $request,
+                           ResponseContract $response,
+                           Carbon $dateTime,
+                           FeedModel $feed,
+                           FeedCommentModel $comment)
     {
-        // todo.
+        $user = $request->user();
+
+        if ($user->id !== $feed->user_id) {
+            return $response->json(['message' => ['你没有权限操作']], 403);
+        }
+
+        $comment->pinned = 0;
+        $comment->pinned_amount = 0;
+
+        return $feed->getConnection()->transaction(function () use ($response, $comment, $dateTime) {
+            $comment->save();
+            $comment->pinned()->update([
+                'expires_at' => $dateTime,
+            ]);
+
+            return $response->json(null, 204);
+        });
     }
 }
