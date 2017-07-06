@@ -150,6 +150,8 @@ class CommentPinnedController extends Controller
 
         if ($user->id !== $feed->user_id) {
             return $response->json(['message' => ['你没有权限操作']], 403);
+        } elseif (! $comment->pinned) {
+            return $response->json(['message' => ['无效操作']], 422);
         }
 
         $comment->pinned = 0;
