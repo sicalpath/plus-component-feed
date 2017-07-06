@@ -110,8 +110,8 @@ class CommentPinnedController extends Controller
         $charge->account = $pinned->user_id;
         $charge->action = 1;
         $charge->amount = $pinned->amount;
-        $charge->subject = sprintf('置顶评论《%s》', str_limit($comment->comment_content, 100, '...'));
-        $charge->body = $charge->subject;
+        $charge->subject = '置顶动态评论';
+        $charge->body = sprintf('置顶评论《%s》', str_limit($comment->comment_content, 100, '...'));
         $charge->status = 1;
 
         return $feed->getConnection()->transaction(function () use ($response, $pinned, $comment, $user, $charge) {
@@ -124,9 +124,44 @@ class CommentPinnedController extends Controller
         });
     }
 
-    public function reject()
+    public function reject(Request $request,
+                           ResponseContract $response,
+                           Carbon $dateTime,
+                           WalletChargeModel $charge,
+                           FeedPinnedModel $pinned)
     {
-        // doto.
+        $user = $request->user();
+
+        if ($user->id !== $pinned->target_user || $pinned->channel !== 'comment') {
+            return $response->json(['message' => ['无效操作']], 422);
+        } elseif ($pinned->expires_at) {
+            return $response->json(['message' => ['已被处理']], 422);
+        }
+
+        $pinned->load(['comment']);
+
+        // 拒绝凭据
+        $charge->user_id = $pinned->user_id;
+        $charge->channel = 'user';
+        $charge->account = $user->id;
+        $charge->action = 1;
+        $charge->amount = $pinned->amount;
+        $charge->subject = '被拒动态评论置顶';
+        $charge->body = sprintf('被拒动态评论《%s》申请，退还申请金额', str_limit($pinned->comment->comment_content ?? 'null', 100, '...'));
+        $charge->status = 1;
+
+        return $pinned->getConnection()->transaction(function () use ($response, $charge, $pinned, $dateTime) {
+            $charge->save();
+            $pinned->user()->wallet()->increment('balance', $pinned->amount);
+            $pinned->comment()->update([
+                'pinned' => 0,
+                'pinned_amount' => 0,
+            ]);
+            $pinned->expires_at = $dateTime;
+            $pinned->save();
+
+            return $response->json(null, 204);
+        });
     }
 
     /**
