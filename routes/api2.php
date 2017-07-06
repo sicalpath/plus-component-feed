@@ -38,7 +38,7 @@ Route::prefix('/feeds')->group(function () {
         Route::delete('/{feed}/uncollect', 'FeedCollectionController@destroy');
 
         // 固定
-        Route::post('/{feed}/pinneds', 'PennedController@feedPinned');
+        Route::post('/{feed}/pinneds', 'PinnedController@feedPinned');
         Route::post('/{feed}/comments/{comment}/pinneds', 'PinnedController@commentPinned');
         Route::patch('/{feed}/comments/{comment}/pinneds/{pinned}', 'CommentPinnedController@pass');
         Route::delete('/{feed}/comments/{comment}/unpinned', 'CommentPinnedController@delete');
