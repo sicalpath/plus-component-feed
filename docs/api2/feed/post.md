@@ -11,10 +11,10 @@ POST /feeds
 | feed_content | string | 分享内容，如果存在附件，则为可选，否则必须存在 |
 | feed_from | integer | 客户端标识，1-PC、2-Wap、3-iOS、4-android、5-其他 |
 | feed_mark | mixed | 客户端请求唯一标识 |
-| feed_latitude | string | 纬度，当经纬度， GeoHash 任意一个存在，则本字段必须存在 |
-| feed_longtitude | string | 纬度，当经纬度， GeoHash 任意一个存在，则本字段必须存在 |
-| feed_geohash | string | GeoHash，当经纬度， GeoHash 任意一个存在，则本字段必须存在 |
-| amount | inteter | 应用收费，不存在表示不收费，存在表示手费。|
+| feed_latitude | string | 纬度，当经经度， GeoHash 任意一个存在，则本字段必须存在 |
+| feed_longtitude | string | 经度，当经纬度， GeoHash 任意一个存在，则本字段必须存在 |
+| feed_geohash | string | GeoHash，当经纬度、经度 任意一个存在，则本字段必须存在 |
+| amount | inteter | 动态收费，不存在表示不收费，存在表示收费。|
 | images | array | 结构：`{ id: <id>, amount: <amount>, type: <read\|download> }`，amount 为可选，id 必须存在，amount 为收费金额，单位分, type 为收费方式 |
 
 
